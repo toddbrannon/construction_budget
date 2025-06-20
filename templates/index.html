@@ -287,7 +287,40 @@
         </div>
         
         <!-- Enhanced Step-by-Step Modal -->
-        {% include 'step_modal.html' %}
+        <div class="modal fade" id="stepModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient text-white" style="background: linear-gradient(135deg, #6f42c1, #9a6fc1);">
+                        <h4 class="modal-title fw-bold">
+                            <i class="fas fa-magic me-3"></i>Step-by-Step Budget Generator
+                        </h4>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" style="min-height: 500px;">
+                        <!-- Progress Bar -->
+                        <div class="progress mb-4" style="height: 8px;">
+                            <div id="stepProgress" class="progress-bar bg-gradient" style="background: linear-gradient(135deg, #6f42c1, #9a6fc1);"></div>
+                        </div>
+                        
+                        <!-- Step Content Container -->
+                        <div id="stepContent">
+                            <!-- Content will be dynamically rendered here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="prevStepBtn" class="btn btn-outline-secondary" onclick="budgetViewer.prevStep()">
+                            <i class="fas fa-arrow-left me-2"></i>Previous
+                        </button>
+                        <button type="button" id="nextStepBtn" class="btn btn-primary" onclick="budgetViewer.nextStep()">
+                            Next<i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <button type="button" id="finishBtn" class="btn btn-success d-none" onclick="budgetViewer.createBudgetFromStep()">
+                            <i class="fas fa-check me-2"></i>Create Budget
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- Step-by-Step Budget Generator Modal -->
         <div class="modal fade" id="stepByStepModal" tabindex="-1">

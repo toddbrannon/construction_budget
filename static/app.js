@@ -1708,6 +1708,46 @@ class BudgetViewer {
         return total;
     }
     
+    async saveNewBudgetToList(budgetEntry, budgetData) {
+        try {
+            const response = await fetch('/api/budgets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    budgetEntry: budgetEntry,
+                    budgetData: budgetData
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                this.showSuccessMessage('Budget created successfully!');
+                
+                // Refresh the budgets list
+                await this.loadBudgetsList();
+                this.renderDashboard();
+                
+                // Show the newly created budget
+                setTimeout(() => {
+                    this.showBudgetViewer(budgetEntry.id);
+                }, 1500);
+            } else {
+                throw new Error(result.error || 'Failed to save budget');
+            }
+            
+        } catch (error) {
+            console.error('Error saving budget:', error);
+            this.showError('Failed to save budget: ' + error.message);
+        }
+    }
+    
     showBudgetSaveInfo(budgetEntry, budgetData) {
         // Create a detailed info modal/alert showing what would be saved
         const alert = document.createElement('div');
