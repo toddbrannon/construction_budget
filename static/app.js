@@ -1195,25 +1195,30 @@ class BudgetViewer {
     }
     
     async showStepByStepGenerator() {
-        // Load budget scenarios
-        try {
-            const response = await fetch('/static/budget-scenarios.json');
-            const data = await response.json();
-            this.budgetScenarios = data.scenarios;
-            
-            // Reset modal state
-            this.currentStep = 1;
-            this.selectedScenario = null;
-            this.updateStepModal();
-            this.renderScenarioCards();
-            
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('stepByStepModal'));
-            modal.show();
-        } catch (error) {
-            console.error('Error loading budget scenarios:', error);
-            this.showError('Failed to load budget scenarios');
-        }
+        // Hide new budget form and show enhanced step modal
+        this.hideNewBudgetForm();
+        
+        // Initialize enhanced step-by-step state
+        this.currentStep = 1;
+        this.maxSteps = 4;
+        this.stepData = {
+            projectInfo: {},
+            selectedScenario: null,
+            trades: [],
+            currentTradeIndex: 0,
+            currentLineItemIndex: 0,
+            isAddingLineItems: false,
+            summary: {}
+        };
+        
+        // Load common trade configurations for auto-fill
+        this.loadTradeConfigurations();
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('stepModal'));
+        modal.show();
+        
+        this.updateStepModal();
     }
     
     renderScenarioCards() {
@@ -1223,7 +1228,7 @@ class BudgetViewer {
                 <div class="card scenario-card h-100 border-2" data-scenario-id="${scenario.id}" style="cursor: pointer; transition: all 0.2s ease;">
                     <div class="card-header d-flex justify-content-between align-items-center py-3" style="background: linear-gradient(135deg, ${scenario.type === 'residential' ? '#6f42c1' : '#0dcaf0'}, ${scenario.type === 'residential' ? '#9a6fc1' : '#0fb3d3'});">
                         <span class="badge bg-light text-dark fs-7 px-3 py-2">${scenario.type}</span>
-                        <span class="fw-bold text-white fs-5">${this.formatCurrency(scenario.totalBudget)}</span>
+                        <span class="fw-semibold text-white" style="font-size: 1.1rem;">${this.formatCurrency(scenario.totalBudget)}</span>
                     </div>
                     <div class="card-body p-4">
                         <h5 class="card-title mb-3 fw-bold">${scenario.project.name}</h5>
@@ -1292,18 +1297,24 @@ class BudgetViewer {
     }
     
     nextStep() {
-        if (this.currentStep < 4) {
+        // Save current step data before proceeding
+        if (this.currentStep === 1) {
+            // Save project info
+            this.saveCurrentProjectInfo();
+        } else if (this.currentStep === 2) {
+            // Save scenario selection  
+            this.saveCurrentScenario();
+        } else if (this.currentStep === 3) {
+            // Save current line item if in line item mode
+            if (this.stepData.isAddingLineItems) {
+                this.saveCurrentLineItem();
+                return; // Stay on step 3 for next line item
+            }
+        }
+        
+        if (this.currentStep < this.maxSteps) {
             this.currentStep++;
             this.updateStepModal();
-            
-            // Populate step content
-            if (this.currentStep === 2) {
-                this.renderProjectInfoStep();
-            } else if (this.currentStep === 3) {
-                this.renderTradesOverviewStep();
-            } else if (this.currentStep === 4) {
-                this.renderBudgetSummaryStep();
-            }
         }
     }
     
@@ -1315,108 +1326,58 @@ class BudgetViewer {
     }
     
     renderProjectInfoStep() {
-        const container = document.getElementById('projectInfoPreview');
-        container.innerHTML = `
-            <div class="row align-items-center mb-4">
-                <div class="col-md-8">
-                    <h4 class="mb-2 fw-bold text-dark">${this.selectedScenario.project.name}</h4>
-                    <p class="text-muted mb-0" style="font-size: 1.1rem; line-height: 1.5;">${this.selectedScenario.description}</p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <span class="badge ${this.selectedScenario.type === 'residential' ? 'bg-primary' : 'bg-info'} px-3 py-2 fs-6">
-                        <i class="fas fa-${this.selectedScenario.type === 'residential' ? 'home' : 'building'} me-2"></i>${this.selectedScenario.type} project
-                    </span>
-                </div>
-            </div>
-            <hr class="my-4">
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-user-tie text-primary me-2"></i>
-                        <strong class="fs-6">Client</strong>
+        const projectInfo = this.stepData.projectInfo;
+        return `
+            <div class="step-content">
+                <h4 class="mb-4">Project Information</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Project Name *</label>
+                        <input type="text" id="stepProjectName" class="form-control" 
+                               value="${projectInfo.name || ''}"
+                               placeholder="Enter project name" required>
                     </div>
-                    <div class="text-muted fs-5">${this.selectedScenario.project.client}</div>
-                </div>
-                <div class="col-md-6">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-dollar-sign text-success me-2"></i>
-                        <strong class="fs-6">Total Budget</strong>
+                    <div class="col-md-6">
+                        <label class="form-label">Client Name *</label>
+                        <input type="text" id="stepClient" class="form-control" 
+                               value="${projectInfo.client || ''}"
+                               placeholder="Enter client name" required>
                     </div>
-                    <div class="text-success fw-bold fs-4">${this.formatCurrency(this.selectedScenario.totalBudget)}</div>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fas fa-map-marker-alt text-info me-2"></i>
-                        <strong class="fs-6">Project Address</strong>
+                    <div class="col-12">
+                        <label class="form-label">Project Address</label>
+                        <textarea id="stepAddress" class="form-control" rows="2" 
+                                  placeholder="Enter project address">${projectInfo.address || ''}</textarea>
                     </div>
-                    <div class="text-muted fs-6">${this.selectedScenario.project.address}</div>
                 </div>
+                ${projectInfo.name ? '<div class="alert alert-success mt-3"><i class="fas fa-check-circle me-2"></i>Project information saved</div>' : ''}
             </div>
         `;
     }
     
     renderTradesOverviewStep() {
-        const container = document.getElementById('tradesOverview');
-        const trades = Object.entries(this.selectedScenario.trades);
-        
-        container.innerHTML = `
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="alert alert-info border-0" style="background: linear-gradient(135deg, #e3f2fd, #f3e5f5);">
-                        <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>Trade Sections Overview</h6>
-                        <p class="mb-0">This budget includes <strong>${trades.length} trade sections</strong> with detailed line items and vendor information.</p>
+        if (!this.stepData.isAddingLineItems) {
+            // Show trade overview first
+            return `
+                <div class="step-content">
+                    <h4 class="mb-4">Build Your Budget Line by Line</h4>
+                    <p class="text-muted mb-4">We'll guide you through adding each budget item step by step. You can review, edit, and save each entry individually.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        We'll start with the most common trade categories and auto-fill realistic values that you can customize.
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-lg" onclick="budgetViewer.startLineItemMode()">
+                            <i class="fas fa-play me-2"></i>Start Building Budget
+                        </button>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-            ${trades.map(([key, trade]) => {
-                const tradeTotal = trade.line_items.reduce((sum, item) => sum + item.budget, 0);
-                return `
-                    <div class="col-md-6 mb-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #495057, #6c757d);">
-                                <h6 class="card-title mb-0 fw-bold">
-                                    <i class="fas fa-tools me-2"></i>${trade.name}
-                                </h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-6">
-                                        <small class="text-muted">Line Items</small>
-                                        <div class="fw-bold fs-6">${trade.line_items.length} items</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Section Total</small>
-                                        <div class="text-success fw-bold fs-6">${this.formatCurrency(tradeTotal)}</div>
-                                    </div>
-                                </div>
-                                <details class="mt-2">
-                                    <summary class="text-primary fw-semibold" style="cursor: pointer; font-size: 0.95rem;">
-                                        <i class="fas fa-list me-1"></i>View Line Items
-                                    </summary>
-                                    <div class="mt-3 border-top pt-3">
-                                        ${trade.line_items.map(item => `
-                                            <div class="d-flex justify-content-between align-items-start mb-2 pb-2 border-bottom border-light">
-                                                <div class="flex-grow-1">
-                                                    <div class="fw-semibold" style="font-size: 0.9rem;">${item.category}</div>
-                                                    <small class="text-muted">${item.vendor}</small>
-                                                </div>
-                                                <div class="text-success fw-bold ms-2" style="font-size: 0.9rem;">
-                                                    ${this.formatCurrency(item.budget)}
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </details>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('')}
-            </div>
-        `;
+            `;
+        } else {
+            // Show current line item being added
+            return this.renderCurrentLineItem();
+        }
     }
     
     renderBudgetSummaryStep() {
@@ -1434,22 +1395,39 @@ class BudgetViewer {
     }
     
     createBudgetFromStep() {
-        // Convert scenario to budget data format
-        this.newBudgetData = {
-            project: {
-                name: this.selectedScenario.project.name,
-                client: this.selectedScenario.project.client,
-                address: this.selectedScenario.project.address
-            },
-            trades: this.selectedScenario.trades
+        // Collect all step data and create the budget
+        const budgetData = {
+            project: this.stepData.projectInfo,
+            trades: {}
         };
         
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('stepByStepModal'));
+        // Add collected trades with line items
+        this.stepData.trades.forEach(trade => {
+            budgetData.trades[trade.name] = {
+                name: trade.name,
+                lineItems: trade.lineItems
+            };
+        });
+        
+        // Close modal and save the budget
+        const modal = bootstrap.Modal.getInstance(document.getElementById('stepModal'));
         modal.hide();
         
-        // Show new budget form with populated data
-        this.showNewBudgetForm();
+        // Create budget entry
+        const budgetEntry = {
+            id: this.generateBudgetId(this.stepData.projectInfo.name),
+            projectName: this.stepData.projectInfo.name,
+            client: this.stepData.projectInfo.client,
+            address: this.stepData.projectInfo.address || '',
+            totalBudget: this.calculateTotalFromTrades(budgetData.trades),
+            status: 'planning',
+            filename: `budget_${Date.now()}.json`,
+            dateCreated: new Date().toISOString().split('T')[0],
+            lastModified: new Date().toISOString().split('T')[0]
+        };
+        
+        // Save the budget
+        this.saveNewBudgetToList(budgetEntry, budgetData);
         this.populateGeneratedBudget();
         
         // Show success message
