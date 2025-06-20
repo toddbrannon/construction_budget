@@ -443,8 +443,13 @@ class BudgetViewer {
     }
     
     renderBudget() {
-        if (!this.budgetData) return;
-        
+        if (!this.budgetData || !this.budgetData.project) {
+            console.error('No budget data available:', this.budgetData);
+            this.showError('No budget data available');
+            return;
+        }
+
+        console.log('Rendering budget with data:', this.budgetData);
         this.renderProjectInfo();
         this.renderTradeSections();
         this.calculateGrandTotal();
@@ -460,10 +465,24 @@ class BudgetViewer {
     
     renderTradeSections() {
         const tradeSectionsContainer = document.getElementById('tradeSections');
+        if (!tradeSectionsContainer) {
+            console.error('Trade sections container not found');
+            return;
+        }
+        
         tradeSectionsContainer.innerHTML = '';
         
-        Object.entries(this.budgetData.trades).forEach(([tradeKey, trade]) => {
-            if (!trade.line_items || trade.line_items.length === 0) {
+        const trades = this.budgetData.trades;
+        if (!trades || Object.keys(trades).length === 0) {
+            tradeSectionsContainer.innerHTML = '<div class="alert alert-info">No trade sections found.</div>';
+            return;
+        }
+
+        console.log('Rendering trades:', trades);
+        
+        Object.entries(trades).forEach(([tradeKey, trade]) => {
+            const lineItems = trade.lineItems || trade.line_items || [];
+            if (lineItems.length === 0) {
                 return; // Skip trades with no line items
             }
             
@@ -1431,8 +1450,6 @@ class BudgetViewer {
         
         // Save the budget
         this.saveNewBudgetToList(budgetEntry, budgetData);
-    }
-        this.populateGeneratedBudget();
         
         // Show success message
         this.showSuccessMessage(`Created ${this.selectedScenario.type} budget: "${this.selectedScenario.project.name}"`);
