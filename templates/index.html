@@ -90,8 +90,11 @@
                                 <li><a class="dropdown-item" href="#" id="createBlankBudget">
                                     <i class="fas fa-file-alt me-2"></i>Blank Budget
                                 </a></li>
+                                <li><a class="dropdown-item" href="#" id="generateStepByStepBudget">
+                                    <i class="fas fa-magic me-2"></i>Step-by-Step Generator
+                                </a></li>
                                 <li><a class="dropdown-item" href="#" id="generateTestBudget">
-                                    <i class="fas fa-magic me-2"></i>Generate Test Budget
+                                    <i class="fas fa-bolt me-2"></i>Quick Generate
                                 </a></li>
                             </ul>
                         </div>
@@ -268,12 +271,73 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Step-by-Step Budget Generator Modal -->
+        <div class="modal fade" id="stepByStepModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-magic me-2"></i>Step-by-Step Budget Generator
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Step 1: Select Scenario -->
+                        <div id="step1" class="step-content">
+                            <h6 class="mb-3">Step 1: Choose a Project Scenario</h6>
+                            <div class="row" id="scenarioCards">
+                                <!-- Scenario cards will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Review Project Info -->
+                        <div id="step2" class="step-content d-none">
+                            <h6 class="mb-3">Step 2: Project Information</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="projectInfoPreview"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Review Trade Sections -->
+                        <div id="step3" class="step-content d-none">
+                            <h6 class="mb-3">Step 3: Trade Sections Overview</h6>
+                            <div id="tradesOverview"></div>
+                        </div>
+                        
+                        <!-- Step 4: Complete -->
+                        <div id="step4" class="step-content d-none">
+                            <h6 class="mb-3">Step 4: Ready to Create</h6>
+                            <div class="alert alert-success">
+                                <h6><i class="fas fa-check-circle me-2"></i>Budget Ready!</h6>
+                                <p class="mb-2">Your budget has been prepared with:</p>
+                                <ul id="budgetSummary" class="mb-0"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="prevStep" disabled>
+                            <i class="fas fa-arrow-left me-2"></i>Previous
+                        </button>
+                        <button type="button" class="btn btn-primary" id="nextStep">
+                            Continue <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <button type="button" class="btn btn-success d-none" id="createBudgetStep">
+                            <i class="fas fa-plus me-2"></i>Create Budget
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JavaScript -->
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Application JS -->
     <script src="/static/app.js"></script>
 </body>
 </html>

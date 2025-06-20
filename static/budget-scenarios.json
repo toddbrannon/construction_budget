@@ -1,0 +1,919 @@
+{
+  "scenarios": [
+    {
+      "id": 1,
+      "type": "residential",
+      "project": {
+        "name": "Luxury Waterfront Estate",
+        "client": "The Johnson Family Trust",
+        "address": "15 Oceanview Drive, Malibu, CA 90265"
+      },
+      "description": "High-end coastal residence with premium finishes and ocean views",
+      "totalBudget": 2850000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Premier Excavation",
+              "budget": 65000,
+              "notes": "Coastal site preparation with retaining walls"
+            },
+            {
+              "category": "DRAINAGE LABOR AND MATERIAL",
+              "categoryCode": "3805",
+              "vendor": "Site Development Pros",
+              "budget": 45000,
+              "notes": "Advanced drainage for waterfront property"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "CONCRETE PILING",
+              "categoryCode": "1301",
+              "vendor": "Foundation Masters",
+              "budget": 185000,
+              "notes": "Deep foundation system for coastal conditions"
+            },
+            {
+              "category": "SHELL / ROOF FRAMING L&M",
+              "categoryCode": "1305",
+              "vendor": "Structural Concrete Specialists",
+              "budget": 320000,
+              "notes": "Premium structural framing with hurricane resistance"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "ELECTRICAL LABOR",
+              "categoryCode": "2101",
+              "vendor": "Elite Electrical Contractors",
+              "budget": 125000,
+              "notes": "Smart home electrical system"
+            },
+            {
+              "category": "LIGHTING SYSTEM",
+              "categoryCode": "2103",
+              "vendor": "Modern Electric Co",
+              "budget": 85000,
+              "notes": "Designer LED lighting package"
+            }
+          ]
+        },
+        "plumbing": {
+          "name": "Plumbing",
+          "line_items": [
+            {
+              "category": "PLUMBING LABOR",
+              "categoryCode": "2001",
+              "vendor": "Master Plumbers Guild",
+              "budget": 95000,
+              "notes": "Luxury plumbing system with spa features"
+            },
+            {
+              "category": "PLUMBING FIXTURES",
+              "categoryCode": "2002",
+              "vendor": "Flow-Tech Solutions",
+              "budget": 120000,
+              "notes": "Premium European fixtures"
+            }
+          ]
+        },
+        "flooring": {
+          "name": "Flooring",
+          "line_items": [
+            {
+              "category": "WOOD FLOOR MATERIAL & LABOR",
+              "categoryCode": "2407",
+              "vendor": "Premium Floor Covering",
+              "budget": 95000,
+              "notes": "Wide-plank European oak flooring"
+            },
+            {
+              "category": "INTERIOR TILE / MARBLE FLOOR MATERIAL",
+              "categoryCode": "2403",
+              "vendor": "Elegant Flooring Solutions",
+              "budget": 65000,
+              "notes": "Italian marble and designer tile"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "commercial",
+      "project": {
+        "name": "Corporate Headquarters Expansion",
+        "client": "Apex Corporation",
+        "address": "5000 Corporate Center Drive, Austin, TX 78759"
+      },
+      "description": "Modern office expansion with sustainable design features",
+      "totalBudget": 4250000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Earthworks Contractors",
+              "budget": 85000,
+              "notes": "Large-scale site preparation for office complex"
+            },
+            {
+              "category": "SITE UTILITIES",
+              "categoryCode": "3801",
+              "vendor": "Site Development Pros",
+              "budget": 125000,
+              "notes": "Underground utilities and infrastructure"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "CONCRETE LABOR",
+              "categoryCode": "1302",
+              "vendor": "Premier Concrete Works",
+              "budget": 285000,
+              "notes": "Structural concrete for multi-story expansion"
+            },
+            {
+              "category": "STRUCTURAL STEEL",
+              "categoryCode": "1401",
+              "vendor": "Steel Frame Solutions",
+              "budget": 450000,
+              "notes": "Steel frame structure for open office design"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "ELECTRICAL LABOR",
+              "categoryCode": "2101",
+              "vendor": "Advanced Electrical Systems",
+              "budget": 185000,
+              "notes": "Commercial electrical distribution system"
+            },
+            {
+              "category": "FIRE ALARM SYSTEM",
+              "categoryCode": "2105",
+              "vendor": "Safety Systems Inc",
+              "budget": 95000,
+              "notes": "Integrated fire alarm and emergency systems"
+            }
+          ]
+        },
+        "hvac": {
+          "name": "Heating & Cooling",
+          "line_items": [
+            {
+              "category": "AIR CONDITIONING & DUCT WORK",
+              "categoryCode": "2201",
+              "vendor": "Climate Control Experts",
+              "budget": 325000,
+              "notes": "Energy-efficient HVAC system with zone controls"
+            }
+          ]
+        },
+        "professional_services": {
+          "name": "Professional Services",
+          "line_items": [
+            {
+              "category": "STRUCTURAL ENGINEERING",
+              "categoryCode": "1002",
+              "vendor": "Engineering Solutions Corp",
+              "budget": 45000,
+              "notes": "Structural design for office expansion"
+            },
+            {
+              "category": "MEP ENGINEERING",
+              "categoryCode": "1004",
+              "vendor": "Building Systems Design",
+              "budget": 65000,
+              "notes": "Mechanical, electrical, plumbing engineering"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "residential",
+      "project": {
+        "name": "Historic Home Renovation",
+        "client": "Heritage Home Investors",
+        "address": "1734 Historic Lane, Savannah, GA 31401"
+      },
+      "description": "Restoration of 1920s colonial home with modern amenities",
+      "totalBudget": 1650000,
+      "trades": {
+        "demolition": {
+          "name": "Demolition",
+          "line_items": [
+            {
+              "category": "DEMOLITION LABOR",
+              "categoryCode": "2901",
+              "vendor": "Heritage Restoration Co",
+              "budget": 45000,
+              "notes": "Careful demolition preserving historic elements"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "FOUNDATION REPAIR",
+              "categoryCode": "1303",
+              "vendor": "Foundation Specialists",
+              "budget": 125000,
+              "notes": "Historic foundation stabilization and repair"
+            },
+            {
+              "category": "STRUCTURAL REPAIR",
+              "categoryCode": "1306",
+              "vendor": "Historic Preservation Inc",
+              "budget": 185000,
+              "notes": "Restoration of original timber framing"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "ELECTRICAL LABOR",
+              "categoryCode": "2101",
+              "vendor": "Period Electric Co",
+              "budget": 95000,
+              "notes": "Complete rewiring with period-appropriate fixtures"
+            }
+          ]
+        },
+        "plumbing": {
+          "name": "Plumbing",
+          "line_items": [
+            {
+              "category": "PLUMBING LABOR",
+              "categoryCode": "2001",
+              "vendor": "Classic Plumbing Services",
+              "budget": 85000,
+              "notes": "New plumbing system throughout historic home"
+            },
+            {
+              "category": "PLUMBING FIXTURES",
+              "categoryCode": "2002",
+              "vendor": "Vintage Fixture Co",
+              "budget": 65000,
+              "notes": "Period-appropriate plumbing fixtures"
+            }
+          ]
+        },
+        "millwork": {
+          "name": "Millwork & Trim",
+          "line_items": [
+            {
+              "category": "INTERIOR TRIM / MILLWORK",
+              "categoryCode": "2501",
+              "vendor": "Heritage Millwork Co",
+              "budget": 125000,
+              "notes": "Custom millwork matching original profiles"
+            },
+            {
+              "category": "STAIR MATERIALS",
+              "categoryCode": "2503",
+              "vendor": "Artisan Woodworks",
+              "budget": 85000,
+              "notes": "Restoration of grand staircase"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "commercial",
+      "project": {
+        "name": "Medical Center Complex",
+        "client": "Regional Medical Group",
+        "address": "1250 Medical Plaza, Denver, CO 80202"
+      },
+      "description": "State-of-the-art medical facility with specialized equipment requirements",
+      "totalBudget": 6750000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Medical Site Prep Inc",
+              "budget": 125000,
+              "notes": "Specialized excavation for medical facility"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "CONCRETE LABOR",
+              "categoryCode": "1302",
+              "vendor": "Medical Construction Co",
+              "budget": 385000,
+              "notes": "Reinforced concrete for medical equipment loads"
+            },
+            {
+              "category": "STRUCTURAL STEEL",
+              "categoryCode": "1401",
+              "vendor": "Healthcare Structures Inc",
+              "budget": 485000,
+              "notes": "Steel structure designed for medical equipment"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "ELECTRICAL LABOR",
+              "categoryCode": "2101",
+              "vendor": "Medical Electrical Systems",
+              "budget": 325000,
+              "notes": "Hospital-grade electrical with emergency backup"
+            },
+            {
+              "category": "EMERGENCY POWER SYSTEM",
+              "categoryCode": "2106",
+              "vendor": "Emergency Power Solutions",
+              "budget": 185000,
+              "notes": "Generator and UPS systems for critical operations"
+            }
+          ]
+        },
+        "plumbing": {
+          "name": "Plumbing",
+          "line_items": [
+            {
+              "category": "PLUMBING LABOR",
+              "categoryCode": "2001",
+              "vendor": "Medical Plumbing Specialists",
+              "budget": 245000,
+              "notes": "Medical gas systems and specialized plumbing"
+            },
+            {
+              "category": "MEDICAL GAS SYSTEM",
+              "categoryCode": "2003",
+              "vendor": "Medical Gas Solutions",
+              "budget": 165000,
+              "notes": "Oxygen, nitrous oxide, and vacuum systems"
+            }
+          ]
+        },
+        "hvac": {
+          "name": "Heating & Cooling",
+          "line_items": [
+            {
+              "category": "AIR CONDITIONING & DUCT WORK",
+              "categoryCode": "2201",
+              "vendor": "Medical HVAC Systems",
+              "budget": 425000,
+              "notes": "Hospital-grade HVAC with HEPA filtration"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "residential",
+      "project": {
+        "name": "Mountain Lodge Construction",
+        "client": "Mountain View Estates",
+        "address": "2018 Mountain Ridge Road, Park City, UT 84060"
+      },
+      "description": "Luxury ski lodge with timber frame construction and mountain views",
+      "totalBudget": 3250000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Alpine Excavation",
+              "budget": 95000,
+              "notes": "Mountain site preparation with rock removal"
+            },
+            {
+              "category": "RETAINING WALLS",
+              "categoryCode": "3803",
+              "vendor": "Mountain Site Solutions",
+              "budget": 125000,
+              "notes": "Stone retaining walls for slope stabilization"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "TIMBER FRAMING",
+              "categoryCode": "1307",
+              "vendor": "Mountain Timber Framers",
+              "budget": 485000,
+              "notes": "Heavy timber frame construction with exposed beams"
+            },
+            {
+              "category": "STONE MASONRY",
+              "categoryCode": "1501",
+              "vendor": "Alpine Stone Works",
+              "budget": 285000,
+              "notes": "Local stone exterior and fireplace construction"
+            }
+          ]
+        },
+        "roofing": {
+          "name": "Roofing",
+          "line_items": [
+            {
+              "category": "METAL ROOFING",
+              "categoryCode": "1901",
+              "vendor": "Mountain Roofing Systems",
+              "budget": 165000,
+              "notes": "Standing seam metal roof for snow load"
+            }
+          ]
+        },
+        "heating": {
+          "name": "Heating & Cooling",
+          "line_items": [
+            {
+              "category": "RADIANT HEATING SYSTEM",
+              "categoryCode": "2202",
+              "vendor": "Alpine Heating Solutions",
+              "budget": 185000,
+              "notes": "In-floor radiant heating throughout"
+            },
+            {
+              "category": "FIREPLACE SYSTEMS",
+              "categoryCode": "2203",
+              "vendor": "Mountain Hearth Co",
+              "budget": 125000,
+              "notes": "Multiple stone fireplaces with efficient inserts"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "commercial",
+      "project": {
+        "name": "Retail Shopping Plaza",
+        "client": "Retail Development Partners",
+        "address": "3400 Shopping District Blvd, Orlando, FL 32801"
+      },
+      "description": "Modern retail complex with multiple tenant spaces and parking",
+      "totalBudget": 5850000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Commercial Site Prep",
+              "budget": 165000,
+              "notes": "Large-scale retail site development"
+            },
+            {
+              "category": "PARKING LOT PAVING",
+              "categoryCode": "3804",
+              "vendor": "Asphalt Solutions Inc",
+              "budget": 285000,
+              "notes": "Extensive parking and drive areas"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "TILT-UP CONCRETE",
+              "categoryCode": "1308",
+              "vendor": "Retail Construction Corp",
+              "budget": 685000,
+              "notes": "Tilt-up concrete panels for efficient construction"
+            },
+            {
+              "category": "STEEL JOISTS",
+              "categoryCode": "1402",
+              "vendor": "Commercial Steel Co",
+              "budget": 325000,
+              "notes": "Open web steel joists for large retail spaces"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "ELECTRICAL LABOR",
+              "categoryCode": "2101",
+              "vendor": "Retail Electric Systems",
+              "budget": 285000,
+              "notes": "Multi-tenant electrical distribution"
+            },
+            {
+              "category": "EXTERIOR LIGHTING",
+              "categoryCode": "2104",
+              "vendor": "Parking Lot Lighting Co",
+              "budget": 125000,
+              "notes": "LED parking lot and facade lighting"
+            }
+          ]
+        },
+        "hvac": {
+          "name": "Heating & Cooling",
+          "line_items": [
+            {
+              "category": "COMMERCIAL HVAC UNITS",
+              "categoryCode": "2204",
+              "vendor": "Retail Climate Control",
+              "budget": 385000,
+              "notes": "Rooftop units for individual tenant spaces"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": "residential",
+      "project": {
+        "name": "Eco-Friendly Smart Home",
+        "client": "Green Building Solutions",
+        "address": "567 Sustainable Way, Portland, OR 97201"
+      },
+      "description": "Net-zero energy home with smart technology and sustainable materials",
+      "totalBudget": 2150000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Eco Site Development",
+              "budget": 55000,
+              "notes": "Minimal impact site preparation"
+            },
+            {
+              "category": "GEOTHERMAL SYSTEM",
+              "categoryCode": "3806",
+              "vendor": "Geothermal Solutions Inc",
+              "budget": 125000,
+              "notes": "Ground-source heat pump system"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "ICF CONSTRUCTION",
+              "categoryCode": "1309",
+              "vendor": "Insulated Concrete Forms Co",
+              "budget": 285000,
+              "notes": "Insulated concrete forms for energy efficiency"
+            },
+            {
+              "category": "ADVANCED FRAMING",
+              "categoryCode": "1310",
+              "vendor": "Sustainable Framing Inc",
+              "budget": 165000,
+              "notes": "Optimized framing with thermal breaks"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "SOLAR PANEL SYSTEM",
+              "categoryCode": "2107",
+              "vendor": "Solar Solutions Pacific",
+              "budget": 185000,
+              "notes": "Rooftop solar array with battery storage"
+            },
+            {
+              "category": "SMART HOME AUTOMATION",
+              "categoryCode": "2108",
+              "vendor": "Smart Tech Systems",
+              "budget": 95000,
+              "notes": "Integrated home automation and energy monitoring"
+            }
+          ]
+        },
+        "insulation": {
+          "name": "Insulation & Energy",
+          "line_items": [
+            {
+              "category": "SPRAY FOAM INSULATION",
+              "categoryCode": "2301",
+              "vendor": "Green Insulation Co",
+              "budget": 125000,
+              "notes": "High-performance spray foam insulation"
+            },
+            {
+              "category": "TRIPLE PANE WINDOWS",
+              "categoryCode": "2302",
+              "vendor": "Energy Efficient Windows",
+              "budget": 165000,
+              "notes": "Triple-pane windows with low-E coating"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": "commercial",
+      "project": {
+        "name": "Technology Innovation Hub",
+        "client": "Tech Innovation Group",
+        "address": "4800 Innovation Parkway, San Jose, CA 95110"
+      },
+      "description": "Modern tech campus with flexible spaces and advanced infrastructure",
+      "totalBudget": 8250000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Silicon Valley Site Prep",
+              "budget": 185000,
+              "notes": "Tech campus site development"
+            },
+            {
+              "category": "UNDERGROUND UTILITIES",
+              "categoryCode": "3801",
+              "vendor": "Advanced Infrastructure Co",
+              "budget": 285000,
+              "notes": "High-capacity utility infrastructure"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "PRECAST CONCRETE",
+              "categoryCode": "1311",
+              "vendor": "Tech Building Systems",
+              "budget": 785000,
+              "notes": "Precast concrete panels for modern aesthetic"
+            },
+            {
+              "category": "CURTAIN WALL SYSTEM",
+              "categoryCode": "1312",
+              "vendor": "Glass & Steel Specialists",
+              "budget": 1250000,
+              "notes": "Floor-to-ceiling glass curtain wall system"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "DATA CENTER ELECTRICAL",
+              "categoryCode": "2109",
+              "vendor": "Tech Power Systems",
+              "budget": 485000,
+              "notes": "High-capacity electrical for server rooms"
+            },
+            {
+              "category": "FIBER OPTIC INFRASTRUCTURE",
+              "categoryCode": "2110",
+              "vendor": "Network Infrastructure Inc",
+              "budget": 325000,
+              "notes": "Enterprise-grade network infrastructure"
+            }
+          ]
+        },
+        "hvac": {
+          "name": "Heating & Cooling",
+          "line_items": [
+            {
+              "category": "PRECISION COOLING SYSTEM",
+              "categoryCode": "2205",
+              "vendor": "Data Center Climate",
+              "budget": 425000,
+              "notes": "Precision cooling for server environments"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "residential",
+      "project": {
+        "name": "Urban Townhouse Development",
+        "client": "Urban Development Group",
+        "address": "3421 Urban Plaza, Seattle, WA 98101"
+      },
+      "description": "Modern townhouse complex with sustainable urban design",
+      "totalBudget": 4850000,
+      "trades": {
+        "site_work": {
+          "name": "Site Work",
+          "line_items": [
+            {
+              "category": "EXCAVATION / GRADING",
+              "categoryCode": "3802",
+              "vendor": "Urban Site Solutions",
+              "budget": 125000,
+              "notes": "Urban infill site preparation"
+            },
+            {
+              "category": "STORM WATER MANAGEMENT",
+              "categoryCode": "3807",
+              "vendor": "Green Infrastructure Co",
+              "budget": 185000,
+              "notes": "Sustainable storm water management system"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "MODULAR CONSTRUCTION",
+              "categoryCode": "1313",
+              "vendor": "Urban Modular Systems",
+              "budget": 1250000,
+              "notes": "Modular construction for efficient development"
+            },
+            {
+              "category": "GREEN ROOF SYSTEM",
+              "categoryCode": "1314",
+              "vendor": "Living Roof Solutions",
+              "budget": 285000,
+              "notes": "Extensive green roof system"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "ELECTRIC VEHICLE CHARGING",
+              "categoryCode": "2111",
+              "vendor": "EV Charging Solutions",
+              "budget": 125000,
+              "notes": "EV charging stations for residents"
+            },
+            {
+              "category": "BUILDING AUTOMATION",
+              "categoryCode": "2112",
+              "vendor": "Urban Tech Systems",
+              "budget": 165000,
+              "notes": "Smart building automation system"
+            }
+          ]
+        },
+        "sustainability": {
+          "name": "Sustainability Features",
+          "line_items": [
+            {
+              "category": "RAINWATER HARVESTING",
+              "categoryCode": "2801",
+              "vendor": "Water Conservation Inc",
+              "budget": 95000,
+              "notes": "Rainwater collection and reuse system"
+            },
+            {
+              "category": "SOLAR PANEL SYSTEM",
+              "categoryCode": "2802",
+              "vendor": "Urban Solar Co",
+              "budget": 225000,
+              "notes": "Community solar array system"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": "commercial",
+      "project": {
+        "name": "Healthcare Facility Upgrade",
+        "client": "Healthcare Solutions Corp",
+        "address": "3200 Healthcare Drive, Phoenix, AZ 85001"
+      },
+      "description": "Renovation and expansion of existing healthcare facility",
+      "totalBudget": 3850000,
+      "trades": {
+        "demolition": {
+          "name": "Demolition",
+          "line_items": [
+            {
+              "category": "SELECTIVE DEMOLITION",
+              "categoryCode": "2902",
+              "vendor": "Medical Demo Specialists",
+              "budget": 85000,
+              "notes": "Careful demolition in occupied facility"
+            }
+          ]
+        },
+        "shell": {
+          "name": "Shell",
+          "line_items": [
+            {
+              "category": "STRUCTURAL MODIFICATIONS",
+              "categoryCode": "1315",
+              "vendor": "Healthcare Construction",
+              "budget": 385000,
+              "notes": "Structural modifications for new equipment"
+            },
+            {
+              "category": "INFECTION CONTROL BARRIERS",
+              "categoryCode": "1316",
+              "vendor": "Medical Containment Co",
+              "budget": 125000,
+              "notes": "Temporary barriers during construction"
+            }
+          ]
+        },
+        "electrical": {
+          "name": "Electrical & Low Voltage",
+          "line_items": [
+            {
+              "category": "MEDICAL EQUIPMENT POWER",
+              "categoryCode": "2113",
+              "vendor": "Medical Power Solutions",
+              "budget": 285000,
+              "notes": "Specialized power for medical equipment"
+            },
+            {
+              "category": "NURSE CALL SYSTEM",
+              "categoryCode": "2114",
+              "vendor": "Healthcare Communication",
+              "budget": 165000,
+              "notes": "Advanced nurse call and communication system"
+            }
+          ]
+        },
+        "hvac": {
+          "name": "Heating & Cooling",
+          "line_items": [
+            {
+              "category": "MEDICAL HVAC UPGRADE",
+              "categoryCode": "2206",
+              "vendor": "Healthcare HVAC Systems",
+              "budget": 325000,
+              "notes": "Upgraded HVAC with infection control"
+            }
+          ]
+        },
+        "medical_systems": {
+          "name": "Medical Systems",
+          "line_items": [
+            {
+              "category": "MEDICAL GAS UPGRADE",
+              "categoryCode": "2004",
+              "vendor": "Medical Gas Professionals",
+              "budget": 185000,
+              "notes": "Upgraded medical gas distribution"
+            },
+            {
+              "category": "IMAGING ROOM SHIELDING",
+              "categoryCode": "2005",
+              "vendor": "Radiation Shielding Inc",
+              "budget": 225000,
+              "notes": "Lead-lined rooms for imaging equipment"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

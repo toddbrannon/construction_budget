@@ -617,9 +617,27 @@ class BudgetViewer {
             this.showNewBudgetForm();
         });
         
+        document.getElementById('generateStepByStepBudget').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showStepByStepGenerator();
+        });
+        
         document.getElementById('generateTestBudget').addEventListener('click', (e) => {
             e.preventDefault();
             this.generateTestBudget();
+        });
+        
+        // Step-by-step modal controls
+        document.getElementById('nextStep').addEventListener('click', () => {
+            this.nextStep();
+        });
+        
+        document.getElementById('prevStep').addEventListener('click', () => {
+            this.prevStep();
+        });
+        
+        document.getElementById('createBudgetStep').addEventListener('click', () => {
+            this.createBudgetFromStep();
         });
     }
     
@@ -1169,6 +1187,227 @@ class BudgetViewer {
                 lineItem.querySelector('.item-notes').value = item.notes || '';
             });
         });
+    }
+    
+    async showStepByStepGenerator() {
+        // Load budget scenarios
+        try {
+            const response = await fetch('/static/budget-scenarios.json');
+            const data = await response.json();
+            this.budgetScenarios = data.scenarios;
+            
+            // Reset modal state
+            this.currentStep = 1;
+            this.selectedScenario = null;
+            this.updateStepModal();
+            this.renderScenarioCards();
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('stepByStepModal'));
+            modal.show();
+        } catch (error) {
+            console.error('Error loading budget scenarios:', error);
+            this.showError('Failed to load budget scenarios');
+        }
+    }
+    
+    renderScenarioCards() {
+        const container = document.getElementById('scenarioCards');
+        container.innerHTML = this.budgetScenarios.map(scenario => `
+            <div class="col-md-6 mb-3">
+                <div class="card scenario-card h-100" data-scenario-id="${scenario.id}" style="cursor: pointer;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="badge ${scenario.type === 'residential' ? 'bg-primary' : 'bg-info'}">${scenario.type}</span>
+                        <span class="fw-bold text-success">${this.formatCurrency(scenario.totalBudget)}</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">${scenario.project.name}</h6>
+                        <p class="card-text small text-muted mb-2">${scenario.description}</p>
+                        <p class="card-text">
+                            <strong>Client:</strong> ${scenario.project.client}<br>
+                            <small class="text-muted">${scenario.project.address}</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        // Add click handlers
+        container.querySelectorAll('.scenario-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove previous selection
+                container.querySelectorAll('.scenario-card').forEach(c => {
+                    c.classList.remove('border-primary', 'bg-light');
+                });
+                
+                // Add selection to clicked card
+                card.classList.add('border-primary', 'bg-light');
+                
+                // Store selected scenario
+                const scenarioId = parseInt(card.dataset.scenarioId);
+                this.selectedScenario = this.budgetScenarios.find(s => s.id === scenarioId);
+                
+                // Enable next button
+                document.getElementById('nextStep').disabled = false;
+            });
+        });
+    }
+    
+    updateStepModal() {
+        // Hide all steps
+        document.querySelectorAll('.step-content').forEach(step => {
+            step.classList.add('d-none');
+        });
+        
+        // Show current step
+        document.getElementById(`step${this.currentStep}`).classList.remove('d-none');
+        
+        // Update navigation buttons
+        const prevBtn = document.getElementById('prevStep');
+        const nextBtn = document.getElementById('nextStep');
+        const createBtn = document.getElementById('createBudgetStep');
+        
+        prevBtn.disabled = this.currentStep === 1;
+        
+        if (this.currentStep === 4) {
+            nextBtn.classList.add('d-none');
+            createBtn.classList.remove('d-none');
+        } else {
+            nextBtn.classList.remove('d-none');
+            createBtn.classList.add('d-none');
+            nextBtn.disabled = this.currentStep === 1 && !this.selectedScenario;
+        }
+    }
+    
+    nextStep() {
+        if (this.currentStep < 4) {
+            this.currentStep++;
+            this.updateStepModal();
+            
+            // Populate step content
+            if (this.currentStep === 2) {
+                this.renderProjectInfoStep();
+            } else if (this.currentStep === 3) {
+                this.renderTradesOverviewStep();
+            } else if (this.currentStep === 4) {
+                this.renderBudgetSummaryStep();
+            }
+        }
+    }
+    
+    prevStep() {
+        if (this.currentStep > 1) {
+            this.currentStep--;
+            this.updateStepModal();
+        }
+    }
+    
+    renderProjectInfoStep() {
+        const container = document.getElementById('projectInfoPreview');
+        container.innerHTML = `
+            <div class="row">
+                <div class="col-md-8">
+                    <h5>${this.selectedScenario.project.name}</h5>
+                    <p class="text-muted">${this.selectedScenario.description}</p>
+                </div>
+                <div class="col-md-4">
+                    <span class="badge ${this.selectedScenario.type === 'residential' ? 'bg-primary' : 'bg-info'} fs-6">
+                        ${this.selectedScenario.type} project
+                    </span>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Client:</strong><br>
+                    ${this.selectedScenario.project.client}
+                </div>
+                <div class="col-md-6">
+                    <strong>Total Budget:</strong><br>
+                    <span class="text-success fw-bold">${this.formatCurrency(this.selectedScenario.totalBudget)}</span>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <strong>Address:</strong><br>
+                    ${this.selectedScenario.project.address}
+                </div>
+            </div>
+        `;
+    }
+    
+    renderTradesOverviewStep() {
+        const container = document.getElementById('tradesOverview');
+        const trades = Object.entries(this.selectedScenario.trades);
+        
+        container.innerHTML = `
+            <div class="row">
+                <div class="col-12">
+                    <p class="text-muted">This budget includes ${trades.length} trade sections:</p>
+                </div>
+            </div>
+            ${trades.map(([key, trade]) => {
+                const tradeTotal = trade.line_items.reduce((sum, item) => sum + item.budget, 0);
+                return `
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">${trade.name}</h6>
+                                <p class="card-text">
+                                    <strong>${trade.line_items.length} line items</strong><br>
+                                    <span class="text-success">${this.formatCurrency(tradeTotal)}</span>
+                                </p>
+                                <details>
+                                    <summary class="text-primary" style="cursor: pointer;">View Items</summary>
+                                    <ul class="mt-2 mb-0">
+                                        ${trade.line_items.map(item => `
+                                            <li class="small">${item.category} - ${this.formatCurrency(item.budget)}</li>
+                                        `).join('')}
+                                    </ul>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        `;
+    }
+    
+    renderBudgetSummaryStep() {
+        const container = document.getElementById('budgetSummary');
+        const trades = Object.entries(this.selectedScenario.trades);
+        const totalItems = trades.reduce((sum, [key, trade]) => sum + trade.line_items.length, 0);
+        
+        container.innerHTML = `
+            <li><strong>Project:</strong> ${this.selectedScenario.project.name}</li>
+            <li><strong>Type:</strong> ${this.selectedScenario.type} construction</li>
+            <li><strong>Trade Sections:</strong> ${trades.length}</li>
+            <li><strong>Line Items:</strong> ${totalItems}</li>
+            <li><strong>Total Budget:</strong> ${this.formatCurrency(this.selectedScenario.totalBudget)}</li>
+        `;
+    }
+    
+    createBudgetFromStep() {
+        // Convert scenario to budget data format
+        this.newBudgetData = {
+            project: {
+                name: this.selectedScenario.project.name,
+                client: this.selectedScenario.project.client,
+                address: this.selectedScenario.project.address
+            },
+            trades: this.selectedScenario.trades
+        };
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('stepByStepModal'));
+        modal.hide();
+        
+        // Show new budget form with populated data
+        this.showNewBudgetForm();
+        this.populateGeneratedBudget();
+        
+        // Show success message
+        this.showSuccessMessage(`Created ${this.selectedScenario.type} budget: "${this.selectedScenario.project.name}"`);
     }
     
     addNewTrade() {
