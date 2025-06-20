@@ -1361,7 +1361,12 @@ class BudgetViewer {
         const projectInfo = this.stepData.projectInfo;
         return `
             <div class="step-content">
-                <h4 class="mb-4">Project Information</h4>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Project Information</h4>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="budgetViewer.fillTestProjectData()">
+                        <i class="fas fa-magic me-2"></i>Add Test Data
+                    </button>
+                </div>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Project Name *</label>
@@ -1850,12 +1855,21 @@ class BudgetViewer {
         }
         
         const randomBudget = Math.floor(Math.random() * (currentItem.budgetRange[1] - currentItem.budgetRange[0]) + currentItem.budgetRange[0]);
+        const progress = this.stepData.trades.reduce((sum, trade) => sum + trade.lineItems.length, 0) + 1;
         
         return `
             <div class="step-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="mb-0">Add Line Item</h4>
-                    <span class="badge bg-primary fs-6">Trade: ${currentTrade.name}</span>
+                    <div>
+                        <h4 class="mb-0">Add Line Item ${progress}</h4>
+                        <small class="text-muted">Trade: ${currentTrade.name}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="budgetViewer.fillTestLineItem()">
+                            <i class="fas fa-magic me-1"></i>Use Test Data
+                        </button>
+                        <span class="badge bg-primary fs-6">${this.stepData.currentTradeIndex + 1} of ${this.commonTrades.length}</span>
+                    </div>
                 </div>
                 
                 <div class="card border-2 border-primary">
@@ -2037,7 +2051,12 @@ class BudgetViewer {
     renderScenarioSelectionStep() {
         return `
             <div class="step-content">
-                <h4 class="mb-4">Project Type Selection</h4>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Project Type Selection</h4>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="budgetViewer.autoSelectProjectType()">
+                        <i class="fas fa-magic me-2"></i>Auto Select
+                    </button>
+                </div>
                 <p class="text-muted mb-4">Choose the type of construction project to get appropriate trade categories and pricing.</p>
                 
                 <div class="row">
@@ -2072,6 +2091,22 @@ class BudgetViewer {
                 </script>
             </div>
         `;
+    }
+    
+    autoSelectProjectType() {
+        const types = ['residential', 'commercial'];
+        const selectedType = types[Math.floor(Math.random() * types.length)];
+        
+        // Programmatically select the card
+        document.querySelectorAll('.scenario-type-card').forEach(card => {
+            card.classList.remove('border-primary');
+            if (card.dataset.type === selectedType) {
+                card.classList.add('border-primary');
+            }
+        });
+        
+        this.stepData.selectedScenario = { type: selectedType };
+        this.showSuccessMessage(`${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} project type selected!`);
     }
     
     renderBudgetSummaryStep() {
@@ -2139,6 +2174,106 @@ class BudgetViewer {
             });
         });
         return total;
+    }
+    
+    // Test data generation methods
+    getRandomTestProject() {
+        const projects = [
+            {
+                name: "Modern Downtown Office Complex",
+                client: "Metropolitan Development Group",
+                address: "450 Business District Ave, Seattle, WA 98101"
+            },
+            {
+                name: "Luxury Residential High-Rise",
+                client: "Pinnacle Properties LLC",
+                address: "2200 Skyline Drive, Miami, FL 33131"
+            },
+            {
+                name: "Historic Theater Renovation",
+                client: "Heritage Arts Foundation",
+                address: "1875 Cultural Center Blvd, Chicago, IL 60601"
+            },
+            {
+                name: "Green Energy Research Facility",
+                client: "Sustainable Future Technologies",
+                address: "3400 Innovation Parkway, Austin, TX 78759"
+            },
+            {
+                name: "Community Medical Center",
+                client: "Regional Healthcare Systems",
+                address: "850 Wellness Way, Portland, OR 97201"
+            }
+        ];
+        return projects[Math.floor(Math.random() * projects.length)];
+    }
+    
+    fillTestProjectData() {
+        const testProject = this.getRandomTestProject();
+        
+        document.getElementById('stepProjectName').value = testProject.name;
+        document.getElementById('stepClient').value = testProject.client;
+        document.getElementById('stepAddress').value = testProject.address;
+        
+        // Add visual feedback
+        const inputs = ['stepProjectName', 'stepClient', 'stepAddress'];
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            element.classList.add('border-success');
+            setTimeout(() => element.classList.remove('border-success'), 2000);
+        });
+        
+        this.showSuccessMessage('Test project data added! Review and continue to next step.');
+    }
+    
+    fillTestLineItem() {
+        const currentTrade = this.commonTrades[this.stepData.currentTradeIndex];
+        const currentItem = currentTrade?.items[this.stepData.currentLineItemIndex];
+        
+        if (!currentItem) return;
+        
+        // Generate realistic variations of the test data
+        const vendors = [
+            'Premium Construction Services',
+            'Elite Building Solutions',
+            'Professional Trade Specialists',
+            'Advanced Construction Group',
+            'Quality Building Partners',
+            'Master Craftsmen LLC',
+            'Precision Trade Services',
+            'Expert Construction Co.'
+        ];
+        
+        const randomVendor = vendors[Math.floor(Math.random() * vendors.length)];
+        const baseAmount = currentItem.budgetRange[0];
+        const maxAmount = currentItem.budgetRange[1];
+        const randomAmount = Math.floor(Math.random() * (maxAmount - baseAmount) + baseAmount);
+        
+        const notes = [
+            'Industry standard materials and labor',
+            'Includes all necessary permits and inspections',
+            'Premium quality installation with warranty',
+            'Meets all building codes and regulations',
+            'Professional installation by certified technicians',
+            'Complete turnkey solution with project management'
+        ];
+        
+        const randomNote = notes[Math.floor(Math.random() * notes.length)];
+        
+        // Fill the form with test data
+        document.getElementById('stepVendor').value = randomVendor;
+        document.getElementById('stepBudgetAmount').value = randomAmount;
+        document.getElementById('stepNotes').value = randomNote;
+        
+        // Add visual feedback
+        const inputs = ['stepVendor', 'stepBudgetAmount', 'stepNotes'];
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            element.classList.add('border-success');
+            setTimeout(() => element.classList.remove('border-success'), 2000);
+        });
+        
+        this.showSuccessMessage('Test line item data added! Review and save to continue.');
     }
     
     showBudgetSaveInfo(budgetEntry, budgetData) {
