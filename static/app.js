@@ -42,6 +42,40 @@ class BudgetViewer {
             'SMS DIRECT SERVICES'
         ];
         
+        this.tradeNames = [
+            'Professional Services',
+            'General Conditions',
+            'Temporary Conditions',
+            'Shell',
+            'Masonry',
+            'Decking',
+            'Waterproofing',
+            'Roofing / Siding',
+            'Exterior Windows & Doors',
+            'Framing & Drywall',
+            'Plumbing',
+            'Electrical & Low Voltage',
+            'Heating & Cooling',
+            'Natural Gas & Propane',
+            'Flooring',
+            'Interior Trim Package',
+            'Exterior Trim Package',
+            'Paint',
+            'Tile / Marble / Tops',
+            'Cabinetry and Built-ins',
+            'Appliances',
+            'Bathroom Accessories',
+            'Other Amenities',
+            'Exterior Accessories',
+            'Driveway',
+            'Pool',
+            'Seawall and Dock',
+            'Landscaping / Irrigation',
+            'Site Work',
+            'Pest Control',
+            'SMS Direct Services'
+        ];
+        
         this.init();
     }
     
@@ -487,7 +521,12 @@ class BudgetViewer {
                 <div class="row mb-3">
                     <div class="col-12">
                         <label class="form-label">Trade Name *</label>
-                        <input type="text" class="form-control trade-name" placeholder="e.g., Electrical Systems" required>
+                        <select class="form-select trade-name" required>
+                            <option value="">Select Trade Name</option>
+                            ${this.tradeNames.map(name => 
+                                `<option value="${name}">${name}</option>`
+                            ).join('')}
+                        </select>
                     </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -631,7 +670,8 @@ class BudgetViewer {
         
         let hasValidTrade = false;
         for (const trade of trades) {
-            const tradeName = trade.querySelector('.trade-name').value.trim();
+            const tradeNameSelect = trade.querySelector('.trade-name');
+            const tradeName = tradeNameSelect ? tradeNameSelect.value.trim() : '';
             const lineItems = trade.querySelectorAll('.line-item');
             
             if (tradeName && lineItems.length > 0) {
@@ -676,7 +716,8 @@ class BudgetViewer {
         
         trades.forEach(trade => {
             const tradeKey = trade.dataset.tradeKey;
-            const tradeName = trade.querySelector('.trade-name').value.trim();
+            const tradeNameSelect = trade.querySelector('.trade-name');
+            const tradeName = tradeNameSelect.value.trim();
             
             if (tradeName) {
                 const lineItems = [];
