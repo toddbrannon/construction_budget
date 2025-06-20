@@ -1236,7 +1236,7 @@ class BudgetViewer {
         // Load common trade configurations for auto-fill
         this.loadTradeConfigurations();
         
-        // Show modal
+        // Show the enhanced modal (not the old one)
         const modal = new bootstrap.Modal(document.getElementById('stepModal'));
         modal.show();
         

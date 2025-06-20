@@ -119,8 +119,9 @@ def save_budget():
         budget_data = data['budgetData']
         
         # Save the budget data to individual file
-        budget_filename = f"static/user_{current_user.id}_{budget_entry['filename']}"
-        with open(budget_filename, 'w') as f:
+        budget_filename = f"user_{current_user.id}_{budget_entry['filename']}"
+        full_path = f"static/{budget_filename}"
+        with open(full_path, 'w') as f:
             json.dump(budget_data, f, indent=2)
         
         # Check if updating existing budget
