@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construction Budget Viewer</title>
+    
+    <!-- Bootstrap CSS with Replit theme -->
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- jsPDF and html2canvas for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        .trade-section {
+            transition: all 0.3s ease;
+        }
+        
+        .collapsed .trade-content {
+            display: none;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        .currency {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-dark text-light">
+    <div class="container my-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <h1 class="h2 mb-2 mb-md-0">
+                        <i class="fas fa-hard-hat me-2"></i>
+                        Construction Budget Viewer
+                    </h1>
+                    <button id="exportPdfBtn" class="btn btn-outline-primary no-print" disabled>
+                        <i class="fas fa-file-pdf me-2"></i>
+                        <span class="d-none d-sm-inline">Download </span>PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" class="text-center py-5">
+            <div class="loading-spinner fa-spin fas fa-spinner fa-2x text-primary"></div>
+            <p class="mt-2">Loading budget data...</p>
+        </div>
+
+        <!-- Error message -->
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span id="errorText">Failed to load budget data. Please check if the budget.json file exists and is properly formatted.</span>
+        </div>
+
+        <!-- Main content -->
+        <div id="budgetContent" class="d-none">
+            <!-- Project Information -->
+            <div id="projectInfo" class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Project Information
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Project Name:</strong> <span id="projectName">-</span></p>
+                            <p><strong>Client:</strong> <span id="projectClient">-</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Address:</strong> <span id="projectAddress">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade Sections -->
+            <div id="tradeSections">
+                <!-- Trade sections will be dynamically populated here -->
+            </div>
+
+            <!-- Grand Total -->
+            <div class="card border-primary">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0">Grand Total</h3>
+                        </div>
+                        <div class="col-auto">
+                            <h3 class="mb-0 currency text-primary" id="grandTotal">$0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
