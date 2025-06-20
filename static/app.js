@@ -492,7 +492,10 @@ class BudgetViewer {
     }
     
     createTradeSection(tradeKey, trade) {
-        const subtotal = this.calculateTradeSubtotal(trade.line_items);
+        const lineItems = trade.lineItems || trade.line_items || [];
+        const subtotal = this.calculateTradeSubtotal(lineItems);
+        
+        console.log('Creating trade section for:', tradeKey, trade, lineItems);
         
         const sectionDiv = document.createElement('div');
         sectionDiv.className = 'trade-section card mb-3';
@@ -503,7 +506,7 @@ class BudgetViewer {
                         <button class="btn btn-link text-decoration-none p-0 text-start trade-toggle" 
                                 type="button" data-trade="${tradeKey}">
                             <i class="fas fa-chevron-down me-2 trade-icon"></i>
-                            ${this.escapeHtml(trade.name)}
+                            ${this.escapeHtml(trade.name || tradeKey)}
                         </button>
                     </h4>
                     <div class="currency text-end">
@@ -518,11 +521,11 @@ class BudgetViewer {
                     <div class="col-md-2"><small><strong>Budget</strong></small></div>
                     <div class="col-md-4"><small><strong>Notes</strong></small></div>
                 </div>
-                ${trade.line_items.map(item => this.createLineItemHTML(item)).join('')}
+                ${lineItems.map(item => this.createLineItemHTML(item)).join('')}
                 <hr class="my-3">
                 <div class="row">
                     <div class="col">
-                        <strong>Subtotal: ${this.escapeHtml(trade.name)}</strong>
+                        <strong>Subtotal: ${this.escapeHtml(trade.name || tradeKey)}</strong>
                     </div>
                     <div class="col-auto">
                         <strong class="currency">${this.formatCurrency(subtotal)}</strong>
@@ -901,7 +904,13 @@ class BudgetViewer {
         }
         
         try {
-            await this.loadBudgetData(budget.filename);
+            // Handle different filename formats
+            let filename = budget.filename;
+            if (filename.startsWith('static/')) {
+                filename = filename.substring(7); // Remove 'static/' prefix
+            }
+            
+            await this.loadBudgetData(filename);
             document.getElementById('pageTitle').textContent = `Budget: ${budget.projectName}`;
             document.getElementById('dashboard').classList.add('d-none');
             document.getElementById('newBudgetForm').classList.add('d-none');
@@ -911,7 +920,8 @@ class BudgetViewer {
             document.getElementById('exportPdfBtn').classList.remove('d-none');
             this.renderBudget();
         } catch (error) {
-            this.showError('Failed to load budget data');
+            console.error('Error loading budget:', error);
+            this.showError('Failed to load budget: ' + error.message);
         }
     }
     
