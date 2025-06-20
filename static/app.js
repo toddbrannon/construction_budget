@@ -1295,25 +1295,25 @@ class BudgetViewer {
             const formattedDate = new Date(budget.lastModified).toLocaleDateString();
             
             const cardColors = [
-                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-                'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-                'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-                'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
+                'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(255, 154, 158, 0.1) 0%, rgba(254, 207, 239, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(255, 236, 210, 0.1) 0%, rgba(252, 182, 159, 0.1) 100%)'
             ];
             const cardColor = cardColors[index % cardColors.length];
             
             return `
                 <div class="col-12 col-md-6 col-lg-4 mb-3">
                     <div class="card h-100 budget-card border-0 shadow-sm" data-budget-id="${budget.id}" style="cursor: pointer; background: ${cardColor};">
-                        <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
-                            <h6 class="mb-0 text-truncate me-2 text-white fw-bold">${this.escapeHtml(budget.projectName)}</h6>
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: rgba(0, 0, 0, 0.05);">
+                            <h6 class="mb-0 text-truncate me-2 fw-bold">${this.escapeHtml(budget.projectName)}</h6>
                             ${statusBadge}
                         </div>
-                        <div class="card-body" style="background: rgba(255,255,255,0.95);">
+                        <div class="card-body">
                             <p class="card-text mb-2">
                                 <strong>Client:</strong><br>
                                 <small class="text-muted">${this.escapeHtml(budget.client)}</small>
@@ -1327,7 +1327,7 @@ class BudgetViewer {
                                 <span class="currency fw-bold text-success">${this.formatCurrency(budget.totalBudget)}</span>
                             </p>
                         </div>
-                        <div class="card-footer border-0" style="background: rgba(255,255,255,0.9);">
+                        <div class="card-footer border-0" style="background: rgba(0, 0, 0, 0.02);">
                             <small class="text-muted">
                                 <i class="fas fa-clock me-1"></i>
                                 Last modified: ${formattedDate}
