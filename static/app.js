@@ -8,6 +8,39 @@ class BudgetViewer {
             trades: {}
         };
         this.tradeCounter = 0;
+        this.tradeCategories = [
+            'PROFESSIONAL SERVICES',
+            'GENERAL CONDITIONS',
+            'TEMPORARY CONDITIONS',
+            'SHELL',
+            'MASONRY',
+            'DECKING',
+            'WATERPROOFING',
+            'ROOFING / SIDING',
+            'EXTERIOR WINDOWS & DOORS',
+            'FRAMING & DRYWALL',
+            'PLUMBING',
+            'ELECTRICAL & LOW VOLTAGE',
+            'HEATING & COOLING',
+            'NATURAL GAS & PROPANE',
+            'FLOORING',
+            'INTERIOR TRIM PACKAGE',
+            'EXTERIOR TRIM PACKAGE',
+            'PAINT',
+            'TYPE / MARBLE / TOPS',
+            'CABINETRY AND BUILT-INS',
+            'APPLIANCES',
+            'BATHROOM ACCESSORIES',
+            'OTHER AMENITIES',
+            'EXTERIOR ACCESSORIES',
+            'DRIVEWAY',
+            'POOL',
+            'SEAWALL AND DOCK',
+            'LANDSCAPING / IRRIGATION',
+            'SITE WORK',
+            'PEST CONTROL',
+            'SMS DIRECT SERVICES'
+        ];
         
         this.init();
     }
@@ -121,7 +154,7 @@ class BudgetViewer {
             <div class="row mb-2 py-2 border-bottom border-secondary align-items-center">
                 <div class="col-12 col-sm-6 col-md-3 mb-2 mb-sm-1 mb-md-0">
                     <div class="d-flex flex-column">
-                        <strong class="d-md-none text-muted small">Category</strong>
+                        <strong class="d-md-none text-muted small">Trade Category</strong>
                         <span class="fw-medium">${this.escapeHtml(item.category)}</span>
                     </div>
                 </div>
@@ -310,7 +343,7 @@ class BudgetViewer {
             pdf.setFillColor(240, 240, 240);
             pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
             
-            pdf.text('Category', margin + 2, yPosition + 2);
+            pdf.text('Trade Category', margin + 2, yPosition + 2);
             pdf.text('Vendor', margin + 60, yPosition + 2);
             pdf.text('Budget', margin + 110, yPosition + 2);
             pdf.text('Notes', margin + 140, yPosition + 2);
@@ -329,7 +362,7 @@ class BudgetViewer {
                     pdf.setFont(undefined, 'bold');
                     pdf.setFillColor(240, 240, 240);
                     pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
-                    pdf.text('Category', margin + 2, yPosition + 2);
+                    pdf.text('Trade Category', margin + 2, yPosition + 2);
                     pdf.text('Vendor', margin + 60, yPosition + 2);
                     pdf.text('Budget', margin + 110, yPosition + 2);
                     pdf.text('Notes', margin + 140, yPosition + 2);
@@ -487,9 +520,18 @@ class BudgetViewer {
     addLineItem(container) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'row mb-2 line-item';
+        
+        // Generate category dropdown options
+        const categoryOptions = this.tradeCategories.map(category => 
+            `<option value="${category}">${category}</option>`
+        ).join('');
+        
         itemDiv.innerHTML = `
             <div class="col-12 col-sm-6 col-md-3 mb-2">
-                <input type="text" class="form-control form-control-sm item-category" placeholder="Category" required>
+                <select class="form-select form-select-sm item-category" required>
+                    <option value="">Select Category</option>
+                    ${categoryOptions}
+                </select>
             </div>
             <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <input type="text" class="form-control form-control-sm item-vendor" placeholder="Vendor" required>
@@ -595,7 +637,8 @@ class BudgetViewer {
             if (tradeName && lineItems.length > 0) {
                 let hasValidItem = false;
                 for (const item of lineItems) {
-                    const category = item.querySelector('.item-category').value.trim();
+                    const categorySelect = item.querySelector('.item-category');
+                    const category = categorySelect ? categorySelect.value.trim() : '';
                     const vendor = item.querySelector('.item-vendor').value.trim();
                     const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
                     
@@ -640,7 +683,8 @@ class BudgetViewer {
                 const itemElements = trade.querySelectorAll('.line-item');
                 
                 itemElements.forEach(item => {
-                    const category = item.querySelector('.item-category').value.trim();
+                    const categorySelect = item.querySelector('.item-category');
+                    const category = categorySelect.value.trim();
                     const vendor = item.querySelector('.item-vendor').value.trim();
                     const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
                     const notes = item.querySelector('.item-notes').value.trim();
