@@ -8,8 +8,19 @@
     <!-- Bootstrap CSS with Replit theme -->
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS for development -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '475px',
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -53,15 +64,21 @@
         <!-- Header -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h1 class="h2 mb-2 mb-md-0">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h1 class="h2 mb-0 flex-grow-1">
                         <i class="fas fa-hard-hat me-2"></i>
                         Construction Budget Viewer
                     </h1>
-                    <button id="exportPdfBtn" class="btn btn-outline-primary no-print" disabled>
-                        <i class="fas fa-file-pdf me-2"></i>
-                        <span class="d-none d-sm-inline">Download </span>PDF
-                    </button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button id="newBudgetBtn" class="btn btn-success no-print">
+                            <i class="fas fa-plus me-1"></i>
+                            <span class="d-none d-sm-inline">New </span>Budget
+                        </button>
+                        <button id="exportPdfBtn" class="btn btn-outline-primary no-print" disabled>
+                            <i class="fas fa-file-pdf me-1"></i>
+                            <span class="d-none d-sm-inline">Download </span>PDF
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,6 +93,63 @@
         <div id="errorMessage" class="alert alert-danger d-none" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
             <span id="errorText">Failed to load budget data. Please check if the budget.json file exists and is properly formatted.</span>
+        </div>
+
+        <!-- New Budget Form -->
+        <div id="newBudgetForm" class="d-none">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Create New Budget
+                        </h3>
+                        <button id="cancelNewBudget" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Project Information Form -->
+                    <h5 class="mb-3">Project Information</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2">
+                            <label for="newProjectName" class="form-label">Project Name *</label>
+                            <input type="text" class="form-control" id="newProjectName" required>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="newProjectClient" class="form-label">Client *</label>
+                            <input type="text" class="form-control" id="newProjectClient" required>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label for="newProjectAddress" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="newProjectAddress">
+                        </div>
+                    </div>
+                    
+                    <!-- Trade Sections -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Trade Sections</h5>
+                        <button id="addTradeBtn" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Add Trade
+                        </button>
+                    </div>
+                    <div id="newTradesContainer">
+                        <!-- Trade sections will be added here -->
+                    </div>
+                    
+                    <div class="d-flex gap-2 flex-wrap mt-4">
+                        <button id="saveNewBudget" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Budget
+                        </button>
+                        <button id="previewBudget" class="btn btn-outline-info">
+                            <i class="fas fa-eye me-2"></i>Preview
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Main content -->

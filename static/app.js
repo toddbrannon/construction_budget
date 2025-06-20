@@ -2,6 +2,12 @@ class BudgetViewer {
     constructor() {
         this.budgetData = null;
         this.grandTotal = 0;
+        this.isNewBudgetMode = false;
+        this.newBudgetData = {
+            project: { name: '', client: '', address: '' },
+            trades: {}
+        };
+        this.tradeCounter = 0;
         
         this.init();
     }
@@ -112,21 +118,32 @@ class BudgetViewer {
     
     createLineItemHTML(item) {
         return `
-            <div class="row mb-2 py-2 border-bottom border-secondary">
-                <div class="col-md-3 mb-1 mb-md-0">
-                    <strong class="d-md-none">Category: </strong>
-                    ${this.escapeHtml(item.category)}
+            <div class="row mb-2 py-2 border-bottom border-secondary align-items-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2 mb-sm-1 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <strong class="d-md-none text-muted small">Category</strong>
+                        <span class="fw-medium">${this.escapeHtml(item.category)}</span>
+                    </div>
                 </div>
-                <div class="col-md-3 mb-1 mb-md-0">
-                    <strong class="d-md-none">Vendor: </strong>
-                    ${this.escapeHtml(item.vendor)}
+                <div class="col-12 col-sm-6 col-md-3 mb-2 mb-sm-1 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <strong class="d-md-none text-muted small">Vendor</strong>
+                        <span>${this.escapeHtml(item.vendor)}</span>
+                    </div>
                 </div>
-                <div class="col-md-2 mb-1 mb-md-0">
-                    <strong class="d-md-none">Budget: </strong>
-                    <span class="currency">${this.formatCurrency(item.budget)}</span>
+                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <strong class="d-md-none text-muted small">Budget</strong>
+                        <span class="currency fw-bold text-success">${this.formatCurrency(item.budget)}</span>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    ${item.notes ? `<strong class="d-md-none">Notes: </strong><small class="text-muted">${this.escapeHtml(item.notes)}</small>` : ''}
+                <div class="col-6 col-md-4">
+                    ${item.notes ? `
+                        <div class="d-flex flex-column">
+                            <strong class="d-md-none text-muted small">Notes</strong>
+                            <small class="text-muted">${this.escapeHtml(item.notes)}</small>
+                        </div>
+                    ` : '<span class="d-md-none"></span>'}
                 </div>
             </div>
         `;
@@ -159,6 +176,27 @@ class BudgetViewer {
         // PDF export
         document.getElementById('exportPdfBtn').addEventListener('click', () => {
             this.exportToPDF();
+        });
+        
+        // New budget functionality
+        document.getElementById('newBudgetBtn').addEventListener('click', () => {
+            this.showNewBudgetForm();
+        });
+        
+        document.getElementById('cancelNewBudget').addEventListener('click', () => {
+            this.hideNewBudgetForm();
+        });
+        
+        document.getElementById('addTradeBtn').addEventListener('click', () => {
+            this.addNewTrade();
+        });
+        
+        document.getElementById('saveNewBudget').addEventListener('click', () => {
+            this.saveNewBudget();
+        });
+        
+        document.getElementById('previewBudget').addEventListener('click', () => {
+            this.previewNewBudget();
         });
         
         // Enable PDF export button
@@ -244,64 +282,101 @@ class BudgetViewer {
         pdf.text(`Address: ${this.budgetData.project.address}`, margin, yPosition);
         yPosition += 15;
         
-        // Add trades
+        // Add trades with improved formatting
         for (const [tradeKey, trade] of Object.entries(this.budgetData.trades)) {
             if (!trade.line_items || trade.line_items.length === 0) continue;
             
-            // Check if we need a new page
-            if (yPosition > pageHeight - 60) {
+            // Check if we need a new page for trade section
+            if (yPosition > pageHeight - 80) {
                 pdf.addPage();
                 yPosition = margin;
             }
             
-            // Trade section header
+            // Trade section header with gray background
+            pdf.setFillColor(220, 220, 220);
+            pdf.rect(margin, yPosition - 5, pageWidth - 2 * margin, 12, 'F');
+            
             pdf.setFontSize(14);
             pdf.setFont(undefined, 'bold');
+            pdf.setTextColor(0, 0, 0);
             const subtotal = this.calculateTradeSubtotal(trade.line_items);
-            pdf.text(trade.name, margin, yPosition);
-            pdf.text(this.formatCurrency(subtotal), pageWidth - margin - 30, yPosition);
+            pdf.text(trade.name, margin + 2, yPosition + 3);
+            pdf.text(this.formatCurrency(subtotal), pageWidth - margin - 30, yPosition + 3);
+            yPosition += 15;
+            
+            // Table headers
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'bold');
+            pdf.setFillColor(240, 240, 240);
+            pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
+            
+            pdf.text('Category', margin + 2, yPosition + 2);
+            pdf.text('Vendor', margin + 60, yPosition + 2);
+            pdf.text('Budget', margin + 110, yPosition + 2);
+            pdf.text('Notes', margin + 140, yPosition + 2);
             yPosition += 10;
             
-            // Line items
-            pdf.setFontSize(10);
+            // Line items in table format
             pdf.setFont(undefined, 'normal');
+            pdf.setTextColor(0, 0, 0);
             
-            trade.line_items.forEach(item => {
-                if (yPosition > pageHeight - 30) {
+            trade.line_items.forEach((item, index) => {
+                if (yPosition > pageHeight - 25) {
                     pdf.addPage();
                     yPosition = margin;
-                }
-                
-                // Item details
-                pdf.text(`• ${item.category}`, margin + 5, yPosition);
-                pdf.text(item.vendor, margin + 80, yPosition);
-                pdf.text(this.formatCurrency(item.budget), pageWidth - margin - 30, yPosition);
-                yPosition += 5;
-                
-                if (item.notes) {
-                    pdf.setFont(undefined, 'italic');
-                    const notes = pdf.splitTextToSize(`  ${item.notes}`, pageWidth - margin - 40);
-                    pdf.text(notes, margin + 10, yPosition);
-                    yPosition += notes.length * 4;
+                    
+                    // Repeat table headers on new page
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFillColor(240, 240, 240);
+                    pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
+                    pdf.text('Category', margin + 2, yPosition + 2);
+                    pdf.text('Vendor', margin + 60, yPosition + 2);
+                    pdf.text('Budget', margin + 110, yPosition + 2);
+                    pdf.text('Notes', margin + 140, yPosition + 2);
+                    yPosition += 10;
                     pdf.setFont(undefined, 'normal');
                 }
                 
-                yPosition += 2;
+                // Alternating row background
+                if (index % 2 === 0) {
+                    pdf.setFillColor(250, 250, 250);
+                    pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
+                }
+                
+                // Item details in table format
+                const categoryText = pdf.splitTextToSize(item.category, 55);
+                const vendorText = pdf.splitTextToSize(item.vendor, 45);
+                const notesText = item.notes ? pdf.splitTextToSize(item.notes, 40) : [];
+                
+                pdf.text(categoryText, margin + 2, yPosition + 2);
+                pdf.text(vendorText, margin + 60, yPosition + 2);
+                pdf.text(this.formatCurrency(item.budget), margin + 110, yPosition + 2);
+                if (notesText.length > 0) {
+                    pdf.text(notesText, margin + 140, yPosition + 2);
+                }
+                
+                // Adjust yPosition based on text height
+                const maxLines = Math.max(categoryText.length, vendorText.length, notesText.length, 1);
+                yPosition += maxLines * 4 + 2;
             });
             
-            yPosition += 5;
+            yPosition += 8;
         }
         
-        // Grand total
+        // Grand total with enhanced styling
         if (yPosition > pageHeight - 40) {
             pdf.addPage();
             yPosition = margin;
         }
         
+        pdf.setFillColor(0, 100, 200);
+        pdf.rect(margin, yPosition - 5, pageWidth - 2 * margin, 15, 'F');
+        
         pdf.setFontSize(16);
         pdf.setFont(undefined, 'bold');
-        pdf.text('Grand Total:', margin, yPosition);
-        pdf.text(this.formatCurrency(this.grandTotal), pageWidth - margin - 40, yPosition);
+        pdf.setTextColor(255, 255, 255);
+        pdf.text('GRAND TOTAL:', margin + 2, yPosition + 5);
+        pdf.text(this.formatCurrency(this.grandTotal), pageWidth - margin - 50, yPosition + 5);
     }
     
     formatCurrency(amount) {
@@ -330,6 +405,264 @@ class BudgetViewer {
     hideLoading() {
         document.getElementById('loadingIndicator').classList.add('d-none');
         document.getElementById('budgetContent').classList.remove('d-none');
+    }
+    
+    showNewBudgetForm() {
+        document.getElementById('budgetContent').classList.add('d-none');
+        document.getElementById('newBudgetForm').classList.remove('d-none');
+        document.getElementById('loadingIndicator').classList.add('d-none');
+        this.isNewBudgetMode = true;
+        this.resetNewBudgetForm();
+    }
+    
+    hideNewBudgetForm() {
+        document.getElementById('newBudgetForm').classList.add('d-none');
+        document.getElementById('budgetContent').classList.remove('d-none');
+        this.isNewBudgetMode = false;
+    }
+    
+    resetNewBudgetForm() {
+        document.getElementById('newProjectName').value = '';
+        document.getElementById('newProjectClient').value = '';
+        document.getElementById('newProjectAddress').value = '';
+        document.getElementById('newTradesContainer').innerHTML = '';
+        this.newBudgetData = {
+            project: { name: '', client: '', address: '' },
+            trades: {}
+        };
+        this.tradeCounter = 0;
+        this.addNewTrade(); // Add one trade section by default
+    }
+    
+    addNewTrade() {
+        this.tradeCounter++;
+        const tradeKey = `trade_${this.tradeCounter}`;
+        
+        const tradeDiv = document.createElement('div');
+        tradeDiv.className = 'card mb-3';
+        tradeDiv.dataset.tradeKey = tradeKey;
+        tradeDiv.innerHTML = `
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Trade Section ${this.tradeCounter}</h6>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-trade">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label">Trade Name *</label>
+                        <input type="text" class="form-control trade-name" placeholder="e.g., Electrical Systems" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label mb-0">Line Items</label>
+                    <button type="button" class="btn btn-outline-primary btn-sm add-line-item">
+                        <i class="fas fa-plus me-1"></i>Add Item
+                    </button>
+                </div>
+                <div class="line-items-container">
+                    <!-- Line items will be added here -->
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('newTradesContainer').appendChild(tradeDiv);
+        
+        // Add event listeners
+        tradeDiv.querySelector('.remove-trade').addEventListener('click', () => {
+            tradeDiv.remove();
+        });
+        
+        tradeDiv.querySelector('.add-line-item').addEventListener('click', () => {
+            this.addLineItem(tradeDiv.querySelector('.line-items-container'));
+        });
+        
+        // Add one line item by default
+        this.addLineItem(tradeDiv.querySelector('.line-items-container'));
+    }
+    
+    addLineItem(container) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'row mb-2 line-item';
+        itemDiv.innerHTML = `
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <input type="text" class="form-control form-control-sm item-category" placeholder="Category" required>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <input type="text" class="form-control form-control-sm item-vendor" placeholder="Vendor" required>
+            </div>
+            <div class="col-8 col-md-2 mb-2">
+                <input type="number" class="form-control form-control-sm item-budget" placeholder="Budget" step="0.01" min="0" required>
+            </div>
+            <div class="col-12 col-md-3 mb-2">
+                <input type="text" class="form-control form-control-sm item-notes" placeholder="Notes (optional)">
+            </div>
+            <div class="col-4 col-md-1 mb-2">
+                <button type="button" class="btn btn-outline-danger btn-sm remove-line-item w-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(itemDiv);
+        
+        // Add remove functionality
+        itemDiv.querySelector('.remove-line-item').addEventListener('click', () => {
+            itemDiv.remove();
+        });
+    }
+    
+    saveNewBudget() {
+        if (!this.validateNewBudget()) {
+            return;
+        }
+        
+        this.collectNewBudgetData();
+        this.budgetData = { ...this.newBudgetData };
+        this.renderBudget();
+        this.hideNewBudgetForm();
+        
+        // Show success message
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show';
+        alert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            Budget saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 3000);
+    }
+    
+    previewNewBudget() {
+        if (!this.validateNewBudget()) {
+            return;
+        }
+        
+        this.collectNewBudgetData();
+        const originalData = this.budgetData;
+        this.budgetData = { ...this.newBudgetData };
+        this.renderBudget();
+        this.hideNewBudgetForm();
+        
+        // Show preview notice
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-info alert-dismissible fade show';
+        alert.innerHTML = `
+            <i class="fas fa-eye me-2"></i>
+            Preview mode - Budget not saved yet. 
+            <button type="button" class="btn btn-link p-0 ms-2" id="backToEdit">Edit</button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        document.getElementById('backToEdit').addEventListener('click', () => {
+            this.budgetData = originalData;
+            this.showNewBudgetForm();
+            alert.remove();
+        });
+    }
+    
+    validateNewBudget() {
+        const projectName = document.getElementById('newProjectName').value.trim();
+        const projectClient = document.getElementById('newProjectClient').value.trim();
+        
+        if (!projectName || !projectClient) {
+            alert('Please fill in the required project information (Project Name and Client).');
+            return false;
+        }
+        
+        const trades = document.querySelectorAll('[data-trade-key]');
+        if (trades.length === 0) {
+            alert('Please add at least one trade section.');
+            return false;
+        }
+        
+        let hasValidTrade = false;
+        for (const trade of trades) {
+            const tradeName = trade.querySelector('.trade-name').value.trim();
+            const lineItems = trade.querySelectorAll('.line-item');
+            
+            if (tradeName && lineItems.length > 0) {
+                let hasValidItem = false;
+                for (const item of lineItems) {
+                    const category = item.querySelector('.item-category').value.trim();
+                    const vendor = item.querySelector('.item-vendor').value.trim();
+                    const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
+                    
+                    if (category && vendor && budget > 0) {
+                        hasValidItem = true;
+                        break;
+                    }
+                }
+                if (hasValidItem) {
+                    hasValidTrade = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!hasValidTrade) {
+            alert('Please add at least one complete trade section with valid line items.');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    collectNewBudgetData() {
+        // Collect project info
+        this.newBudgetData.project = {
+            name: document.getElementById('newProjectName').value.trim(),
+            client: document.getElementById('newProjectClient').value.trim(),
+            address: document.getElementById('newProjectAddress').value.trim()
+        };
+        
+        // Collect trades
+        this.newBudgetData.trades = {};
+        const trades = document.querySelectorAll('[data-trade-key]');
+        
+        trades.forEach(trade => {
+            const tradeKey = trade.dataset.tradeKey;
+            const tradeName = trade.querySelector('.trade-name').value.trim();
+            
+            if (tradeName) {
+                const lineItems = [];
+                const itemElements = trade.querySelectorAll('.line-item');
+                
+                itemElements.forEach(item => {
+                    const category = item.querySelector('.item-category').value.trim();
+                    const vendor = item.querySelector('.item-vendor').value.trim();
+                    const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
+                    const notes = item.querySelector('.item-notes').value.trim();
+                    
+                    if (category && vendor && budget > 0) {
+                        lineItems.push({
+                            category,
+                            vendor,
+                            budget,
+                            notes: notes || undefined
+                        });
+                    }
+                });
+                
+                if (lineItems.length > 0) {
+                    this.newBudgetData.trades[tradeKey] = {
+                        name: tradeName,
+                        line_items: lineItems
+                    };
+                }
+            }
+        });
     }
 }
 
