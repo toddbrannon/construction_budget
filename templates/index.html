@@ -74,19 +74,18 @@
                             <i class="fas fa-arrow-left me-1"></i>
                             <span class="d-none d-sm-inline">Back to </span>Dashboard
                         </button>
-                        <div class="dropdown d-none d-md-block">
-                            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-light d-none d-md-inline">
                                 <i class="fas fa-user me-2"></i>{{ user.first_name or user.username }}
+                            </span>
+                            <button class="btn btn-outline-light btn-sm d-none d-md-inline-block" onclick="window.location.href='#'">
+                                <i class="fas fa-user"></i>
+                                <span class="d-none d-lg-inline ms-1">Profile</span>
                             </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2"></i>Profile
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
-                            </ul>
+                            <button class="btn btn-outline-light btn-sm" onclick="window.location.href='{{ url_for('logout') }}'">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span class="d-none d-lg-inline ms-1">Logout</span>
+                            </button>
                         </div>
                         <button id="editBudgetBtn" class="btn btn-warning no-print d-none">
                             <i class="fas fa-edit me-1"></i>
