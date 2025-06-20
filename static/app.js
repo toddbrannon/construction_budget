@@ -75,6 +75,310 @@ class BudgetViewer {
             'Pest Control',
             'SMS Direct Services'
         ];
+
+        this.tradeCategoryMapping = {
+            'Professional Services': [
+                { name: 'ARCHITECT', code: '1001' },
+                { name: 'STRUCTURAL ENGINEERING', code: '1002' },
+                { name: 'CIVIL ENGINEERING', code: '1003' },
+                { name: 'MEP ENGINEERING', code: '1004' },
+                { name: 'FIRE SPRINKLER', code: '1005' },
+                { name: 'LANDSCAPE ARCHITECT', code: '1006' },
+                { name: 'INTERIOR DESIGN', code: '1007' },
+                { name: 'BUILDER\'S RISK INSURANCE', code: '1008' },
+                { name: 'WIND INSURANCE', code: '1009' },
+                { name: 'PROJECT INSURANCE', code: '1010' },
+                { name: 'PROFESSIONAL SERVICES', code: '1011' },
+                { name: 'THRESHOLD INSPECTIONS', code: '1012' },
+                { name: 'LEGAL SERVICES', code: '1013' }
+            ],
+            'General Conditions': [
+                { name: 'SURVEYS', code: '1101' },
+                { name: 'BUILDING PERMITS', code: '1102' },
+                { name: 'PLAN COPIES', code: '1103' },
+                { name: 'PERMIT PROCESSING', code: '1104' },
+                { name: 'SOIL TESTING', code: '1105' },
+                { name: 'ASBESTOS & LEAD TESTING', code: '1106' },
+                { name: 'MOLD TESTING', code: '1107' },
+                { name: 'MISCELLANEOUS CONSTRUCTION EXPENSE', code: '1108' },
+                { name: 'PROTECTIVE MATERIALS', code: '1109' },
+                { name: 'CONSTRUCTION PREPARATION/DEMO', code: '1110' },
+                { name: 'CONSTRUCTION CLEANING', code: '1111' },
+                { name: 'PUNCH OUT', code: '1112' },
+                { name: 'COURIER SERVICES', code: '1113' },
+                { name: 'GENERAL BUILDING MATERIALS', code: '1114' },
+                { name: 'WEEKLY ALLOWANCE FOR JOB/SITE CLEAN UP', code: '1115' }
+            ],
+            'Temporary Conditions': [
+                { name: 'CONSTRUCTION TRAILER', code: '1201' },
+                { name: 'CONSTRUCTION FENCES', code: '1202' },
+                { name: 'ON SITE WIFI', code: '1203' },
+                { name: 'PSEG ELECTRIC TIE-IN PRIMARY FEEDERS', code: '1204' },
+                { name: 'TEMPORARY ELECTRIC', code: '1205' },
+                { name: 'TEMPORARY AC', code: '1206' },
+                { name: 'TEMPORARY WATER', code: '1207' },
+                { name: 'TEMPORARY TOILETS', code: '1208' },
+                { name: 'TEMPORARY STORAGE', code: '1209' },
+                { name: 'LP DELIVERIES', code: '1210' },
+                { name: 'TEMPORARY LP TANKS', code: '1211' },
+                { name: 'TEMPORARY HEAT W/ RENTAL', code: '1212' },
+                { name: 'TEMPORARY TENTING', code: '1213' },
+                { name: 'DUMPSTER/TRASH HAULING', code: '1214' },
+                { name: 'SCAFFOLDING SETUP/BREAK DOWN', code: '1215' },
+                { name: 'SCAFFOLDING MONTHLY RENTAL', code: '1216' },
+                { name: 'FURNITURE PACKUP/PACK OUT/STORAGE', code: '1217' }
+            ],
+            'Shell': [
+                { name: 'CONCRETE PILING', code: '1301' },
+                { name: 'CONCRETE PILING ENGINEERING & INSPECTIONS', code: '1302' },
+                { name: 'PILING SPOILS CLEAN UP', code: '1303' },
+                { name: 'REVISION FRAMING', code: '1304' },
+                { name: 'SHELL / ROOF FRAMING L&M', code: '1305' },
+                { name: 'TRUSSES & FLOOR JOISTS', code: '1306' },
+                { name: 'FLOOR SYSTEM', code: '1307' },
+                { name: 'CORE DRILL FOR ALL TRADES', code: '1308' },
+                { name: 'SITE WALLS', code: '1309' },
+                { name: 'SHEATHING L & M', code: '1310' },
+                { name: 'ROT REPAIR', code: '1311' },
+                { name: 'ACCESSORY STRUCTURES', code: '1312' },
+                { name: 'CONCRETE SAW CUTTING', code: '1313' }
+            ],
+            'Masonry': [
+                { name: 'STUCCO', code: '1401' },
+                { name: 'STONE VENEER MATERIAL', code: '1402' },
+                { name: 'VENEER INSTALLATION / LABOR', code: '1403' },
+                { name: 'PRECAST STONE / CORAL', code: '1404' },
+                { name: 'PATIO MATERIAL', code: '1405' },
+                { name: 'PATIO LABOR', code: '1406' }
+            ],
+            'Decking': [
+                { name: 'DECKING FOOTINGS', code: '1501' },
+                { name: 'DECKING FRAMING L & M', code: '1502' },
+                { name: 'DECKING MATERIAL', code: '1503' },
+                { name: 'EXTERIOR RAILS', code: '1504' },
+                { name: 'DECKING LABOR', code: '1505' }
+            ],
+            'Waterproofing': [
+                { name: 'WATERPROOFING BELOW GRADE', code: '1601' },
+                { name: 'WATERPROOFING WALLS PRIOR TO STUCCO', code: '1602' },
+                { name: 'BALCONY WATERPROOFING', code: '1603' },
+                { name: 'SITE WALL WATERPROOFING', code: '1604' }
+            ],
+            'Roofing / Siding': [
+                { name: 'DEMO/LOAD DEBRIS/CLEAN WORK AREA', code: '1701' },
+                { name: 'ROOFING LABOR AND MATERIALS', code: '1702' },
+                { name: 'CHIMNEY CAPS/LOUVERS & VENTS', code: '1703' },
+                { name: 'DOOR PANS', code: '1704' },
+                { name: 'WINDOW DRIP CAPS', code: '1705' },
+                { name: 'FLASHINGS', code: '1706' },
+                { name: 'SIDING MATERIAL', code: '1707' },
+                { name: 'SIDING LABOR', code: '1708' },
+                { name: 'PARAPET CAPPING', code: '1709' },
+                { name: 'KNUCKLE/INTERSECTING FLASHING', code: '1710' },
+                { name: 'WRP (HOUSE WRAP)', code: '1711' },
+                { name: 'CROSS LATHE', code: '1712' },
+                { name: 'ATTACHMENTS', code: '1713' },
+                { name: 'BREAK FLASHING/EXPOSED METAL DETAILING', code: '1714' },
+                { name: 'SPEACIALTY MATERIALS', code: '1715' }
+            ],
+            'Exterior Windows & Doors': [
+                { name: 'GLASS WINDOWS AND DOORS', code: '1801' },
+                { name: 'WINDOW AND DOOR INSTALLATION', code: '1802' },
+                { name: 'BUCKS/ WATERPROOFING', code: '1803' },
+                { name: 'FRONT ENTRY DOOR', code: '1804' },
+                { name: 'EXTERIOR DOOR HARDWARE', code: '1805' },
+                { name: 'EXTERIOR DOOR HARDWARE INSTALLATION', code: '1806' },
+                { name: 'OVERHEAD GARAGE DOORS', code: '1807' },
+                { name: 'SPECIALTY DOOR SYSTEMS', code: '1808' }
+            ],
+            'Framing & Drywall': [
+                { name: 'DRYWALL L & M', code: '1901' },
+                { name: 'INTERIOR FRAMING', code: '1902' },
+                { name: 'INSULATION', code: '1903' },
+                { name: 'WINE ROOM INSULATION', code: '1904' }
+            ],
+            'Plumbing': [
+                { name: 'PLUMBING LABOR', code: '2001' },
+                { name: 'PLUMBING FIXTURES', code: '2002' },
+                { name: 'SEPTIC', code: '2003' },
+                { name: 'BACKFLOW', code: '2004' },
+                { name: 'DOCK PLUMBING', code: '2005' },
+                { name: 'FIRE SPRINKLERS', code: '2006' },
+                { name: 'SEWER TIE-IN', code: '2007' },
+                { name: 'WELL WATER', code: '2008' }
+            ],
+            'Electrical & Low Voltage': [
+                { name: 'ELECTRICAL LABOR', code: '2101' },
+                { name: 'ELECTRICAL FIXTURES', code: '2102' },
+                { name: 'LIGHTING SYSTEM', code: '2103' },
+                { name: 'AUDIO / VISUAL & NETWORK PREWIRE', code: '2104' },
+                { name: 'AUDIO / VISUAL & NETWORK EQUIPMENT', code: '2105' },
+                { name: 'MOTORIZED SHADES / DRAPERIES', code: '2106' },
+                { name: 'SECURITY SYSTEM', code: '2107' },
+                { name: 'CAMERAS', code: '2108' },
+                { name: 'CENTRAL VACUUM', code: '2109' },
+                { name: 'LIGHTNING PROTECTION', code: '2110' },
+                { name: 'GENERATOR', code: '2111' },
+                { name: 'LANDSCAPE LIGHTING', code: '2112' },
+                { name: 'BOAT LIFT / DOCK ELECTRIC', code: '2113' },
+                { name: 'SOLAR', code: '2114' }
+            ],
+            'Heating & Cooling': [
+                { name: 'AIR CONDITIONING & DUCT WORK', code: '2201' },
+                { name: 'WINE ROOM', code: '2202' }
+            ],
+            'Natural Gas & Propane': [
+                { name: 'NATURAL GAS OR PROPANE TANK', code: '2301' },
+                { name: 'NATIONAL GRID / OTHER GAS METER', code: '2302' },
+                { name: 'EXTERIOR GAS FIXTURES - LANTERNS/OTHER', code: '2303' }
+            ],
+            'Flooring': [
+                { name: 'SUBFLOOR UNDERLAYMENT', code: '2401' },
+                { name: 'SOUND PROOFING / CRACK SUPPRESSION', code: '2402' },
+                { name: 'INTERIOR TILE / MARBLE FLOOR MATERIAL', code: '2403' },
+                { name: 'INTERIOR TILE / MARBLE FLOOR LABOR', code: '2404' },
+                { name: 'EXTERIOR TILE / MARBLE MATERIAL', code: '2405' },
+                { name: 'EXTERIOR TILE / MARBLE LABOR', code: '2406' },
+                { name: 'WOOD FLOOR MATERIAL & LABOR', code: '2407' },
+                { name: 'CARPET MATERIAL', code: '2409' },
+                { name: 'CARPET LABOR', code: '2410' },
+                { name: 'FLOOR DEMOLITION', code: '2411' },
+                { name: 'GARAGE FLOORS (EPOXY COATING)', code: '2412' },
+                { name: 'FLOORING PROTECTION', code: '2413' },
+                { name: 'OTHER FLOORING L & M', code: '2414' },
+                { name: 'FLOOR REFINISHING', code: '2415' }
+            ],
+            'Interior Trim Package': [
+                { name: 'TRIM MATERIAL', code: '2501' },
+                { name: 'TRIM LABOR', code: '2502' },
+                { name: 'INTERIOR DOORS MATERIAL', code: '2503' },
+                { name: 'INTERIOR DOORS HARDWARE', code: '2504' },
+                { name: 'STAIRS & HANDRAILS', code: '2505' },
+                { name: 'ATTIC HATCHES / PULL DOWN LADDERS', code: '2506' },
+                { name: 'SPECIALTY DETAILS', code: '2507' }
+            ],
+            'Exterior Trim Package': [
+                { name: 'TRIM MATERIAL', code: '2601' },
+                { name: 'TRIM LABOR', code: '2602' }
+            ],
+            'Paint': [
+                { name: 'PAINTING INTERIOR', code: '2701' },
+                { name: 'PAINTING EXTERIOR', code: '2702' },
+                { name: 'PAINTING EXTERIOR WINDOWS/DOORS', code: '2703' },
+                { name: 'CUSTOM FINISHES', code: '2704' },
+                { name: 'PRESSURE WASH', code: '2705' },
+                { name: 'WALLPAPER MATERIAL', code: '2706' },
+                { name: 'WALLPAPER LABOR', code: '2707' }
+            ],
+            'Tile / Marble / Tops': [
+                { name: 'COUNTER TOP MATERIAL', code: '2801' },
+                { name: 'COUNTER TOP LABOR', code: '2802' },
+                { name: 'BACKSPLASH MATERIAL', code: '2803' },
+                { name: 'BACKSPLASH LABOR', code: '2804' },
+                { name: 'WATERPROOFING', code: '2805' },
+                { name: 'BATHROOM SHOWER FLOOR / WALLS MATERIAL', code: '2806' },
+                { name: 'BATHROOM SHOWER FLOOR / WALLS LABOR', code: '2807' },
+                { name: 'EXTERIOR TILE & MARBLE MATERIAL', code: '2808' },
+                { name: 'EXTERIOR TILE & MARBLE LABOR', code: '2809' },
+                { name: 'ACCENT WALL / SPECIALTY MATERIAL', code: '2810' },
+                { name: 'ACCENT WALL / SPECIALTY LABOR', code: '2811' },
+                { name: 'FIRE PLACE SURROUNDS', code: '2812' }
+            ],
+            'Cabinetry and Built-ins': [
+                { name: 'KITCHEN CABINETS', code: '2901' },
+                { name: 'INSTALL OF OTHERS CABINETS', code: '2902' },
+                { name: 'VANITY AND MED. CAB INSTALL', code: '2903' },
+                { name: 'BATH VANITIES', code: '2904' },
+                { name: 'CLOSETS', code: '2905' },
+                { name: 'WINE ROOM', code: '2906' },
+                { name: 'CUSTOM BUILT INS', code: '2907' },
+                { name: 'CABINETRY HARDWARE', code: '2908' },
+                { name: 'PRE FAB CAB. ASSEMBLY', code: '2909' }
+            ],
+            'Appliances': [
+                { name: 'APPLIANCES', code: '3001' }
+            ],
+            'Bathroom Accessories': [
+                { name: 'SHOWER ENCLOSURES AND MIRRORS', code: '3101' },
+                { name: 'TOWEL BARS / ROBE HOOKS / TP HOLDERS', code: '3102' },
+                { name: 'ACCESSORIES INSTALLATION', code: '3103' }
+            ],
+            'Other Amenities': [
+                { name: 'ELEVATOR', code: '3201' },
+                { name: 'SAFE', code: '3202' },
+                { name: 'CAR LIFT', code: '3203' },
+                { name: 'CUSTOM METAL DOORS', code: '3204' },
+                { name: 'FIREPLACES', code: '3205' },
+                { name: 'FIREPLACE DECORATIVE MANTELS', code: '3206' },
+                { name: 'GAS LOG SET', code: '3207' }
+            ],
+            'Exterior Accessories': [
+                { name: 'SIDE GATES', code: '3301' },
+                { name: 'FENCES', code: '3302' },
+                { name: 'CHILD SAFETY FENCES', code: '3303' },
+                { name: 'ENTRANCE GATES', code: '3304' },
+                { name: 'ENTRANCE GATE MOTORS, KEY PADS AND LOOPS', code: '3305' },
+                { name: 'DECORATIVE SHUTTERS', code: '3306' },
+                { name: 'ARMOR SCREENS', code: '3307' },
+                { name: 'GUTTERS', code: '3308' },
+                { name: 'MAILBOX', code: '3309' },
+                { name: 'FLAG POLE', code: '3310' },
+                { name: 'TRELLIS', code: '3311' },
+                { name: 'BEACH STAIRS', code: '3312' },
+                { name: 'BEACH STAIRS DAVIT AND WIRING', code: '3313' },
+                { name: 'BREEZE SOLIEL', code: '3314' },
+                { name: 'ALUMINUM GRATE/LENTIL', code: '3315' },
+                { name: 'EGREES LADDERS/STAIRS', code: '3316' }
+            ],
+            'Driveway': [
+                { name: 'DRIVEWAY MATERIAL', code: '3401' },
+                { name: 'DRIVEWAY LABOR', code: '3402' },
+                { name: 'SLEEVES LABOR AND MATERIAL', code: '3403' },
+                { name: 'PAVEMENT APRON', code: '3404' },
+                { name: 'SHELL ROCK', code: '3405' },
+                { name: 'APRON', code: '3406' }
+            ],
+            'Pool': [
+                { name: 'POOL DEMOLITION', code: '3501' },
+                { name: 'POOL AND SPA', code: '3502' },
+                { name: 'POOL DECK MATERIAL', code: '3503' },
+                { name: 'POOL DECK LABOR', code: '3504' },
+                { name: 'POOL FENCE AND ALARMS', code: '3505' },
+                { name: 'POOL SAFETY FENCE', code: '3506' },
+                { name: 'POOL AUTOMATION', code: '3507' }
+            ],
+            'Seawall and Dock': [
+                { name: 'SEAWALL', code: '3601' },
+                { name: 'SEAWALL CAP', code: '3602' },
+                { name: 'DOCK', code: '3603' },
+                { name: 'BOAT LIFT', code: '3604' }
+            ],
+            'Landscaping / Irrigation': [
+                { name: 'LANDSCAPING LABOR AND MATERIALS', code: '3701' },
+                { name: 'IRRIGATION', code: '3702' },
+                { name: 'TREE REMOVAL / TRIMMING / RELOCATION', code: '3703' },
+                { name: 'FOUNTAIN', code: '3704' },
+                { name: 'SCREENING FOR NEIGHBORS', code: '3705' }
+            ],
+            'Site Work': [
+                { name: 'FOUNDATION AND SITE EQUIPMENT', code: '3801' },
+                { name: 'EXCAVATION / GRADING', code: '3802' },
+                { name: 'FILL (REMOVAL OR DELIVER)', code: '3803' },
+                { name: 'STABILIZER / SHELL ROCK', code: '3804' },
+                { name: 'DRAINAGE LABOR AND MATERIAL', code: '3805' },
+                { name: 'SILT FENCE', code: '3806' }
+            ],
+            'Pest Control': [
+                { name: 'TERMITE TREATMENT', code: '3901' },
+                { name: 'LAWN / SHRUB TREATMENT', code: '3902' },
+                { name: 'HOUSE TREATMENT', code: '3903' }
+            ],
+            'SMS Direct Services': [
+                { name: 'FIELD SUPERVISION/PROJECT MANAGEMENT', code: '5001' },
+                { name: 'PROJECT ADMINISTRATION', code: '5002' },
+                { name: 'GENERAL LABOR', code: '5003' }
+            ]
+        };
         
         this.init();
     }
@@ -549,28 +853,45 @@ class BudgetViewer {
         });
         
         tradeDiv.querySelector('.add-line-item').addEventListener('click', () => {
-            this.addLineItem(tradeDiv.querySelector('.line-items-container'));
+            const tradeNameSelect = tradeDiv.querySelector('.trade-name');
+            const tradeName = tradeNameSelect.value;
+            this.addLineItem(tradeDiv.querySelector('.line-items-container'), tradeName);
         });
         
-        // Add one line item by default
+        // Add trade name change listener to update categories
+        tradeDiv.querySelector('.trade-name').addEventListener('change', (e) => {
+            const tradeName = e.target.value;
+            const lineItemsContainer = tradeDiv.querySelector('.line-items-container');
+            
+            // Update existing line items with new categories
+            const existingItems = lineItemsContainer.querySelectorAll('.line-item');
+            existingItems.forEach(item => {
+                this.updateLineItemCategories(item, tradeName);
+            });
+        });
+        
+        // Add one line item by default (disabled until trade is selected)
         this.addLineItem(tradeDiv.querySelector('.line-items-container'));
     }
     
-    addLineItem(container) {
+    addLineItem(container, tradeName = null) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'row mb-2 line-item';
         
-        // Generate category dropdown options
-        const categoryOptions = this.tradeCategories.map(category => 
-            `<option value="${category}">${category}</option>`
-        ).join('');
+        // Generate category dropdown options based on selected trade
+        let categoryOptions = '<option value="">Select Category</option>';
+        if (tradeName && this.tradeCategoryMapping[tradeName]) {
+            categoryOptions += this.tradeCategoryMapping[tradeName].map(category => 
+                `<option value="${category.name}" data-code="${category.code}">${category.name} (${category.code})</option>`
+            ).join('');
+        }
         
         itemDiv.innerHTML = `
             <div class="col-12 col-sm-6 col-md-3 mb-2">
-                <select class="form-select form-select-sm item-category" required>
-                    <option value="">Select Category</option>
+                <select class="form-select form-select-sm item-category" required ${!tradeName ? 'disabled' : ''}>
                     ${categoryOptions}
                 </select>
+                ${!tradeName ? '<small class="text-muted">Select Trade Name first</small>' : ''}
             </div>
             <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <input type="text" class="form-control form-control-sm item-vendor" placeholder="Vendor" required>
@@ -594,6 +915,8 @@ class BudgetViewer {
         itemDiv.querySelector('.remove-line-item').addEventListener('click', () => {
             itemDiv.remove();
         });
+        
+        return itemDiv;
     }
     
     saveNewBudget() {
@@ -731,8 +1054,12 @@ class BudgetViewer {
                     const notes = item.querySelector('.item-notes').value.trim();
                     
                     if (category && vendor && budget > 0) {
+                        const categoryOption = categorySelect.options[categorySelect.selectedIndex];
+                        const categoryCode = categoryOption ? categoryOption.getAttribute('data-code') : '';
+                        
                         lineItems.push({
                             category,
+                            categoryCode,
                             vendor,
                             budget,
                             notes: notes || undefined
@@ -748,6 +1075,43 @@ class BudgetViewer {
                 }
             }
         });
+    }
+    
+    updateLineItemCategories(lineItem, tradeName) {
+        const categorySelect = lineItem.querySelector('.item-category');
+        const currentValue = categorySelect.value;
+        
+        // Clear and rebuild options
+        categorySelect.innerHTML = '<option value="">Select Category</option>';
+        
+        if (tradeName && this.tradeCategoryMapping[tradeName]) {
+            this.tradeCategoryMapping[tradeName].forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.name;
+                option.setAttribute('data-code', category.code);
+                option.textContent = `${category.name} (${category.code})`;
+                if (category.name === currentValue) {
+                    option.selected = true;
+                }
+                categorySelect.appendChild(option);
+            });
+            categorySelect.disabled = false;
+            
+            // Remove helper text
+            const helpText = lineItem.querySelector('small');
+            if (helpText) {
+                helpText.remove();
+            }
+        } else {
+            categorySelect.disabled = true;
+            // Add helper text if not present
+            if (!lineItem.querySelector('small')) {
+                const helpText = document.createElement('small');
+                helpText.className = 'text-muted';
+                helpText.textContent = 'Select Trade Name first';
+                categorySelect.parentNode.appendChild(helpText);
+            }
+        }
     }
 }
 
