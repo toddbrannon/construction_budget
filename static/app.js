@@ -2208,40 +2208,108 @@ class BudgetViewer {
         return projects[Math.floor(Math.random() * projects.length)];
     }
     
-    fillTestProjectData() {
-        const testProject = this.getRandomTestProject();
-        
-        document.getElementById('stepProjectName').value = testProject.name;
-        document.getElementById('stepClient').value = testProject.client;
-        document.getElementById('stepAddress').value = testProject.address;
-        
-        // Add visual feedback
-        const inputs = ['stepProjectName', 'stepClient', 'stepAddress'];
-        inputs.forEach(id => {
-            const element = document.getElementById(id);
-            element.classList.add('border-success');
-            setTimeout(() => element.classList.remove('border-success'), 2000);
-        });
-        
-        this.showSuccessMessage('Test project data added! Review and continue to next step.');
+    async fillTestProjectData() {
+        try {
+            // Load from budget scenarios file
+            const response = await fetch('/static/budget-scenarios.json');
+            if (response.ok) {
+                const data = await response.json();
+                const scenarios = data.scenarios || data;
+                const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+                
+                const projectNameEl = document.getElementById('stepProjectName');
+                const clientEl = document.getElementById('stepClient');
+                const addressEl = document.getElementById('stepAddress');
+                
+                if (projectNameEl) projectNameEl.value = randomScenario.project.name;
+                if (clientEl) clientEl.value = randomScenario.project.client;
+                if (addressEl) addressEl.value = randomScenario.project.address;
+                
+                // Add visual feedback
+                const inputs = [projectNameEl, clientEl, addressEl].filter(el => el);
+                inputs.forEach(element => {
+                    element.classList.add('border-success');
+                    setTimeout(() => element.classList.remove('border-success'), 2000);
+                });
+                
+                this.showSuccessMessage('Test project data loaded from scenarios file');
+            } else {
+                throw new Error('Could not load scenarios file');
+            }
+        } catch (error) {
+            console.error('Error loading test data:', error);
+            // Fallback to hardcoded test data
+            const testProject = this.getRandomTestProject();
+            
+            const projectNameEl = document.getElementById('stepProjectName');
+            const clientEl = document.getElementById('stepClient');
+            const addressEl = document.getElementById('stepAddress');
+            
+            if (projectNameEl) projectNameEl.value = testProject.name;
+            if (clientEl) clientEl.value = testProject.client;
+            if (addressEl) addressEl.value = testProject.address;
+            
+            this.showSuccessMessage('Test project data added');
+        }
     }
     
-    fillTestLineItem() {
+    async fillTestLineItem() {
+        try {
+            // Load line item data from scenarios file
+            const response = await fetch('/static/budget-scenarios.json');
+            if (response.ok) {
+                const data = await response.json();
+                const scenarios = data.scenarios || data;
+                
+                // Get random scenario and random trade/line item from it
+                const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+                const trades = Object.values(randomScenario.trades);
+                const randomTrade = trades[Math.floor(Math.random() * trades.length)];
+                const lineItems = randomTrade.line_items || [];
+                
+                if (lineItems.length > 0) {
+                    const randomLineItem = lineItems[Math.floor(Math.random() * lineItems.length)];
+                    
+                    const vendorEl = document.getElementById('stepVendor');
+                    const budgetEl = document.getElementById('stepBudgetAmount');
+                    const notesEl = document.getElementById('stepNotes');
+                    const categoryEl = document.getElementById('stepCategory');
+                    
+                    if (vendorEl) vendorEl.value = randomLineItem.vendor;
+                    if (budgetEl) budgetEl.value = randomLineItem.budget;
+                    if (notesEl) notesEl.value = randomLineItem.notes || '';
+                    if (categoryEl && randomLineItem.category) {
+                        // Try to set category if it exists in the dropdown
+                        const option = Array.from(categoryEl.options).find(opt => opt.value === randomLineItem.category);
+                        if (option) categoryEl.value = randomLineItem.category;
+                    }
+                    
+                    // Add visual feedback
+                    const inputs = [vendorEl, budgetEl, notesEl, categoryEl].filter(el => el);
+                    inputs.forEach(element => {
+                        element.classList.add('border-success');
+                        setTimeout(() => element.classList.remove('border-success'), 2000);
+                    });
+                    
+                    this.showSuccessMessage('Test line item data loaded from scenarios file');
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading line item test data:', error);
+        }
+        
+        // Fallback to generated test data
         const currentTrade = this.commonTrades[this.stepData.currentTradeIndex];
         const currentItem = currentTrade?.items[this.stepData.currentLineItemIndex];
         
         if (!currentItem) return;
         
-        // Generate realistic variations of the test data
         const vendors = [
             'Premium Construction Services',
-            'Elite Building Solutions',
+            'Elite Building Solutions', 
             'Professional Trade Specialists',
-            'Advanced Construction Group',
-            'Quality Building Partners',
-            'Master Craftsmen LLC',
-            'Precision Trade Services',
-            'Expert Construction Co.'
+            'Advanced Construction Group'
         ];
         
         const randomVendor = vendors[Math.floor(Math.random() * vendors.length)];
@@ -2249,31 +2317,15 @@ class BudgetViewer {
         const maxAmount = currentItem.budgetRange[1];
         const randomAmount = Math.floor(Math.random() * (maxAmount - baseAmount) + baseAmount);
         
-        const notes = [
-            'Industry standard materials and labor',
-            'Includes all necessary permits and inspections',
-            'Premium quality installation with warranty',
-            'Meets all building codes and regulations',
-            'Professional installation by certified technicians',
-            'Complete turnkey solution with project management'
-        ];
+        const vendorEl = document.getElementById('stepVendor');
+        const budgetEl = document.getElementById('stepBudgetAmount');
+        const notesEl = document.getElementById('stepNotes');
         
-        const randomNote = notes[Math.floor(Math.random() * notes.length)];
+        if (vendorEl) vendorEl.value = randomVendor;
+        if (budgetEl) budgetEl.value = randomAmount;
+        if (notesEl) notesEl.value = 'Professional installation with warranty';
         
-        // Fill the form with test data
-        document.getElementById('stepVendor').value = randomVendor;
-        document.getElementById('stepBudgetAmount').value = randomAmount;
-        document.getElementById('stepNotes').value = randomNote;
-        
-        // Add visual feedback
-        const inputs = ['stepVendor', 'stepBudgetAmount', 'stepNotes'];
-        inputs.forEach(id => {
-            const element = document.getElementById(id);
-            element.classList.add('border-success');
-            setTimeout(() => element.classList.remove('border-success'), 2000);
-        });
-        
-        this.showSuccessMessage('Test line item data added! Review and save to continue.');
+        this.showSuccessMessage('Test line item data added');
     }
     
     showBudgetSaveInfo(budgetEntry, budgetData) {
@@ -2662,6 +2714,11 @@ Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
 }
 
 // Initialize the budget viewer when the DOM is loaded
+let budgetViewer;
 document.addEventListener('DOMContentLoaded', () => {
-    new BudgetViewer();
+    budgetViewer = new BudgetViewer();
+    budgetViewer.init();
+    
+    // Make budgetViewer globally accessible for onclick handlers
+    window.budgetViewer = budgetViewer;
 });
