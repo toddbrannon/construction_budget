@@ -1028,7 +1028,7 @@ class BudgetViewer {
         return itemDiv;
     }
     
-    saveNewBudget() {
+    async saveNewBudget() {
         if (!this.validateNewBudget()) {
             return;
         }
@@ -1038,15 +1038,185 @@ class BudgetViewer {
         
         if (this.isEditMode) {
             // Update existing budget
+            await this.updateExistingBudget();
             this.renderBudget();
             this.showBudgetViewer(this.currentBudgetId);
             this.showSuccessMessage('Budget updated successfully!');
         } else {
             // Create new budget
+            await this.saveNewBudgetToList();
             this.renderBudget();
             this.hideNewBudgetForm();
-            this.showSuccessMessage('Budget created successfully!');
+            this.showSuccessMessage('Budget created successfully! (Note: In production, this would be saved to the server)');
         }
+    }
+    
+    async saveNewBudgetToList() {
+        // Generate unique ID for new budget
+        const newBudgetId = this.generateBudgetId(this.newBudgetData.project.name);
+        const currentDate = new Date().toISOString().split('T')[0];
+        
+        // Calculate total budget
+        const totalBudget = this.calculateTotalBudgetAmount();
+        
+        // Create new budget entry for the list
+        const newBudgetEntry = {
+            id: newBudgetId,
+            projectName: this.newBudgetData.project.name,
+            client: this.newBudgetData.project.client,
+            address: this.newBudgetData.project.address,
+            dateCreated: currentDate,
+            lastModified: currentDate,
+            status: 'planning', // Default status for new budgets
+            totalBudget: totalBudget,
+            filename: `${newBudgetId}.json`
+        };
+        
+        try {
+            // Save to server
+            const response = await fetch('/api/budgets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    budgetEntry: newBudgetEntry,
+                    budgetData: this.newBudgetData
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Budget saved successfully:', result);
+                
+                // Update local lists
+                this.budgetsList.unshift(newBudgetEntry);
+                this.filteredBudgets = [...this.budgetsList];
+                this.currentBudgetId = newBudgetId;
+                
+                this.showSuccessMessage('Budget saved successfully to JSON files!');
+            } else {
+                throw new Error('Failed to save budget to server');
+            }
+        } catch (error) {
+            console.error('Error saving budget:', error);
+            
+            // Fallback to local update only
+            this.budgetsList.unshift(newBudgetEntry);
+            this.filteredBudgets = [...this.budgetsList];
+            this.currentBudgetId = newBudgetId;
+            
+            this.showBudgetSaveInfo(newBudgetEntry, this.newBudgetData);
+        }
+    }
+    
+    async updateExistingBudget() {
+        if (!this.currentBudgetId) return;
+        
+        // Find and update the budget in the list
+        const budgetIndex = this.budgetsList.findIndex(b => b.id === this.currentBudgetId);
+        if (budgetIndex !== -1) {
+            const currentDate = new Date().toISOString().split('T')[0];
+            const totalBudget = this.calculateTotalBudgetAmount();
+            
+            // Update budget entry
+            const updatedBudgetEntry = {
+                ...this.budgetsList[budgetIndex],
+                projectName: this.newBudgetData.project.name,
+                client: this.newBudgetData.project.client,
+                address: this.newBudgetData.project.address,
+                lastModified: currentDate,
+                totalBudget: totalBudget
+            };
+            
+            try {
+                // Save to server
+                const response = await fetch('/api/budgets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        budgetEntry: updatedBudgetEntry,
+                        budgetData: this.newBudgetData
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Budget updated successfully:', result);
+                    
+                    // Update local list
+                    this.budgetsList[budgetIndex] = updatedBudgetEntry;
+                    this.filteredBudgets = [...this.budgetsList];
+                    
+                    this.showSuccessMessage('Budget updated successfully in JSON files!');
+                } else {
+                    throw new Error('Failed to update budget on server');
+                }
+            } catch (error) {
+                console.error('Error updating budget:', error);
+                
+                // Fallback to local update only
+                this.budgetsList[budgetIndex] = updatedBudgetEntry;
+                this.filteredBudgets = [...this.budgetsList];
+                
+                this.showSuccessMessage('Budget updated locally (server save failed)');
+            }
+        }
+    }
+    
+    generateBudgetId(projectName) {
+        const cleanName = projectName.toLowerCase()
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, '-')
+            .substring(0, 30);
+        const year = new Date().getFullYear();
+        const timestamp = Date.now().toString().slice(-4);
+        return `${cleanName}-${year}-${timestamp}`;
+    }
+    
+    calculateTotalBudgetAmount() {
+        let total = 0;
+        Object.values(this.newBudgetData.trades).forEach(trade => {
+            if (trade.line_items) {
+                trade.line_items.forEach(item => {
+                    total += item.budget || 0;
+                });
+            }
+        });
+        return total;
+    }
+    
+    showBudgetSaveInfo(budgetEntry, budgetData) {
+        // Create a detailed info modal/alert showing what would be saved
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-info alert-dismissible fade show mt-3';
+        alert.innerHTML = `
+            <h6><i class="fas fa-info-circle me-2"></i>Budget Save Information</h6>
+            <p class="mb-2">In a production environment, this would save:</p>
+            <ul class="mb-2">
+                <li><strong>Budget ID:</strong> ${budgetEntry.id}</li>
+                <li><strong>File:</strong> ${budgetEntry.filename}</li>
+                <li><strong>Total Budget:</strong> ${this.formatCurrency(budgetEntry.totalBudget)}</li>
+                <li><strong>Trade Sections:</strong> ${Object.keys(budgetData.trades).length}</li>
+            </ul>
+            <details class="mb-2">
+                <summary>View JSON Structure</summary>
+                <pre class="mt-2 p-2 bg-dark text-light rounded small" style="max-height: 200px; overflow-y: auto;">Budget Entry: ${JSON.stringify(budgetEntry, null, 2)}
+
+Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
+            </details>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        // Auto-dismiss after 10 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 10000);
     }
     
     showSuccessMessage(message) {
