@@ -74,6 +74,20 @@
                             <i class="fas fa-arrow-left me-1"></i>
                             <span class="d-none d-sm-inline">Back to </span>Dashboard
                         </button>
+                        <div class="dropdown d-none d-md-block">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-2"></i>{{ user.first_name or user.username }}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </div>
                         <button id="editBudgetBtn" class="btn btn-warning no-print d-none">
                             <i class="fas fa-edit me-1"></i>
                             <span class="d-none d-sm-inline">Edit </span>Budget
