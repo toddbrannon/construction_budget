@@ -1290,18 +1290,30 @@ class BudgetViewer {
         
         noResults.classList.add('d-none');
         
-        container.innerHTML = this.filteredBudgets.map(budget => {
+        container.innerHTML = this.filteredBudgets.map((budget, index) => {
             const statusBadge = this.getStatusBadge(budget.status);
             const formattedDate = new Date(budget.lastModified).toLocaleDateString();
             
+            const cardColors = [
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+                'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
+            ];
+            const cardColor = cardColors[index % cardColors.length];
+            
             return `
                 <div class="col-12 col-md-6 col-lg-4 mb-3">
-                    <div class="card h-100 budget-card" data-budget-id="${budget.id}" style="cursor: pointer;">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0 text-truncate me-2">${this.escapeHtml(budget.projectName)}</h6>
+                    <div class="card h-100 budget-card border-0 shadow-sm" data-budget-id="${budget.id}" style="cursor: pointer; background: ${cardColor};">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                            <h6 class="mb-0 text-truncate me-2 text-white fw-bold">${this.escapeHtml(budget.projectName)}</h6>
                             ${statusBadge}
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="background: rgba(255,255,255,0.95);">
                             <p class="card-text mb-2">
                                 <strong>Client:</strong><br>
                                 <small class="text-muted">${this.escapeHtml(budget.client)}</small>
@@ -1315,7 +1327,7 @@ class BudgetViewer {
                                 <span class="currency fw-bold text-success">${this.formatCurrency(budget.totalBudget)}</span>
                             </p>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer border-0" style="background: rgba(255,255,255,0.9);">
                             <small class="text-muted">
                                 <i class="fas fa-clock me-1"></i>
                                 Last modified: ${formattedDate}
