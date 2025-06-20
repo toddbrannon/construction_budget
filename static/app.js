@@ -1214,19 +1214,22 @@ class BudgetViewer {
     renderScenarioCards() {
         const container = document.getElementById('scenarioCards');
         container.innerHTML = this.budgetScenarios.map(scenario => `
-            <div class="col-md-6 mb-3">
-                <div class="card scenario-card h-100" data-scenario-id="${scenario.id}" style="cursor: pointer;">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="badge ${scenario.type === 'residential' ? 'bg-primary' : 'bg-info'}">${scenario.type}</span>
-                        <span class="fw-bold text-success">${this.formatCurrency(scenario.totalBudget)}</span>
+            <div class="col-md-6 mb-4">
+                <div class="card scenario-card h-100 border-2" data-scenario-id="${scenario.id}" style="cursor: pointer; transition: all 0.2s ease;">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3" style="background: linear-gradient(135deg, ${scenario.type === 'residential' ? '#6f42c1' : '#0dcaf0'}, ${scenario.type === 'residential' ? '#9a6fc1' : '#0fb3d3'});">
+                        <span class="badge bg-light text-dark fs-7 px-3 py-2">${scenario.type}</span>
+                        <span class="fw-bold text-white fs-5">${this.formatCurrency(scenario.totalBudget)}</span>
                     </div>
-                    <div class="card-body">
-                        <h6 class="card-title">${scenario.project.name}</h6>
-                        <p class="card-text small text-muted mb-2">${scenario.description}</p>
-                        <p class="card-text">
-                            <strong>Client:</strong> ${scenario.project.client}<br>
-                            <small class="text-muted">${scenario.project.address}</small>
-                        </p>
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3 fw-bold">${scenario.project.name}</h5>
+                        <p class="card-text text-muted mb-3" style="font-size: 0.95rem; line-height: 1.4;">${scenario.description}</p>
+                        <div class="mb-2">
+                            <strong class="text-dark">Client:</strong>
+                            <div class="text-muted">${scenario.project.client}</div>
+                        </div>
+                        <div class="text-muted small" style="font-size: 0.85rem;">
+                            <i class="fas fa-map-marker-alt me-1"></i>${scenario.project.address}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1237,11 +1240,15 @@ class BudgetViewer {
             card.addEventListener('click', () => {
                 // Remove previous selection
                 container.querySelectorAll('.scenario-card').forEach(c => {
-                    c.classList.remove('border-primary', 'bg-light');
+                    c.classList.remove('border-success');
+                    c.style.borderWidth = '';
+                    c.style.boxShadow = '';
                 });
                 
                 // Add selection to clicked card
-                card.classList.add('border-primary', 'bg-light');
+                card.classList.add('border-success');
+                card.style.borderWidth = '3px';
+                card.style.boxShadow = '0 0.5rem 1rem rgba(25, 135, 84, 0.3)';
                 
                 // Store selected scenario
                 const scenarioId = parseInt(card.dataset.scenarioId);
@@ -1305,32 +1312,41 @@ class BudgetViewer {
     renderProjectInfoStep() {
         const container = document.getElementById('projectInfoPreview');
         container.innerHTML = `
-            <div class="row">
+            <div class="row align-items-center mb-4">
                 <div class="col-md-8">
-                    <h5>${this.selectedScenario.project.name}</h5>
-                    <p class="text-muted">${this.selectedScenario.description}</p>
+                    <h4 class="mb-2 fw-bold text-dark">${this.selectedScenario.project.name}</h4>
+                    <p class="text-muted mb-0" style="font-size: 1.1rem; line-height: 1.5;">${this.selectedScenario.description}</p>
                 </div>
-                <div class="col-md-4">
-                    <span class="badge ${this.selectedScenario.type === 'residential' ? 'bg-primary' : 'bg-info'} fs-6">
-                        ${this.selectedScenario.type} project
+                <div class="col-md-4 text-md-end">
+                    <span class="badge ${this.selectedScenario.type === 'residential' ? 'bg-primary' : 'bg-info'} px-3 py-2 fs-6">
+                        <i class="fas fa-${this.selectedScenario.type === 'residential' ? 'home' : 'building'} me-2"></i>${this.selectedScenario.type} project
                     </span>
                 </div>
             </div>
-            <hr>
-            <div class="row">
+            <hr class="my-4">
+            <div class="row g-4">
                 <div class="col-md-6">
-                    <strong>Client:</strong><br>
-                    ${this.selectedScenario.project.client}
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-user-tie text-primary me-2"></i>
+                        <strong class="fs-6">Client</strong>
+                    </div>
+                    <div class="text-muted fs-5">${this.selectedScenario.project.client}</div>
                 </div>
                 <div class="col-md-6">
-                    <strong>Total Budget:</strong><br>
-                    <span class="text-success fw-bold">${this.formatCurrency(this.selectedScenario.totalBudget)}</span>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-dollar-sign text-success me-2"></i>
+                        <strong class="fs-6">Total Budget</strong>
+                    </div>
+                    <div class="text-success fw-bold fs-4">${this.formatCurrency(this.selectedScenario.totalBudget)}</div>
                 </div>
             </div>
-            <div class="row mt-2">
+            <div class="row mt-4">
                 <div class="col-12">
-                    <strong>Address:</strong><br>
-                    ${this.selectedScenario.project.address}
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-map-marker-alt text-info me-2"></i>
+                        <strong class="fs-6">Project Address</strong>
+                    </div>
+                    <div class="text-muted fs-6">${this.selectedScenario.project.address}</div>
                 </div>
             </div>
         `;
@@ -1341,35 +1357,60 @@ class BudgetViewer {
         const trades = Object.entries(this.selectedScenario.trades);
         
         container.innerHTML = `
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col-12">
-                    <p class="text-muted">This budget includes ${trades.length} trade sections:</p>
+                    <div class="alert alert-info border-0" style="background: linear-gradient(135deg, #e3f2fd, #f3e5f5);">
+                        <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>Trade Sections Overview</h6>
+                        <p class="mb-0">This budget includes <strong>${trades.length} trade sections</strong> with detailed line items and vendor information.</p>
+                    </div>
                 </div>
             </div>
+            <div class="row">
             ${trades.map(([key, trade]) => {
                 const tradeTotal = trade.line_items.reduce((sum, item) => sum + item.budget, 0);
                 return `
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
+                    <div class="col-md-6 mb-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #495057, #6c757d);">
+                                <h6 class="card-title mb-0 fw-bold">
+                                    <i class="fas fa-tools me-2"></i>${trade.name}
+                                </h6>
+                            </div>
                             <div class="card-body">
-                                <h6 class="card-title">${trade.name}</h6>
-                                <p class="card-text">
-                                    <strong>${trade.line_items.length} line items</strong><br>
-                                    <span class="text-success">${this.formatCurrency(tradeTotal)}</span>
-                                </p>
-                                <details>
-                                    <summary class="text-primary" style="cursor: pointer;">View Items</summary>
-                                    <ul class="mt-2 mb-0">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">Line Items</small>
+                                        <div class="fw-bold fs-6">${trade.line_items.length} items</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Section Total</small>
+                                        <div class="text-success fw-bold fs-6">${this.formatCurrency(tradeTotal)}</div>
+                                    </div>
+                                </div>
+                                <details class="mt-2">
+                                    <summary class="text-primary fw-semibold" style="cursor: pointer; font-size: 0.95rem;">
+                                        <i class="fas fa-list me-1"></i>View Line Items
+                                    </summary>
+                                    <div class="mt-3 border-top pt-3">
                                         ${trade.line_items.map(item => `
-                                            <li class="small">${item.category} - ${this.formatCurrency(item.budget)}</li>
+                                            <div class="d-flex justify-content-between align-items-start mb-2 pb-2 border-bottom border-light">
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-semibold" style="font-size: 0.9rem;">${item.category}</div>
+                                                    <small class="text-muted">${item.vendor}</small>
+                                                </div>
+                                                <div class="text-success fw-bold ms-2" style="font-size: 0.9rem;">
+                                                    ${this.formatCurrency(item.budget)}
+                                                </div>
+                                            </div>
                                         `).join('')}
-                                    </ul>
+                                    </div>
                                 </details>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('')}
+            </div>
         `;
     }
     
@@ -1379,11 +1420,11 @@ class BudgetViewer {
         const totalItems = trades.reduce((sum, [key, trade]) => sum + trade.line_items.length, 0);
         
         container.innerHTML = `
-            <li><strong>Project:</strong> ${this.selectedScenario.project.name}</li>
-            <li><strong>Type:</strong> ${this.selectedScenario.type} construction</li>
-            <li><strong>Trade Sections:</strong> ${trades.length}</li>
-            <li><strong>Line Items:</strong> ${totalItems}</li>
-            <li><strong>Total Budget:</strong> ${this.formatCurrency(this.selectedScenario.totalBudget)}</li>
+            <li class="mb-2"><strong class="text-dark">Project:</strong> <span class="text-muted fs-6">${this.selectedScenario.project.name}</span></li>
+            <li class="mb-2"><strong class="text-dark">Type:</strong> <span class="badge ${this.selectedScenario.type === 'residential' ? 'bg-primary' : 'bg-info'} ms-2">${this.selectedScenario.type} construction</span></li>
+            <li class="mb-2"><strong class="text-dark">Trade Sections:</strong> <span class="text-muted fs-6">${trades.length} sections</span></li>
+            <li class="mb-2"><strong class="text-dark">Line Items:</strong> <span class="text-muted fs-6">${totalItems} items</span></li>
+            <li class="mb-0"><strong class="text-dark">Total Budget:</strong> <span class="text-success fw-bold fs-5 ms-2">${this.formatCurrency(this.selectedScenario.totalBudget)}</span></li>
         `;
     }
     
