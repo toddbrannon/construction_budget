@@ -610,6 +610,17 @@ class BudgetViewer {
         document.getElementById('sortBudgets').addEventListener('change', () => {
             this.sortAndRenderBudgets();
         });
+        
+        // Test budget generation
+        document.getElementById('createBlankBudget').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showNewBudgetForm();
+        });
+        
+        document.getElementById('generateTestBudget').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.generateTestBudget();
+        });
     }
     
     toggleTradeSection(toggleBtn) {
@@ -912,6 +923,252 @@ class BudgetViewer {
         // Reset button text
         const saveButton = document.getElementById('saveNewBudget');
         saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Save Budget';
+    }
+    
+    generateTestBudget() {
+        // Project templates with realistic data
+        const projectTemplates = [
+            {
+                type: 'residential',
+                names: [
+                    'Luxury Waterfront Estate',
+                    'Modern Family Residence',
+                    'Historic Home Renovation',
+                    'Coastal Villa Project',
+                    'Mountain Lodge Construction',
+                    'Urban Townhouse Development',
+                    'Eco-Friendly Smart Home',
+                    'Classic Colonial Revival'
+                ],
+                clients: [
+                    'The Johnson Family Trust',
+                    'Miller Property Holdings',
+                    'Heritage Home Investors',
+                    'Coastal Living LLC',
+                    'Mountain View Estates',
+                    'Urban Development Group',
+                    'Green Building Solutions',
+                    'Classic Homes Partnership'
+                ],
+                addresses: [
+                    '15 Oceanview Drive, Malibu, CA 90265',
+                    '892 Maple Street, Aspen, CO 81611',
+                    '1734 Historic Lane, Savannah, GA 31401',
+                    '456 Waterfront Blvd, Miami, FL 33139',
+                    '2018 Mountain Ridge Road, Park City, UT 84060',
+                    '3421 Urban Plaza, Seattle, WA 98101',
+                    '567 Sustainable Way, Portland, OR 97201',
+                    '1289 Heritage Court, Charleston, SC 29401'
+                ]
+            },
+            {
+                type: 'commercial',
+                names: [
+                    'Corporate Headquarters Expansion',
+                    'Medical Center Complex',
+                    'Retail Shopping Plaza',
+                    'Modern Office Tower',
+                    'Restaurant & Entertainment District',
+                    'Technology Innovation Hub',
+                    'Mixed-Use Development',
+                    'Healthcare Facility Upgrade'
+                ],
+                clients: [
+                    'Apex Corporation',
+                    'Regional Medical Group',
+                    'Retail Development Partners',
+                    'Downtown Properties LLC',
+                    'Entertainment Ventures Inc',
+                    'Tech Innovation Group',
+                    'Urban Mixed-Use Partners',
+                    'Healthcare Solutions Corp'
+                ],
+                addresses: [
+                    '5000 Corporate Center Drive, Austin, TX 78759',
+                    '1250 Medical Plaza, Denver, CO 80202',
+                    '3400 Shopping District Blvd, Orlando, FL 32801',
+                    '750 Business Tower Way, Charlotte, NC 28202',
+                    '2100 Entertainment Row, Nashville, TN 37203',
+                    '4800 Innovation Parkway, San Jose, CA 95110',
+                    '1875 Urban Square, Boston, MA 02101',
+                    '3200 Healthcare Drive, Phoenix, AZ 85001'
+                ]
+            }
+        ];
+        
+        // Realistic vendor names
+        const vendors = {
+            excavation: ['Premier Excavation', 'Earthworks Contractors', 'Site Development Pros', 'Foundation Specialists'],
+            concrete: ['Concrete Solutions Inc', 'Premier Concrete Works', 'Structural Concrete Specialists', 'Foundation Masters'],
+            electrical: ['Advanced Electrical Systems', 'Power Solutions Inc', 'Elite Electrical Contractors', 'Modern Electric Co'],
+            plumbing: ['Professional Plumbing Services', 'Hydro Systems Inc', 'Master Plumbers Guild', 'Flow-Tech Solutions'],
+            roofing: ['Superior Roofing Solutions', 'Peak Performance Roofing', 'Weatherguard Contractors', 'Roofline Specialists'],
+            flooring: ['Premium Floor Covering', 'Elegant Flooring Solutions', 'Floor Masters Inc', 'Decorative Surfaces Co'],
+            painting: ['Professional Painting Services', 'Color Masters Inc', 'Premium Paint Solutions', 'Artistic Finishes'],
+            hvac: ['Climate Control Experts', 'Advanced HVAC Systems', 'Comfort Solutions Inc', 'Air Quality Specialists']
+        };
+        
+        // Select random template
+        const templateType = Math.random() > 0.6 ? 'commercial' : 'residential';
+        const template = projectTemplates.find(t => t.type === templateType);
+        const randomIndex = Math.floor(Math.random() * template.names.length);
+        
+        // Generate project data
+        const testBudgetData = {
+            project: {
+                name: template.names[randomIndex],
+                client: template.clients[randomIndex],
+                address: template.addresses[randomIndex]
+            },
+            trades: {}
+        };
+        
+        // Generate realistic trade sections based on project type
+        const tradeConfigs = this.getTradeConfigsForType(templateType, vendors);
+        
+        tradeConfigs.forEach(config => {
+            const tradeKey = `trade_${config.name.toLowerCase().replace(/\s+/g, '_')}`;
+            testBudgetData.trades[tradeKey] = {
+                name: config.name,
+                line_items: config.items.map(item => ({
+                    category: item.category,
+                    categoryCode: item.code,
+                    vendor: this.getRandomVendor(vendors, item.vendorType),
+                    budget: this.generateRealisticBudget(item.baseAmount, templateType),
+                    notes: item.notes || undefined
+                }))
+            };
+        });
+        
+        // Set the generated data and show form
+        this.newBudgetData = testBudgetData;
+        this.showNewBudgetForm();
+        this.populateGeneratedBudget();
+        
+        // Show success message
+        this.showSuccessMessage(`Generated ${templateType} test budget: "${testBudgetData.project.name}"`);
+    }
+    
+    getTradeConfigsForType(projectType, vendors) {
+        const baseConfig = [
+            {
+                name: 'Site Work',
+                items: [
+                    { category: 'EXCAVATION / GRADING', code: '3802', vendorType: 'excavation', baseAmount: 45000, notes: 'Site preparation and rough grading' },
+                    { category: 'DRAINAGE LABOR AND MATERIAL', code: '3805', vendorType: 'excavation', baseAmount: 25000, notes: 'Storm water management system' }
+                ]
+            },
+            {
+                name: 'Shell',
+                items: [
+                    { category: 'CONCRETE PILING', code: '1301', vendorType: 'concrete', baseAmount: 85000, notes: 'Foundation piling system' },
+                    { category: 'SHELL / ROOF FRAMING L&M', code: '1305', vendorType: 'concrete', baseAmount: 120000, notes: 'Structural framing package' }
+                ]
+            },
+            {
+                name: 'Electrical & Low Voltage',
+                items: [
+                    { category: 'ELECTRICAL LABOR', code: '2101', vendorType: 'electrical', baseAmount: 75000, notes: 'Complete electrical installation' },
+                    { category: 'LIGHTING SYSTEM', code: '2103', vendorType: 'electrical', baseAmount: 35000, notes: 'LED lighting package' }
+                ]
+            },
+            {
+                name: 'Plumbing',
+                items: [
+                    { category: 'PLUMBING LABOR', code: '2001', vendorType: 'plumbing', baseAmount: 65000, notes: 'Complete plumbing system' },
+                    { category: 'PLUMBING FIXTURES', code: '2002', vendorType: 'plumbing', baseAmount: 45000, notes: 'High-end fixture package' }
+                ]
+            }
+        ];
+        
+        if (projectType === 'commercial') {
+            baseConfig.push(
+                {
+                    name: 'Heating & Cooling',
+                    items: [
+                        { category: 'AIR CONDITIONING & DUCT WORK', code: '2201', vendorType: 'hvac', baseAmount: 185000, notes: 'Commercial HVAC system' }
+                    ]
+                },
+                {
+                    name: 'Professional Services',
+                    items: [
+                        { category: 'STRUCTURAL ENGINEERING', code: '1002', vendorType: 'concrete', baseAmount: 25000, notes: 'Structural design and analysis' },
+                        { category: 'MEP ENGINEERING', code: '1004', vendorType: 'electrical', baseAmount: 35000, notes: 'Mechanical, electrical, plumbing design' }
+                    ]
+                }
+            );
+        } else {
+            baseConfig.push(
+                {
+                    name: 'Flooring',
+                    items: [
+                        { category: 'WOOD FLOOR MATERIAL & LABOR', code: '2407', vendorType: 'flooring', baseAmount: 45000, notes: 'Hardwood flooring throughout' },
+                        { category: 'INTERIOR TILE / MARBLE FLOOR MATERIAL', code: '2403', vendorType: 'flooring', baseAmount: 25000, notes: 'Tile for bathrooms and kitchen' }
+                    ]
+                },
+                {
+                    name: 'Paint',
+                    items: [
+                        { category: 'PAINTING INTERIOR', code: '2701', vendorType: 'painting', baseAmount: 35000, notes: 'Interior paint and finishes' },
+                        { category: 'PAINTING EXTERIOR', code: '2702', vendorType: 'painting', baseAmount: 25000, notes: 'Exterior paint system' }
+                    ]
+                }
+            );
+        }
+        
+        return baseConfig;
+    }
+    
+    getRandomVendor(vendors, vendorType) {
+        const vendorList = vendors[vendorType] || vendors.excavation;
+        return vendorList[Math.floor(Math.random() * vendorList.length)];
+    }
+    
+    generateRealisticBudget(baseAmount, projectType) {
+        // Add realistic variation to base amounts
+        const multiplier = projectType === 'commercial' ? 1.5 : 1.0;
+        const variation = 0.7 + (Math.random() * 0.6); // 70% to 130% of base
+        return Math.round(baseAmount * multiplier * variation);
+    }
+    
+    populateGeneratedBudget() {
+        if (!this.newBudgetData) return;
+        
+        // Populate project information
+        document.getElementById('newProjectName').value = this.newBudgetData.project.name;
+        document.getElementById('newProjectClient').value = this.newBudgetData.project.client;
+        document.getElementById('newProjectAddress').value = this.newBudgetData.project.address;
+        
+        // Clear existing trades
+        document.getElementById('newTradesContainer').innerHTML = '';
+        this.tradeCounter = 0;
+        
+        // Populate trades
+        Object.entries(this.newBudgetData.trades).forEach(([tradeKey, trade]) => {
+            this.addNewTrade();
+            const tradeDiv = document.querySelector('[data-trade-key]:last-child');
+            const tradeNameSelect = tradeDiv.querySelector('.trade-name');
+            
+            // Set trade name
+            tradeNameSelect.value = trade.name;
+            tradeNameSelect.dispatchEvent(new Event('change'));
+            
+            // Clear default line item
+            const lineItemsContainer = tradeDiv.querySelector('.line-items-container');
+            lineItemsContainer.innerHTML = '';
+            
+            // Add line items
+            trade.line_items.forEach(item => {
+                const lineItem = this.addLineItem(lineItemsContainer, trade.name);
+                
+                // Populate line item data
+                const categorySelect = lineItem.querySelector('.item-category');
+                categorySelect.value = item.category;
+                lineItem.querySelector('.item-vendor').value = item.vendor;
+                lineItem.querySelector('.item-budget').value = item.budget;
+                lineItem.querySelector('.item-notes').value = item.notes || '';
+            });
+        });
     }
     
     addNewTrade() {
