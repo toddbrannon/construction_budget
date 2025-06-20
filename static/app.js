@@ -1363,7 +1363,7 @@ class BudgetViewer {
             <div class="step-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="mb-0">Project Information</h4>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="budgetViewer.fillTestProjectData()">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.budgetViewer.fillTestProjectData()">
                         <i class="fas fa-magic me-2"></i>Add Test Data
                     </button>
                 </div>
@@ -1865,7 +1865,7 @@ class BudgetViewer {
                         <small class="text-muted">Trade: ${currentTrade.name}</small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="budgetViewer.fillTestLineItem()">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.budgetViewer.fillTestLineItem()">
                             <i class="fas fa-magic me-1"></i>Use Test Data
                         </button>
                         <span class="badge bg-primary fs-6">${this.stepData.currentTradeIndex + 1} of ${this.commonTrades.length}</span>
@@ -2053,7 +2053,7 @@ class BudgetViewer {
             <div class="step-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="mb-0">Project Type Selection</h4>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="budgetViewer.autoSelectProjectType()">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.budgetViewer.autoSelectProjectType()">
                         <i class="fas fa-magic me-2"></i>Auto Select
                     </button>
                 </div>
@@ -2085,7 +2085,7 @@ class BudgetViewer {
                         card.addEventListener('click', function() {
                             document.querySelectorAll('.scenario-type-card').forEach(c => c.classList.remove('border-primary'));
                             this.classList.add('border-primary');
-                            budgetViewer.stepData.selectedScenario = { type: this.dataset.type };
+                            window.budgetViewer.stepData.selectedScenario = { type: this.dataset.type };
                         });
                     });
                 </script>
