@@ -433,9 +433,12 @@ class BudgetViewer {
             if (!this.budgetData.project || !this.budgetData.trades) {
                 throw new Error('Invalid budget data structure');
             }
+            
+            console.log('Budget data loaded successfully:', this.budgetData);
         } catch (error) {
             console.error('Error loading budget data:', error);
             this.showError(`Failed to load budget: ${filename}`);
+            throw error;
         }
     }
     
@@ -1428,6 +1431,7 @@ class BudgetViewer {
         
         // Save the budget
         this.saveNewBudgetToList(budgetEntry, budgetData);
+    }
         this.populateGeneratedBudget();
         
         // Show success message
@@ -1746,6 +1750,368 @@ class BudgetViewer {
             console.error('Error saving budget:', error);
             this.showError('Failed to save budget: ' + error.message);
         }
+    }
+    
+    // Enhanced step-by-step methods
+    loadTradeConfigurations() {
+        this.commonTrades = [
+            {
+                name: 'Professional Services',
+                items: [
+                    { category: 'ARCHITECTURAL DESIGN', vendor: 'Design Associates LLC', budgetRange: [85000, 125000] },
+                    { category: 'STRUCTURAL ENGINEERING', vendor: 'Structural Solutions Inc', budgetRange: [35000, 55000] }
+                ]
+            },
+            {
+                name: 'General Conditions',
+                items: [
+                    { category: 'BUILDING PERMITS', vendor: 'Local Building Department', budgetRange: [15000, 35000] },
+                    { category: 'SURVEYS', vendor: 'Precision Surveying', budgetRange: [8000, 18000] }
+                ]
+            },
+            {
+                name: 'Shell',
+                items: [
+                    { category: 'SHELL / ROOF FRAMING L&M', vendor: 'Premier Framing Solutions', budgetRange: [185000, 485000] }
+                ]
+            },
+            {
+                name: 'Plumbing',
+                items: [
+                    { category: 'ROUGH PLUMBING', vendor: 'Elite Plumbing Systems', budgetRange: [65000, 125000] }
+                ]
+            },
+            {
+                name: 'Electrical & Low Voltage',
+                items: [
+                    { category: 'ROUGH ELECTRICAL', vendor: 'Modern Electric Contractors', budgetRange: [85000, 185000] }
+                ]
+            }
+        ];
+    }
+    
+    saveCurrentProjectInfo() {
+        this.stepData.projectInfo = {
+            name: document.getElementById('stepProjectName')?.value || '',
+            client: document.getElementById('stepClient')?.value || '',
+            address: document.getElementById('stepAddress')?.value || ''
+        };
+    }
+    
+    saveCurrentScenario() {
+        // For now, use a default scenario approach
+        this.stepData.selectedScenario = {
+            type: 'residential',
+            totalBudget: 2500000
+        };
+    }
+    
+    startLineItemMode() {
+        this.stepData.isAddingLineItems = true;
+        this.stepData.currentTradeIndex = 0;
+        this.stepData.currentLineItemIndex = 0;
+        this.updateStepModal();
+    }
+    
+    renderCurrentLineItem() {
+        const currentTrade = this.commonTrades[this.stepData.currentTradeIndex];
+        const currentItem = currentTrade?.items[this.stepData.currentLineItemIndex];
+        
+        if (!currentItem) {
+            // All items added, show completion
+            return this.renderCompletionStep();
+        }
+        
+        const randomBudget = Math.floor(Math.random() * (currentItem.budgetRange[1] - currentItem.budgetRange[0]) + currentItem.budgetRange[0]);
+        
+        return `
+            <div class="step-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Add Line Item</h4>
+                    <span class="badge bg-primary fs-6">Trade: ${currentTrade.name}</span>
+                </div>
+                
+                <div class="card border-2 border-primary">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Trade Category *</label>
+                                <select id="stepTradeCategory" class="form-select">
+                                    <option value="${currentTrade.name}" selected>${currentTrade.name}</option>
+                                    ${this.tradeNames.map(trade => 
+                                        trade !== currentTrade.name ? `<option value="${trade}">${trade}</option>` : ''
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Category *</label>
+                                <select id="stepCategory" class="form-select">
+                                    <option value="${currentItem.category}" selected>${currentItem.category}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Vendor *</label>
+                                <input type="text" id="stepVendor" class="form-control" value="${currentItem.vendor}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Budget Amount *</label>
+                                <input type="number" id="stepBudgetAmount" class="form-control" value="${randomBudget}" min="0" step="100" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Notes</label>
+                                <textarea id="stepNotes" class="form-control" rows="2" placeholder="Additional notes for this line item"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <small class="text-muted">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Values have been auto-filled based on industry standards. You can edit any field before saving.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    saveCurrentLineItem() {
+        const tradeCategory = document.getElementById('stepTradeCategory')?.value;
+        const category = document.getElementById('stepCategory')?.value;
+        const vendor = document.getElementById('stepVendor')?.value;
+        const budgetAmount = parseFloat(document.getElementById('stepBudgetAmount')?.value) || 0;
+        const notes = document.getElementById('stepNotes')?.value || '';
+        
+        if (!tradeCategory || !category || !vendor || budgetAmount <= 0) {
+            this.showError('Please fill in all required fields');
+            return;
+        }
+        
+        // Find or create trade in stepData
+        let trade = this.stepData.trades.find(t => t.name === tradeCategory);
+        if (!trade) {
+            trade = { name: tradeCategory, lineItems: [] };
+            this.stepData.trades.push(trade);
+        }
+        
+        // Add line item
+        trade.lineItems.push({
+            category: category,
+            vendor: vendor,
+            budgetAmount: budgetAmount,
+            notes: notes
+        });
+        
+        // Move to next item
+        this.stepData.currentLineItemIndex++;
+        if (this.stepData.currentLineItemIndex >= this.commonTrades[this.stepData.currentTradeIndex].items.length) {
+            this.stepData.currentTradeIndex++;
+            this.stepData.currentLineItemIndex = 0;
+        }
+        
+        // Show success message briefly
+        this.showSuccessMessage('Line item saved! Moving to next item...');
+        
+        // Update the modal content
+        setTimeout(() => {
+            this.updateStepModal();
+        }, 1000);
+    }
+    
+    renderCompletionStep() {
+        const totalItems = this.stepData.trades.reduce((sum, trade) => sum + trade.lineItems.length, 0);
+        const totalBudget = this.stepData.trades.reduce((sum, trade) => 
+            sum + trade.lineItems.reduce((tradeSum, item) => tradeSum + item.budgetAmount, 0), 0
+        );
+        
+        return `
+            <div class="step-content text-center">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="mb-3">Budget Building Complete!</h4>
+                <p class="text-muted mb-4">You've successfully added ${totalItems} line items across ${this.stepData.trades.length} trade categories.</p>
+                
+                <div class="card border-success">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">Budget Summary</h5>
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="fw-bold fs-4">${this.stepData.trades.length}</div>
+                                <small class="text-muted">Trade Categories</small>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fw-bold fs-4">${totalItems}</div>
+                                <small class="text-muted">Line Items</small>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fw-bold fs-4 text-success">${this.formatCurrency(totalBudget)}</div>
+                                <small class="text-muted">Total Budget</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button class="btn btn-success btn-lg" onclick="budgetViewer.createBudgetFromStep()">
+                        <i class="fas fa-save me-2"></i>Create Budget
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    updateStepModal() {
+        // Update progress bar
+        const progress = (this.currentStep / this.maxSteps) * 100;
+        document.getElementById('stepProgress').style.width = `${progress}%`;
+        
+        // Update step content
+        const stepContent = document.getElementById('stepContent');
+        let content = '';
+        
+        switch (this.currentStep) {
+            case 1:
+                content = this.renderProjectInfoStep();
+                break;
+            case 2:
+                content = this.renderScenarioSelectionStep();
+                break;
+            case 3:
+                content = this.renderTradesOverviewStep();
+                break;
+            case 4:
+                content = this.renderBudgetSummaryStep();
+                break;
+        }
+        
+        stepContent.innerHTML = content;
+        
+        // Update navigation buttons
+        const prevBtn = document.getElementById('prevStepBtn');
+        const nextBtn = document.getElementById('nextStepBtn');
+        const finishBtn = document.getElementById('finishBtn');
+        
+        prevBtn.style.display = this.currentStep === 1 ? 'none' : 'inline-block';
+        
+        if (this.stepData.isAddingLineItems && this.currentStep === 3) {
+            nextBtn.textContent = 'Save & Continue';
+            nextBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save & Continue';
+        } else if (this.currentStep === this.maxSteps) {
+            nextBtn.style.display = 'none';
+            finishBtn.classList.remove('d-none');
+        } else {
+            nextBtn.style.display = 'inline-block';
+            nextBtn.innerHTML = 'Next<i class="fas fa-arrow-right ms-2"></i>';
+            finishBtn.classList.add('d-none');
+        }
+    }
+    
+    renderScenarioSelectionStep() {
+        return `
+            <div class="step-content">
+                <h4 class="mb-4">Project Type Selection</h4>
+                <p class="text-muted mb-4">Choose the type of construction project to get appropriate trade categories and pricing.</p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-2 scenario-type-card" data-type="residential" style="cursor: pointer;">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-home text-primary mb-3" style="font-size: 3rem;"></i>
+                                <h5 class="card-title">Residential</h5>
+                                <p class="card-text text-muted">Single family homes, condos, renovations</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-2 scenario-type-card" data-type="commercial" style="cursor: pointer;">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-building text-info mb-3" style="font-size: 3rem;"></i>
+                                <h5 class="card-title">Commercial</h5>
+                                <p class="card-text text-muted">Office buildings, retail, industrial</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    document.querySelectorAll('.scenario-type-card').forEach(card => {
+                        card.addEventListener('click', function() {
+                            document.querySelectorAll('.scenario-type-card').forEach(c => c.classList.remove('border-primary'));
+                            this.classList.add('border-primary');
+                            budgetViewer.stepData.selectedScenario = { type: this.dataset.type };
+                        });
+                    });
+                </script>
+            </div>
+        `;
+    }
+    
+    renderBudgetSummaryStep() {
+        const totalItems = this.stepData.trades.reduce((sum, trade) => sum + trade.lineItems.length, 0);
+        const totalBudget = this.stepData.trades.reduce((sum, trade) => 
+            sum + trade.lineItems.reduce((tradeSum, item) => tradeSum + item.budgetAmount, 0), 0
+        );
+        
+        return `
+            <div class="step-content">
+                <h4 class="mb-4">Budget Summary</h4>
+                <div class="card border-success">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">Final Budget Overview</h5>
+                        <div class="row text-center mb-4">
+                            <div class="col-md-4">
+                                <div class="fw-bold fs-4">${this.stepData.trades.length}</div>
+                                <small class="text-muted">Trade Categories</small>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fw-bold fs-4">${totalItems}</div>
+                                <small class="text-muted">Line Items</small>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fw-bold fs-4 text-success">${this.formatCurrency(totalBudget)}</div>
+                                <small class="text-muted">Total Budget</small>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion" id="summaryAccordion">
+                            ${this.stepData.trades.map((trade, index) => `
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}">
+                                            ${trade.name} (${trade.lineItems.length} items)
+                                        </button>
+                                    </h2>
+                                    <div id="collapse${index}" class="accordion-collapse collapse" data-bs-parent="#summaryAccordion">
+                                        <div class="accordion-body">
+                                            ${trade.lineItems.map(item => `
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <div>
+                                                        <strong>${item.category}</strong><br>
+                                                        <small class="text-muted">${item.vendor}</small>
+                                                    </div>
+                                                    <span class="text-success fw-bold">${this.formatCurrency(item.budgetAmount)}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    calculateTotalFromTrades(trades) {
+        let total = 0;
+        Object.values(trades).forEach(trade => {
+            trade.lineItems.forEach(item => {
+                total += parseFloat(item.budgetAmount) || 0;
+            });
+        });
+        return total;
     }
     
     showBudgetSaveInfo(budgetEntry, budgetData) {
