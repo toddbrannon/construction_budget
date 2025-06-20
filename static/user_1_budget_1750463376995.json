@@ -1,0 +1,76 @@
+{
+  "project": {
+    "name": "Mountain Lodge Construction",
+    "client": "Mountain View Estates",
+    "address": "2018 Mountain Ridge Road, Park City, UT 84060"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "lineItems": [
+        {
+          "category": "ARCHITECTURAL DESIGN",
+          "vendor": "Design Associates LLC",
+          "budgetAmount": 102203,
+          "notes": ""
+        },
+        {
+          "category": "STRUCTURAL ENGINEERING",
+          "vendor": "Structural Solutions Inc",
+          "budgetAmount": 48020,
+          "notes": ""
+        }
+      ]
+    },
+    "General Conditions": {
+      "name": "General Conditions",
+      "lineItems": [
+        {
+          "category": "BUILDING PERMITS",
+          "vendor": "Local Building Department",
+          "budgetAmount": 22668,
+          "notes": ""
+        },
+        {
+          "category": "SURVEYS",
+          "vendor": "Precision Surveying",
+          "budgetAmount": 10860,
+          "notes": ""
+        }
+      ]
+    },
+    "Shell": {
+      "name": "Shell",
+      "lineItems": [
+        {
+          "category": "SHELL / ROOF FRAMING L&M",
+          "vendor": "Premier Framing Solutions",
+          "budgetAmount": 431243,
+          "notes": ""
+        }
+      ]
+    },
+    "Plumbing": {
+      "name": "Plumbing",
+      "lineItems": [
+        {
+          "category": "ROUGH PLUMBING",
+          "vendor": "Elite Plumbing Systems",
+          "budgetAmount": 72377,
+          "notes": ""
+        }
+      ]
+    },
+    "Electrical & Low Voltage": {
+      "name": "Electrical & Low Voltage",
+      "lineItems": [
+        {
+          "category": "ROUGH ELECTRICAL",
+          "vendor": "Modern Electric Contractors",
+          "budgetAmount": 150547,
+          "notes": ""
+        }
+      ]
+    }
+  }
+}
