@@ -1,0 +1,44 @@
+{
+  "project": {
+    "name": "Historic Home Renovation",
+    "client": "Heritage Preservation Society",
+    "address": "842 Victorian Lane, Charleston, SC 29401", 
+    "totalBudget": 1650000,
+    "status": "completed"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "lineItems": [
+        {
+          "category": "ARCHITECTURAL DESIGN",
+          "vendor": "Historic Restoration Specialists",
+          "budgetAmount": 95000,
+          "notes": "Period-accurate restoration plans for 1890s Victorian mansion"
+        }
+      ]
+    },
+    "General Conditions": {
+      "name": "General Conditions",
+      "lineItems": [
+        {
+          "category": "BUILDING PERMITS", 
+          "vendor": "Charleston Historic District Commission",
+          "budgetAmount": 18000,
+          "notes": "Historic preservation permits and approvals"
+        }
+      ]
+    },
+    "Masonry": {
+      "name": "Masonry",
+      "lineItems": [
+        {
+          "category": "STONE VENEER MATERIAL",
+          "vendor": "Charleston Stoneworks",
+          "budgetAmount": 125000,
+          "notes": "Period-appropriate limestone restoration materials"
+        }
+      ]
+    }
+  }
+}
