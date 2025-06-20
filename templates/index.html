@@ -67,14 +67,22 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h1 class="h2 mb-0 flex-grow-1">
                         <i class="fas fa-hard-hat me-2"></i>
-                        Construction Budget Viewer
+                        <span id="pageTitle">Construction Budget Dashboard</span>
                     </h1>
                     <div class="d-flex gap-2 flex-wrap">
+                        <button id="backToDashboard" class="btn btn-outline-secondary no-print d-none">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            <span class="d-none d-sm-inline">Back to </span>Dashboard
+                        </button>
+                        <button id="editBudgetBtn" class="btn btn-warning no-print d-none">
+                            <i class="fas fa-edit me-1"></i>
+                            <span class="d-none d-sm-inline">Edit </span>Budget
+                        </button>
                         <button id="newBudgetBtn" class="btn btn-success no-print">
                             <i class="fas fa-plus me-1"></i>
                             <span class="d-none d-sm-inline">New </span>Budget
                         </button>
-                        <button id="exportPdfBtn" class="btn btn-outline-primary no-print" disabled>
+                        <button id="exportPdfBtn" class="btn btn-outline-primary no-print d-none">
                             <i class="fas fa-file-pdf me-1"></i>
                             <span class="d-none d-sm-inline">Download </span>PDF
                         </button>
@@ -86,13 +94,66 @@
         <!-- Loading indicator -->
         <div id="loadingIndicator" class="text-center py-5">
             <div class="loading-spinner fa-spin fas fa-spinner fa-2x text-primary"></div>
-            <p class="mt-2">Loading budget data...</p>
+            <p class="mt-2">Loading dashboard...</p>
         </div>
 
         <!-- Error message -->
         <div id="errorMessage" class="alert alert-danger d-none" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
-            <span id="errorText">Failed to load budget data. Please check if the budget.json file exists and is properly formatted.</span>
+            <span id="errorText">Failed to load data. Please refresh the page and try again.</span>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="d-none">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-folder-open me-2"></i>
+                                Your Construction Budgets
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="searchBudgets" placeholder="Search by project name or client...">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="filterStatus">
+                                        <option value="">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="planning">Planning</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="sortBudgets">
+                                        <option value="lastModified">Last Modified</option>
+                                        <option value="projectName">Project Name</option>
+                                        <option value="totalBudget">Budget Amount</option>
+                                        <option value="dateCreated">Date Created</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="budgetsList" class="row">
+                                <!-- Budget cards will be populated here -->
+                            </div>
+                            <div id="noBudgetsMessage" class="text-center py-5 d-none">
+                                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                <h4 class="text-muted">No budgets found</h4>
+                                <p class="text-muted">Create your first construction budget to get started.</p>
+                                <button class="btn btn-success" onclick="document.getElementById('newBudgetBtn').click()">
+                                    <i class="fas fa-plus me-2"></i>Create New Budget
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- New Budget Form -->

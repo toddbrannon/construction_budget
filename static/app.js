@@ -3,6 +3,11 @@ class BudgetViewer {
         this.budgetData = null;
         this.grandTotal = 0;
         this.isNewBudgetMode = false;
+        this.isEditMode = false;
+        this.currentBudgetId = null;
+        this.budgetsList = [];
+        this.filteredBudgets = [];
+        this.currentView = 'dashboard'; // 'dashboard', 'budget', 'new', 'edit'
         this.newBudgetData = {
             project: { name: '', client: '', address: '' },
             trades: {}
@@ -385,20 +390,35 @@ class BudgetViewer {
     
     async init() {
         try {
-            await this.loadBudgetData();
-            this.renderBudget();
+            await this.loadBudgetsList();
+            this.renderDashboard();
             this.setupEventListeners();
             this.hideLoading();
         } catch (error) {
             console.error('Failed to initialize budget viewer:', error);
-            this.showError('Failed to load budget data. Please refresh the page and try again.');
+            this.showError('Failed to load dashboard data. Please refresh the page and try again.');
             this.hideLoading();
         }
     }
     
-    async loadBudgetData() {
+    async loadBudgetsList() {
         try {
-            const response = await fetch('/static/budget.json');
+            const response = await fetch('/static/budgets.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            this.budgetsList = data.budgets || [];
+            this.filteredBudgets = [...this.budgetsList];
+        } catch (error) {
+            console.error('Error loading budgets list:', error);
+            throw error;
+        }
+    }
+
+    async loadBudgetData(filename = 'budget.json') {
+        try {
+            const response = await fetch(`/static/${filename}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -544,18 +564,26 @@ class BudgetViewer {
             }
         });
         
-        // PDF export
-        document.getElementById('exportPdfBtn').addEventListener('click', () => {
-            this.exportToPDF();
+        // Navigation buttons
+        document.getElementById('backToDashboard').addEventListener('click', () => {
+            this.showDashboard();
         });
         
-        // New budget functionality
+        document.getElementById('editBudgetBtn').addEventListener('click', () => {
+            this.editCurrentBudget();
+        });
+        
         document.getElementById('newBudgetBtn').addEventListener('click', () => {
             this.showNewBudgetForm();
         });
         
+        document.getElementById('exportPdfBtn').addEventListener('click', () => {
+            this.exportToPDF();
+        });
+        
+        // New budget form
         document.getElementById('cancelNewBudget').addEventListener('click', () => {
-            this.hideNewBudgetForm();
+            this.showDashboard();
         });
         
         document.getElementById('addTradeBtn').addEventListener('click', () => {
@@ -570,8 +598,18 @@ class BudgetViewer {
             this.previewNewBudget();
         });
         
-        // Enable PDF export button
-        document.getElementById('exportPdfBtn').disabled = false;
+        // Dashboard search and filters
+        document.getElementById('searchBudgets').addEventListener('input', (e) => {
+            this.filterBudgets();
+        });
+        
+        document.getElementById('filterStatus').addEventListener('change', () => {
+            this.filterBudgets();
+        });
+        
+        document.getElementById('sortBudgets').addEventListener('change', () => {
+            this.sortAndRenderBudgets();
+        });
     }
     
     toggleTradeSection(toggleBtn) {
@@ -775,21 +813,88 @@ class BudgetViewer {
     
     hideLoading() {
         document.getElementById('loadingIndicator').classList.add('d-none');
-        document.getElementById('budgetContent').classList.remove('d-none');
+        if (this.currentView === 'dashboard') {
+            document.getElementById('dashboard').classList.remove('d-none');
+        } else {
+            document.getElementById('budgetContent').classList.remove('d-none');
+        }
+    }
+    
+    showDashboard() {
+        this.currentView = 'dashboard';
+        this.currentBudgetId = null;
+        this.isEditMode = false;
+        document.getElementById('pageTitle').textContent = 'Construction Budget Dashboard';
+        document.getElementById('dashboard').classList.remove('d-none');
+        document.getElementById('budgetContent').classList.add('d-none');
+        document.getElementById('newBudgetForm').classList.add('d-none');
+        document.getElementById('backToDashboard').classList.add('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        document.getElementById('exportPdfBtn').classList.add('d-none');
+        this.renderDashboard();
+    }
+    
+    async showBudgetViewer(budgetId) {
+        this.currentView = 'budget';
+        this.currentBudgetId = budgetId;
+        const budget = this.budgetsList.find(b => b.id === budgetId);
+        
+        if (!budget) {
+            this.showError('Budget not found');
+            return;
+        }
+        
+        try {
+            await this.loadBudgetData(budget.filename);
+            document.getElementById('pageTitle').textContent = `Budget: ${budget.projectName}`;
+            document.getElementById('dashboard').classList.add('d-none');
+            document.getElementById('newBudgetForm').classList.add('d-none');
+            document.getElementById('budgetContent').classList.remove('d-none');
+            document.getElementById('backToDashboard').classList.remove('d-none');
+            document.getElementById('editBudgetBtn').classList.remove('d-none');
+            document.getElementById('exportPdfBtn').classList.remove('d-none');
+            this.renderBudget();
+        } catch (error) {
+            this.showError('Failed to load budget data');
+        }
     }
     
     showNewBudgetForm() {
+        this.currentView = 'new';
+        document.getElementById('pageTitle').textContent = 'Create New Budget';
+        document.getElementById('dashboard').classList.add('d-none');
         document.getElementById('budgetContent').classList.add('d-none');
         document.getElementById('newBudgetForm').classList.remove('d-none');
         document.getElementById('loadingIndicator').classList.add('d-none');
+        document.getElementById('backToDashboard').classList.remove('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        document.getElementById('exportPdfBtn').classList.add('d-none');
         this.isNewBudgetMode = true;
+        this.isEditMode = false;
         this.resetNewBudgetForm();
     }
     
-    hideNewBudgetForm() {
-        document.getElementById('newBudgetForm').classList.add('d-none');
-        document.getElementById('budgetContent').classList.remove('d-none');
+    editCurrentBudget() {
+        if (!this.budgetData) return;
+        
+        this.currentView = 'edit';
+        this.isEditMode = true;
         this.isNewBudgetMode = false;
+        document.getElementById('pageTitle').textContent = `Edit Budget: ${this.budgetData.project.name}`;
+        document.getElementById('budgetContent').classList.add('d-none');
+        document.getElementById('newBudgetForm').classList.remove('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        this.populateEditForm();
+    }
+    
+    hideNewBudgetForm() {
+        if (this.currentView === 'edit') {
+            this.showBudgetViewer(this.currentBudgetId);
+        } else {
+            this.showDashboard();
+        }
+        this.isNewBudgetMode = false;
+        this.isEditMode = false;
     }
     
     resetNewBudgetForm() {
@@ -803,6 +908,10 @@ class BudgetViewer {
         };
         this.tradeCounter = 0;
         this.addNewTrade(); // Add one trade section by default
+        
+        // Reset button text
+        const saveButton = document.getElementById('saveNewBudget');
+        saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Save Budget';
     }
     
     addNewTrade() {
@@ -926,15 +1035,26 @@ class BudgetViewer {
         
         this.collectNewBudgetData();
         this.budgetData = { ...this.newBudgetData };
-        this.renderBudget();
-        this.hideNewBudgetForm();
         
-        // Show success message
+        if (this.isEditMode) {
+            // Update existing budget
+            this.renderBudget();
+            this.showBudgetViewer(this.currentBudgetId);
+            this.showSuccessMessage('Budget updated successfully!');
+        } else {
+            // Create new budget
+            this.renderBudget();
+            this.hideNewBudgetForm();
+            this.showSuccessMessage('Budget created successfully!');
+        }
+    }
+    
+    showSuccessMessage(message) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-success alert-dismissible fade show';
         alert.innerHTML = `
             <i class="fas fa-check-circle me-2"></i>
-            Budget saved successfully!
+            ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
         document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
@@ -955,8 +1075,14 @@ class BudgetViewer {
         this.collectNewBudgetData();
         const originalData = this.budgetData;
         this.budgetData = { ...this.newBudgetData };
+        
+        this.currentView = 'preview';
+        document.getElementById('pageTitle').textContent = `Preview: ${this.newBudgetData.project.name}`;
+        document.getElementById('newBudgetForm').classList.add('d-none');
+        document.getElementById('budgetContent').classList.remove('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        document.getElementById('exportPdfBtn').classList.remove('d-none');
         this.renderBudget();
-        this.hideNewBudgetForm();
         
         // Show preview notice
         const alert = document.createElement('div');
@@ -1112,6 +1238,156 @@ class BudgetViewer {
                 categorySelect.parentNode.appendChild(helpText);
             }
         }
+    }
+    
+    renderDashboard() {
+        this.sortAndRenderBudgets();
+    }
+    
+    filterBudgets() {
+        const searchTerm = document.getElementById('searchBudgets').value.toLowerCase();
+        const statusFilter = document.getElementById('filterStatus').value;
+        
+        this.filteredBudgets = this.budgetsList.filter(budget => {
+            const matchesSearch = budget.projectName.toLowerCase().includes(searchTerm) ||
+                                budget.client.toLowerCase().includes(searchTerm);
+            const matchesStatus = !statusFilter || budget.status === statusFilter;
+            return matchesSearch && matchesStatus;
+        });
+        
+        this.sortAndRenderBudgets();
+    }
+    
+    sortAndRenderBudgets() {
+        const sortBy = document.getElementById('sortBudgets').value;
+        
+        this.filteredBudgets.sort((a, b) => {
+            switch (sortBy) {
+                case 'projectName':
+                    return a.projectName.localeCompare(b.projectName);
+                case 'totalBudget':
+                    return b.totalBudget - a.totalBudget;
+                case 'dateCreated':
+                    return new Date(b.dateCreated) - new Date(a.dateCreated);
+                case 'lastModified':
+                default:
+                    return new Date(b.lastModified) - new Date(a.lastModified);
+            }
+        });
+        
+        this.renderBudgetCards();
+    }
+    
+    renderBudgetCards() {
+        const container = document.getElementById('budgetsList');
+        const noResults = document.getElementById('noBudgetsMessage');
+        
+        if (this.filteredBudgets.length === 0) {
+            container.innerHTML = '';
+            noResults.classList.remove('d-none');
+            return;
+        }
+        
+        noResults.classList.add('d-none');
+        
+        container.innerHTML = this.filteredBudgets.map(budget => {
+            const statusBadge = this.getStatusBadge(budget.status);
+            const formattedDate = new Date(budget.lastModified).toLocaleDateString();
+            
+            return `
+                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 budget-card" data-budget-id="${budget.id}" style="cursor: pointer;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 text-truncate me-2">${this.escapeHtml(budget.projectName)}</h6>
+                            ${statusBadge}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-2">
+                                <strong>Client:</strong><br>
+                                <small class="text-muted">${this.escapeHtml(budget.client)}</small>
+                            </p>
+                            <p class="card-text mb-2">
+                                <strong>Address:</strong><br>
+                                <small class="text-muted">${this.escapeHtml(budget.address)}</small>
+                            </p>
+                            <p class="card-text mb-2">
+                                <strong>Total Budget:</strong><br>
+                                <span class="currency fw-bold text-success">${this.formatCurrency(budget.totalBudget)}</span>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Last modified: ${formattedDate}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Add click handlers to budget cards
+        container.querySelectorAll('.budget-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const budgetId = card.dataset.budgetId;
+                this.showBudgetViewer(budgetId);
+            });
+        });
+    }
+    
+    getStatusBadge(status) {
+        const badges = {
+            'active': '<span class="badge bg-success">Active</span>',
+            'planning': '<span class="badge bg-warning">Planning</span>',
+            'completed': '<span class="badge bg-primary">Completed</span>'
+        };
+        return badges[status] || '<span class="badge bg-secondary">Unknown</span>';
+    }
+    
+    populateEditForm() {
+        if (!this.budgetData) return;
+        
+        // Populate project information
+        document.getElementById('newProjectName').value = this.budgetData.project.name || '';
+        document.getElementById('newProjectClient').value = this.budgetData.project.client || '';
+        document.getElementById('newProjectAddress').value = this.budgetData.project.address || '';
+        
+        // Clear existing trades
+        document.getElementById('newTradesContainer').innerHTML = '';
+        this.tradeCounter = 0;
+        
+        // Populate trades
+        Object.entries(this.budgetData.trades).forEach(([tradeKey, trade]) => {
+            if (!trade.line_items || trade.line_items.length === 0) return;
+            
+            this.addNewTrade();
+            const tradeDiv = document.querySelector('[data-trade-key]:last-child');
+            const tradeNameSelect = tradeDiv.querySelector('.trade-name');
+            
+            // Set trade name
+            tradeNameSelect.value = trade.name;
+            tradeNameSelect.dispatchEvent(new Event('change'));
+            
+            // Clear default line item
+            const lineItemsContainer = tradeDiv.querySelector('.line-items-container');
+            lineItemsContainer.innerHTML = '';
+            
+            // Add line items
+            trade.line_items.forEach(item => {
+                const lineItem = this.addLineItem(lineItemsContainer, trade.name);
+                
+                // Populate line item data
+                const categorySelect = lineItem.querySelector('.item-category');
+                categorySelect.value = item.category;
+                lineItem.querySelector('.item-vendor').value = item.vendor;
+                lineItem.querySelector('.item-budget').value = item.budget;
+                lineItem.querySelector('.item-notes').value = item.notes || '';
+            });
+        });
+        
+        // Update button text for edit mode
+        const saveButton = document.getElementById('saveNewBudget');
+        saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Update Budget';
     }
 }
 
