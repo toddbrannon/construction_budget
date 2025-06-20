@@ -403,7 +403,11 @@ class BudgetViewer {
     
     async loadBudgetsList() {
         try {
-            const response = await fetch('/static/budgets.json');
+            const response = await fetch('/api/budgets');
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -412,7 +416,8 @@ class BudgetViewer {
             this.filteredBudgets = [...this.budgetsList];
         } catch (error) {
             console.error('Error loading budgets list:', error);
-            throw error;
+            this.budgetsList = [];
+            this.filteredBudgets = [];
         }
     }
 
@@ -430,7 +435,7 @@ class BudgetViewer {
             }
         } catch (error) {
             console.error('Error loading budget data:', error);
-            throw error;
+            this.showError(`Failed to load budget: ${filename}`);
         }
     }
     

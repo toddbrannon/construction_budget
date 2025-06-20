@@ -1,19 +1,50 @@
 import os
 import logging
 import json
-from flask import Flask, render_template, send_from_directory, request, jsonify
+from datetime import datetime
+from flask import Flask, render_template, send_from_directory, request, jsonify, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from sqlalchemy.orm import DeclarativeBase
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Configure logging for debugging
 logging.basicConfig(level=logging.DEBUG)
 
-# Create the Flask app
+class Base(DeclarativeBase):
+    pass
+
+# Create Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
+app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+# Database configuration
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    'pool_pre_ping': True,
+    "pool_recycle": 300,
+}
+
+# Initialize extensions
+db = SQLAlchemy(app, model_class=Base)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access this page.'
+
+@login_manager.user_loader
+def load_user(user_id):
+    from models import User
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
     """Serve the main budget viewer page"""
-    return render_template('index.html')
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+    return render_template('index.html', user=current_user)
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -39,7 +70,6 @@ def login():
         
         if user and user.check_password(password):
             login_user(user, remember=True)
-            from datetime import datetime
             user.last_login = datetime.utcnow()
             db.session.commit()
             
@@ -186,6 +216,3 @@ with app.app_context():
             app.logger.info("Created test user: shoppers / password123")
     except Exception as e:
         app.logger.error(f"Error during startup initialization: {str(e)}")
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
