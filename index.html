@@ -453,6 +453,14 @@
                 document.getElementById('filterModalBackdrop').addEventListener('click', () => this.hideFilterModal());
                 document.getElementById('clearFilters').addEventListener('click', () => this.clearAllFilters());
                 document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
+                
+                // Create new budget button
+                document.getElementById('createNewBudgetBtn').addEventListener('click', () => this.showNewBudgetForm());
+                
+                // New budget form
+                document.getElementById('cancelNewBudget').addEventListener('click', () => this.hideNewBudgetForm());
+                document.getElementById('saveNewBudget').addEventListener('click', () => this.saveNewBudget());
+                document.getElementById('addTradeBtn').addEventListener('click', () => this.addNewTrade());
             }
             
             async loadBudgetsList() {
@@ -660,6 +668,222 @@
             showBudgetViewer(budgetId) {
                 console.log('Opening budget:', budgetId);
                 // This would load the budget details
+            }
+            
+            showNewBudgetForm() {
+                document.getElementById('dashboardView').classList.add('d-none');
+                document.getElementById('newBudgetView').classList.remove('d-none');
+                this.currentView = 'newBudget';
+                this.resetNewBudgetForm();
+            }
+            
+            hideNewBudgetForm() {
+                document.getElementById('newBudgetView').classList.add('d-none');
+                document.getElementById('dashboardView').classList.remove('d-none');
+                this.currentView = 'dashboard';
+            }
+            
+            resetNewBudgetForm() {
+                document.getElementById('projectName').value = '';
+                document.getElementById('clientName').value = '';
+                document.getElementById('projectAddress').value = '';
+                document.getElementById('tradesContainer').innerHTML = '';
+                this.tradeCounter = 0;
+                this.addNewTrade(); // Add one default trade
+            }
+            
+            addNewTrade() {
+                this.tradeCounter++;
+                const tradesContainer = document.getElementById('tradesContainer');
+                const tradeDiv = document.createElement('div');
+                tradeDiv.className = 'trade-section mb-4 p-3 border rounded';
+                tradeDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">Trade ${this.tradeCounter}</h6>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="budgetManager.removeTrade(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Trade Name</label>
+                            <input type="text" class="form-control trade-name" placeholder="e.g., Foundation, Framing, Electrical">
+                        </div>
+                    </div>
+                    <div class="line-items-container">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h7>Line Items</h7>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="budgetManager.addLineItem(this.closest('.trade-section'))">
+                                <i class="fas fa-plus"></i> Add Item
+                            </button>
+                        </div>
+                        <div class="line-items">
+                            <!-- Line items will be added here -->
+                        </div>
+                    </div>
+                `;
+                tradesContainer.appendChild(tradeDiv);
+                this.addLineItem(tradeDiv); // Add one default line item
+            }
+            
+            removeTrade(button) {
+                const tradeSection = button.closest('.trade-section');
+                tradeSection.remove();
+            }
+            
+            addLineItem(container) {
+                const lineItemsDiv = container.querySelector('.line-items');
+                const lineItemDiv = document.createElement('div');
+                lineItemDiv.className = 'line-item row mb-2';
+                lineItemDiv.innerHTML = `
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Description" name="description">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" placeholder="Quantity" name="quantity" min="0" step="0.01">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" placeholder="Unit" name="unit">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" placeholder="Unit Cost" name="unitCost" min="0" step="0.01">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="budgetManager.removeLineItem(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                lineItemsDiv.appendChild(lineItemDiv);
+            }
+            
+            removeLineItem(button) {
+                const lineItem = button.closest('.line-item');
+                lineItem.remove();
+            }
+            
+            async saveNewBudget() {
+                const budgetData = this.collectNewBudgetData();
+                if (!this.validateNewBudget(budgetData)) {
+                    return;
+                }
+                
+                // Generate unique ID
+                const budgetId = this.generateBudgetId(budgetData.project.name);
+                
+                // Create budget entry for the list
+                const budgetEntry = {
+                    id: budgetId,
+                    projectName: budgetData.project.name,
+                    client: budgetData.project.client,
+                    address: budgetData.project.address,
+                    dateCreated: new Date().toISOString().split('T')[0],
+                    lastModified: new Date().toISOString().split('T')[0],
+                    status: 'planning',
+                    totalBudget: this.calculateTotalBudgetAmount(budgetData),
+                    filename: `${budgetId}.json`
+                };
+                
+                // Add to budgets list
+                this.budgetsList.push(budgetEntry);
+                this.saveBudgetsList();
+                
+                // Save budget data
+                this.saveBudgetToStorage(budgetId, budgetData);
+                
+                // Show success and return to dashboard
+                this.showSuccessMessage('Budget created successfully!');
+                this.hideNewBudgetForm();
+                this.renderDashboard();
+            }
+            
+            collectNewBudgetData() {
+                const budgetData = {
+                    project: {
+                        name: document.getElementById('projectName').value.trim(),
+                        client: document.getElementById('clientName').value.trim(),
+                        address: document.getElementById('projectAddress').value.trim()
+                    },
+                    trades: {}
+                };
+                
+                const tradeSections = document.querySelectorAll('.trade-section');
+                tradeSections.forEach((section, index) => {
+                    const tradeName = section.querySelector('.trade-name').value.trim() || `Trade ${index + 1}`;
+                    const lineItems = [];
+                    
+                    section.querySelectorAll('.line-item').forEach(item => {
+                        const description = item.querySelector('[name="description"]').value.trim();
+                        const quantity = parseFloat(item.querySelector('[name="quantity"]').value) || 0;
+                        const unit = item.querySelector('[name="unit"]').value.trim();
+                        const unitCost = parseFloat(item.querySelector('[name="unitCost"]').value) || 0;
+                        
+                        if (description) {
+                            lineItems.push({
+                                description,
+                                quantity,
+                                unit,
+                                unitCost,
+                                total: quantity * unitCost
+                            });
+                        }
+                    });
+                    
+                    if (lineItems.length > 0) {
+                        budgetData.trades[tradeName] = { lineItems };
+                    }
+                });
+                
+                return budgetData;
+            }
+            
+            validateNewBudget(budgetData) {
+                if (!budgetData.project.name) {
+                    this.showError('Project name is required');
+                    return false;
+                }
+                if (!budgetData.project.client) {
+                    this.showError('Client name is required');
+                    return false;
+                }
+                if (Object.keys(budgetData.trades).length === 0) {
+                    this.showError('At least one trade with line items is required');
+                    return false;
+                }
+                return true;
+            }
+            
+            generateBudgetId(projectName) {
+                const cleanName = projectName.toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, '')
+                    .replace(/\s+/g, '-')
+                    .substring(0, 30);
+                const year = new Date().getFullYear();
+                const timestamp = Date.now().toString().slice(-4);
+                return `${cleanName}-${year}-${timestamp}`;
+            }
+            
+            calculateTotalBudgetAmount(budgetData) {
+                let total = 0;
+                Object.values(budgetData.trades).forEach(trade => {
+                    trade.lineItems.forEach(item => {
+                        total += item.total || 0;
+                    });
+                });
+                return total;
+            }
+            
+            saveBudgetsList() {
+                localStorage.setItem('constructionBudgetsList', JSON.stringify(this.budgetsList));
+            }
+            
+            saveBudgetToStorage(budgetId, budgetData) {
+                localStorage.setItem(`constructionBudget_${budgetId}`, JSON.stringify(budgetData));
+            }
+            
+            showSuccessMessage(message) {
+                // Simple alert for now - could be improved with a toast notification
+                alert(message);
             }
         }
         
