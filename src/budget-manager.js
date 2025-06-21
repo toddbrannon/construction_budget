@@ -400,6 +400,7 @@ export class BudgetManager {
         this.renderProjectInfo();
         this.renderTradeSections();
         this.calculateGrandTotal();
+        this.showCollapseExpandHint();
     }
 
     renderProjectInfo() {
@@ -436,20 +437,38 @@ export class BudgetManager {
             tradeSectionsContainer.appendChild(tradeSection);
         });
     }
+    
+    showCollapseExpandHint() {
+        const tradeSectionsContainer = document.getElementById('tradeSections');
+        if (tradeSectionsContainer.children.length > 0) {
+            const hintDiv = document.createElement('div');
+            hintDiv.className = 'alert alert-info mb-3';
+            hintDiv.innerHTML = `
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Tip:</strong> Click on any trade section header to expand and view line items.
+            `;
+            tradeSectionsContainer.insertBefore(hintDiv, tradeSectionsContainer.firstChild);
+        }
+    }
 
     createTradeSection(tradeKey, trade) {
         const section = document.createElement('div');
         section.className = 'trade-section fade-in';
         
         const subtotal = this.calculateTradeSubtotal(trade.line_items);
+        const itemCount = trade.line_items.length;
+        const itemText = itemCount === 1 ? 'item' : 'items';
         
         section.innerHTML = `
             <div class="trade-header" onclick="budgetManager.toggleTradeSection(this)">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-chevron-right me-2 trade-toggle"></i>
-                        ${this.escapeHtml(trade.name)}
-                    </h5>
+                    <div>
+                        <h5 class="mb-0">
+                            <i class="fas fa-chevron-right me-2 trade-toggle"></i>
+                            ${this.escapeHtml(trade.name)}
+                        </h5>
+                        <small class="text-muted">${itemCount} ${itemText}</small>
+                    </div>
                     <span class="currency">${this.formatCurrency(subtotal)}</span>
                 </div>
             </div>
