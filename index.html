@@ -602,12 +602,12 @@
                     <div class="card budget-card h-100" onclick="budgetManager.showBudgetViewer('${budget.id}')">
                         <div class="card-body">
                             <h5 class="card-title">${this.escapeHtml(budget.projectName)}</h5>
+                            <span class="badge ${this.getStatusBadgeClass(budget.status)} mb-2">${this.getStatusText(budget.status)}</span>
                             <p class="card-text">
                                 <strong>Client:</strong> ${this.escapeHtml(budget.client)}<br>
                                 <small class="text-muted d-block mt-1">${this.escapeHtml(budget.address)}</small>
                             </p>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge ${this.getStatusBadgeClass(budget.status)}">${this.getStatusText(budget.status)}</span>
                                 <span class="currency">${this.formatCurrency(budget.totalBudget)}</span>
                             </div>
                             <small class="text-muted">
