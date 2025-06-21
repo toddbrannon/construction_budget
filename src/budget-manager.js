@@ -1279,9 +1279,8 @@ export class BudgetManager {
         return texts[status] || 'Unknown';
     }
 
-    // Make the budget manager globally available
-    window.budgetManager = this;
+
 }
 
-// Export for use in main.js
-window.BudgetManager = BudgetManager;
+// Export the class for ES6 modules
+export { BudgetManager };
