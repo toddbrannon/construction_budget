@@ -446,21 +446,35 @@
             }
             
             setupEventListeners() {
-                // Search and filter
-                document.getElementById('searchInput').addEventListener('input', () => this.filterBudgets());
-                document.getElementById('filterToggle').addEventListener('click', () => this.showFilterModal());
-                document.getElementById('closeFilter').addEventListener('click', () => this.hideFilterModal());
-                document.getElementById('filterModalBackdrop').addEventListener('click', () => this.hideFilterModal());
-                document.getElementById('clearFilters').addEventListener('click', () => this.clearAllFilters());
-                document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
-                
-                // Create new budget button
-                document.getElementById('createNewBudgetBtn').addEventListener('click', () => this.showNewBudgetForm());
-                
-                // New budget form
-                document.getElementById('cancelNewBudget').addEventListener('click', () => this.hideNewBudgetForm());
-                document.getElementById('saveNewBudget').addEventListener('click', () => this.saveNewBudget());
-                document.getElementById('addTradeBtn').addEventListener('click', () => this.addNewTrade());
+                try {
+                    // Search and filter
+                    const searchInput = document.getElementById('searchInput');
+                    const filterToggle = document.getElementById('filterToggle');
+                    const closeFilter = document.getElementById('closeFilter');
+                    const filterModalBackdrop = document.getElementById('filterModalBackdrop');
+                    const clearFilters = document.getElementById('clearFilters');
+                    const applyFilters = document.getElementById('applyFilters');
+                    const createNewBudgetBtn = document.getElementById('createNewBudgetBtn');
+                    
+                    if (searchInput) searchInput.addEventListener('input', () => this.filterBudgets());
+                    if (filterToggle) filterToggle.addEventListener('click', () => this.showFilterModal());
+                    if (closeFilter) closeFilter.addEventListener('click', () => this.hideFilterModal());
+                    if (filterModalBackdrop) filterModalBackdrop.addEventListener('click', () => this.hideFilterModal());
+                    if (clearFilters) clearFilters.addEventListener('click', () => this.clearAllFilters());
+                    if (applyFilters) applyFilters.addEventListener('click', () => this.applyFilters());
+                    if (createNewBudgetBtn) createNewBudgetBtn.addEventListener('click', () => this.showNewBudgetForm());
+                    
+                    // New budget form elements (these may not exist initially)
+                    const cancelNewBudget = document.getElementById('cancelNewBudget');
+                    const saveNewBudget = document.getElementById('saveNewBudget');
+                    const addTradeBtn = document.getElementById('addTradeBtn');
+                    
+                    if (cancelNewBudget) cancelNewBudget.addEventListener('click', () => this.hideNewBudgetForm());
+                    if (saveNewBudget) saveNewBudget.addEventListener('click', () => this.saveNewBudget());
+                    if (addTradeBtn) addTradeBtn.addEventListener('click', () => this.addNewTrade());
+                } catch (error) {
+                    console.error('Error setting up event listeners:', error);
+                }
             }
             
             async loadBudgetsList() {
@@ -661,8 +675,19 @@
                 const errorDiv = document.getElementById('errorMessage');
                 const errorText = document.getElementById('errorText');
                 
-                errorText.textContent = message;
-                errorDiv.classList.remove('d-none');
+                if (errorDiv && errorText) {
+                    errorText.textContent = message;
+                    errorDiv.classList.remove('d-none');
+                } else {
+                    console.error('Error:', message);
+                }
+            }
+            
+            hideError() {
+                const errorDiv = document.getElementById('errorMessage');
+                if (errorDiv) {
+                    errorDiv.classList.add('d-none');
+                }
             }
             
             showBudgetViewer(budgetId) {
