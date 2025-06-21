@@ -428,10 +428,30 @@ class BudgetViewer {
             if (!this.budgetData.project || !this.budgetData.trades) {
                 throw new Error('Invalid budget data structure');
             }
+            
+            // Normalize data structure for consistent handling
+            this.normalizeTradesData();
         } catch (error) {
             console.error('Error loading budget data:', error);
             throw error;
         }
+    }
+    
+    normalizeTradesData() {
+        // Convert old format to new format if needed
+        const normalizedTrades = {};
+        
+        Object.entries(this.budgetData.trades).forEach(([key, trade]) => {
+            if (trade.line_items && Array.isArray(trade.line_items)) {
+                // Already in correct format
+                normalizedTrades[trade.name || key] = trade;
+            } else {
+                // Convert old format
+                normalizedTrades[trade.name || key] = trade;
+            }
+        });
+        
+        this.budgetData.trades = normalizedTrades;
     }
     
     renderBudget() {
@@ -1541,8 +1561,11 @@ Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
             const tradeDiv = document.querySelector('[data-trade-key]:last-child');
             const tradeNameSelect = tradeDiv.querySelector('.trade-name');
             
+            // Find matching trade name from our predefined list
+            const matchingTradeName = this.findMatchingTradeName(trade.name);
+            
             // Set trade name
-            tradeNameSelect.value = trade.name;
+            tradeNameSelect.value = matchingTradeName;
             tradeNameSelect.dispatchEvent(new Event('change'));
             
             // Clear default line item
@@ -1551,13 +1574,26 @@ Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
             
             // Add line items
             trade.line_items.forEach(item => {
-                const lineItem = this.addLineItem(lineItemsContainer, trade.name);
+                const lineItem = this.addLineItem(lineItemsContainer, matchingTradeName);
                 
                 // Populate line item data
                 const categorySelect = lineItem.querySelector('.item-category');
-                categorySelect.value = item.category;
-                lineItem.querySelector('.item-vendor').value = item.vendor;
-                lineItem.querySelector('.item-budget').value = item.budget;
+                
+                // Try to find matching category
+                const matchingCategory = this.findMatchingCategory(item.category, matchingTradeName);
+                if (matchingCategory) {
+                    categorySelect.value = matchingCategory;
+                } else {
+                    // If no exact match, add a custom option
+                    const customOption = document.createElement('option');
+                    customOption.value = item.category;
+                    customOption.textContent = item.category;
+                    categorySelect.appendChild(customOption);
+                    categorySelect.value = item.category;
+                }
+                
+                lineItem.querySelector('.item-vendor').value = item.vendor || '';
+                lineItem.querySelector('.item-budget').value = item.budget || 0;
                 lineItem.querySelector('.item-notes').value = item.notes || '';
             });
         });
@@ -1565,6 +1601,43 @@ Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
         // Update button text for edit mode
         const saveButton = document.getElementById('saveNewBudget');
         saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Update Budget';
+    }
+    
+    findMatchingTradeName(tradeName) {
+        // Try to find exact match first
+        if (this.tradeNames.includes(tradeName)) {
+            return tradeName;
+        }
+        
+        // Try to find partial match
+        const lowerTradeName = tradeName.toLowerCase();
+        const match = this.tradeNames.find(name => 
+            name.toLowerCase().includes(lowerTradeName) || 
+            lowerTradeName.includes(name.toLowerCase())
+        );
+        
+        return match || this.tradeNames[0]; // Default to first trade if no match
+    }
+    
+    findMatchingCategory(categoryName, tradeName) {
+        if (!tradeName || !this.tradeCategoryMapping[tradeName]) {
+            return null;
+        }
+        
+        const categories = this.tradeCategoryMapping[tradeName];
+        
+        // Try exact match first
+        const exactMatch = categories.find(cat => cat.name === categoryName);
+        if (exactMatch) return exactMatch.name;
+        
+        // Try partial match
+        const lowerCategoryName = categoryName.toLowerCase();
+        const partialMatch = categories.find(cat => 
+            cat.name.toLowerCase().includes(lowerCategoryName) ||
+            lowerCategoryName.includes(cat.name.toLowerCase())
+        );
+        
+        return partialMatch ? partialMatch.name : null;
     }
 }
 
