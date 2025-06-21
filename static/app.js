@@ -1041,13 +1041,12 @@ class BudgetViewer {
             await this.updateExistingBudget();
             this.renderBudget();
             this.showBudgetViewer(this.currentBudgetId);
-            this.showSuccessMessage('Budget updated successfully!');
+
         } else {
             // Create new budget
             await this.saveNewBudgetToList();
             this.renderBudget();
             this.hideNewBudgetForm();
-            this.showSuccessMessage('Budget created successfully! (Note: In production, this would be saved to the server)');
         }
     }
     
@@ -1094,7 +1093,7 @@ class BudgetViewer {
                 this.filteredBudgets = [...this.budgetsList];
                 this.currentBudgetId = newBudgetId;
                 
-                this.showSuccessMessage('Budget saved successfully to JSON files!');
+                this.showSuccessMessage('New budget saved to JSON files!');
             } else {
                 throw new Error('Failed to save budget to server');
             }
@@ -1150,7 +1149,7 @@ class BudgetViewer {
                     this.budgetsList[budgetIndex] = updatedBudgetEntry;
                     this.filteredBudgets = [...this.budgetsList];
                     
-                    this.showSuccessMessage('Budget updated successfully in JSON files!');
+                    this.showSuccessMessage('Budget updated and saved to JSON files!');
                 } else {
                     throw new Error('Failed to update budget on server');
                 }
@@ -1350,12 +1349,8 @@ Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
                     const notes = item.querySelector('.item-notes').value.trim();
                     
                     if (category && vendor && budget > 0) {
-                        const categoryOption = categorySelect.options[categorySelect.selectedIndex];
-                        const categoryCode = categoryOption ? categoryOption.getAttribute('data-code') : '';
-                        
                         lineItems.push({
                             category,
-                            categoryCode,
                             vendor,
                             budget,
                             notes: notes || undefined
@@ -1364,7 +1359,7 @@ Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
                 });
                 
                 if (lineItems.length > 0) {
-                    this.newBudgetData.trades[tradeKey] = {
+                    this.newBudgetData.trades[tradeName] = {
                         name: tradeName,
                         line_items: lineItems
                     };
