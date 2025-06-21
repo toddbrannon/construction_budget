@@ -1,5 +1,4 @@
-import jsPDF from 'jspdf'
-import 'jspdf-autotable'
+// Import will be handled by CDN for now
 
 export class BudgetManager {
     constructor() {
@@ -340,8 +339,10 @@ export class BudgetManager {
                 });
                 
                 this.budgetsList = allBudgets;
+                console.log('Loaded budgets:', this.budgetsList);
             } else {
                 this.budgetsList = savedBudgets;
+                console.log('Using saved budgets only:', this.budgetsList);
             }
             
             this.filteredBudgets = [...this.budgetsList];
@@ -569,6 +570,7 @@ export class BudgetManager {
     async exportToPDF() {
         if (!this.budgetData) return;
         
+        const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
         await this.generatePDFContent(pdf);
         pdf.save(`${this.budgetData.project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_budget.pdf`);

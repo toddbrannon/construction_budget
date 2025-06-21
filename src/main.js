@@ -1,7 +1,3 @@
-// Import CSS
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './style.css'
-
 // Import the budget manager class
 import { BudgetManager } from './budget-manager.js'
 
