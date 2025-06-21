@@ -13,22 +13,12 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 @app.route('/')
 def index():
     """Serve the main budget viewer page"""
-    return send_from_directory('.', 'index.html')
+    return render_template('index.html')
 
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     """Serve static files"""
     return send_from_directory('static', filename)
-
-@app.route('/<path:filename>')
-def serve_public(filename):
-    """Serve public files (JSON data, etc.)"""
-    return send_from_directory('public', filename)
-
-@app.route('/src/<path:filename>')
-def serve_src(filename):
-    """Serve Vite source files"""
-    return send_from_directory('src', filename)
 
 @app.route('/api/budgets', methods=['GET'])
 def get_budgets():

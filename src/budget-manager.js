@@ -1,4 +1,5 @@
-// Import will be handled by CDN for now
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 export class BudgetManager {
     constructor() {
@@ -15,11 +16,6 @@ export class BudgetManager {
             trades: {}
         };
         this.tradeCounter = 0;
-        this.activeFilters = {
-            status: '',
-            sort: 'modified',
-            order: 'desc'
-        };
         
         this.tradeNames = [
             'Professional Services',
@@ -339,10 +335,8 @@ export class BudgetManager {
                 });
                 
                 this.budgetsList = allBudgets;
-                console.log('Loaded budgets:', this.budgetsList);
             } else {
                 this.budgetsList = savedBudgets;
-                console.log('Using saved budgets only:', this.budgetsList);
             }
             
             this.filteredBudgets = [...this.budgetsList];
@@ -542,16 +536,9 @@ export class BudgetManager {
         document.getElementById('saveNewBudget').addEventListener('click', () => this.saveNewBudget());
         document.getElementById('previewBudgetBtn').addEventListener('click', () => this.previewNewBudget());
         
-        // Filter form listeners
-        document.getElementById('sortFilter').addEventListener('change', () => this.updateSortOrderLabels());
-        
         // Search and filter
         document.getElementById('searchInput').addEventListener('input', () => this.filterBudgets());
-        document.getElementById('filterToggle').addEventListener('click', () => this.showFilterModal());
-        document.getElementById('closeFilter').addEventListener('click', () => this.hideFilterModal());
-        document.getElementById('filterModalBackdrop').addEventListener('click', () => this.hideFilterModal());
-        document.getElementById('clearFilters').addEventListener('click', () => this.clearAllFilters());
-        document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
+        document.getElementById('statusFilter').addEventListener('change', () => this.filterBudgets());
     }
 
     toggleTradeSection(toggleBtn) {
@@ -570,7 +557,6 @@ export class BudgetManager {
     async exportToPDF() {
         if (!this.budgetData) return;
         
-        const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
         await this.generatePDFContent(pdf);
         pdf.save(`${this.budgetData.project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_budget.pdf`);
@@ -1238,6 +1224,7 @@ export class BudgetManager {
 
     filterBudgets() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
         
         this.filteredBudgets = this.budgetsList.filter(budget => {
             const matchesSearch = !searchTerm || 
@@ -1245,129 +1232,12 @@ export class BudgetManager {
                 budget.client.toLowerCase().includes(searchTerm) ||
                 budget.address.toLowerCase().includes(searchTerm);
             
-            const matchesStatus = !this.activeFilters.status || budget.status === this.activeFilters.status;
+            const matchesStatus = !statusFilter || budget.status === statusFilter;
             
             return matchesSearch && matchesStatus;
         });
         
-        this.sortBudgets();
         this.renderBudgetCards();
-    }
-    
-    sortBudgets() {
-        const { sort, order } = this.activeFilters;
-        
-        this.filteredBudgets.sort((a, b) => {
-            let comparison = 0;
-            
-            switch (sort) {
-                case 'name':
-                    comparison = a.projectName.localeCompare(b.projectName);
-                    break;
-                case 'client':
-                    comparison = a.client.localeCompare(b.client);
-                    break;
-                case 'budget':
-                    comparison = a.totalBudget - b.totalBudget;
-                    break;
-                case 'modified':
-                default:
-                    comparison = new Date(a.lastModified) - new Date(b.lastModified);
-                    break;
-            }
-            
-            return order === 'asc' ? comparison : -comparison;
-        });
-    }
-    
-    showFilterModal() {
-        // Populate current filter values
-        document.getElementById('statusFilter').value = this.activeFilters.status;
-        document.getElementById('sortFilter').value = this.activeFilters.sort;
-        document.querySelector(`input[name="sortOrder"][value="${this.activeFilters.order}"]`).checked = true;
-        
-        // Show modal
-        document.getElementById('filterModalBackdrop').classList.add('show');
-        document.getElementById('filterModal').classList.add('show');
-        document.body.style.overflow = 'hidden';
-        
-        this.updateFilterBadge();
-    }
-    
-    hideFilterModal() {
-        document.getElementById('filterModalBackdrop').classList.remove('show');
-        document.getElementById('filterModal').classList.remove('show');
-        document.body.style.overflow = '';
-    }
-    
-    clearAllFilters() {
-        this.activeFilters = {
-            status: '',
-            sort: 'modified',
-            order: 'desc'
-        };
-        
-        // Update form
-        document.getElementById('statusFilter').value = '';
-        document.getElementById('sortFilter').value = 'modified';
-        document.querySelector('input[name="sortOrder"][value="desc"]').checked = true;
-        
-        this.updateFilterBadge();
-        this.filterBudgets();
-    }
-    
-    applyFilters() {
-        this.activeFilters = {
-            status: document.getElementById('statusFilter').value,
-            sort: document.getElementById('sortFilter').value,
-            order: document.querySelector('input[name="sortOrder"]:checked').value
-        };
-        
-        this.updateFilterBadge();
-        this.filterBudgets();
-        this.hideFilterModal();
-    }
-    
-    updateFilterBadge() {
-        const badge = document.getElementById('filterBadge');
-        let activeCount = 0;
-        
-        if (this.activeFilters.status) activeCount++;
-        if (this.activeFilters.sort !== 'modified') activeCount++;
-        if (this.activeFilters.order !== 'desc') activeCount++;
-        
-        if (activeCount > 0) {
-            badge.textContent = activeCount;
-            badge.classList.remove('d-none');
-        } else {
-            badge.classList.add('d-none');
-        }
-        
-        // Update sort order labels based on sort type
-        this.updateSortOrderLabels();
-    }
-    
-    updateSortOrderLabels() {
-        const sortType = document.getElementById('sortFilter').value;
-        const descLabel = document.querySelector('label[for="sortDesc"]');
-        const ascLabel = document.querySelector('label[for="sortAsc"]');
-        
-        switch (sortType) {
-            case 'name':
-            case 'client':
-                descLabel.textContent = 'Z to A';
-                ascLabel.textContent = 'A to Z';
-                break;
-            case 'budget':
-                descLabel.textContent = 'Highest First';
-                ascLabel.textContent = 'Lowest First';
-                break;
-            case 'modified':
-            default:
-                descLabel.textContent = 'Newest First';
-                ascLabel.textContent = 'Oldest First';
-                break;
-        }
     }
 
     renderBudgetCards() {
@@ -1375,11 +1245,13 @@ export class BudgetManager {
         
         if (this.filteredBudgets.length === 0) {
             container.innerHTML = `
-                <div class="card" style="grid-column: 1 / -1;">
-                    <div class="card-body text-center py-4">
-                        <i class="fas fa-calculator fa-2x text-muted mb-3"></i>
-                        <h5>No budgets found</h5>
-                        <p class="text-muted mb-0">Try adjusting your search or create a new budget.</p>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-calculator fa-3x text-muted mb-3"></i>
+                            <h5>No budgets found</h5>
+                            <p class="text-muted">Try adjusting your search or create a new budget.</p>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1387,20 +1259,22 @@ export class BudgetManager {
         }
         
         container.innerHTML = this.filteredBudgets.map(budget => `
-            <div class="card budget-card h-100" onclick="budgetManager.showBudgetViewer('${budget.id}')">
-                <div class="card-body">
-                    <h5 class="card-title">${this.escapeHtml(budget.projectName)}</h5>
-                    <p class="card-text">
-                        <strong>Client:</strong> ${this.escapeHtml(budget.client)}<br>
-                        <small class="text-muted d-block mt-1">${this.escapeHtml(budget.address)}</small>
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge ${this.getStatusBadgeClass(budget.status)}">${this.getStatusText(budget.status)}</span>
-                        <span class="currency">${this.formatCurrency(budget.totalBudget)}</span>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card budget-card h-100" onclick="budgetManager.showBudgetViewer('${budget.id}')">
+                    <div class="card-body">
+                        <h5 class="card-title">${this.escapeHtml(budget.projectName)}</h5>
+                        <p class="card-text">
+                            <strong>Client:</strong> ${this.escapeHtml(budget.client)}<br>
+                            <small class="text-muted">${this.escapeHtml(budget.address)}</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge ${this.getStatusBadgeClass(budget.status)}">${this.getStatusText(budget.status)}</span>
+                            <span class="currency">${this.formatCurrency(budget.totalBudget)}</span>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            Modified: ${new Date(budget.lastModified).toLocaleDateString()}
+                        </small>
                     </div>
-                    <small class="text-muted">
-                        Modified: ${new Date(budget.lastModified).toLocaleDateString()}
-                    </small>
                 </div>
             </div>
         `).join('');
