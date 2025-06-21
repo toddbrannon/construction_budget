@@ -649,25 +649,16 @@ class BudgetViewer {
         
         document.getElementById('generateStepByStepBudget').addEventListener('click', (e) => {
             e.preventDefault();
-            this.showStepByStepGenerator();
         });
         
-        document.getElementById('generateTestBudget').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.generateTestBudget();
-        });
+
         
         // Step-by-step modal controls
-        document.getElementById('nextStep').addEventListener('click', () => {
-            this.nextStep();
         });
         
-        document.getElementById('prevStep').addEventListener('click', () => {
-            this.prevStep();
         });
         
         document.getElementById('createBudgetStep').addEventListener('click', () => {
-            this.createBudgetFromStep();
         });
     }
     
@@ -980,7 +971,6 @@ class BudgetViewer {
         saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Save Budget';
     }
     
-    generateTestBudget() {
         // Project templates with realistic data
         const projectTemplates = [
             {
@@ -1079,7 +1069,6 @@ class BudgetViewer {
         };
         
         // Generate realistic trade sections based on project type
-        const tradeConfigs = this.getTradeConfigsForType(templateType, vendors);
         
         tradeConfigs.forEach(config => {
             const tradeKey = `trade_${config.name.toLowerCase().replace(/\s+/g, '_')}`;
@@ -1088,8 +1077,6 @@ class BudgetViewer {
                 line_items: config.items.map(item => ({
                     category: item.category,
                     categoryCode: item.code,
-                    vendor: this.getRandomVendor(vendors, item.vendorType),
-                    budget: this.generateRealisticBudget(item.baseAmount, templateType),
                     notes: item.notes || undefined
                 }))
             };
@@ -1098,13 +1085,11 @@ class BudgetViewer {
         // Set the generated data and show form
         this.newBudgetData = testBudgetData;
         this.showNewBudgetForm();
-        this.populateGeneratedBudget();
         
         // Show success message
         this.showSuccessMessage(`Generated ${templateType} test budget: "${testBudgetData.project.name}"`);
     }
     
-    getTradeConfigsForType(projectType, vendors) {
         const baseConfig = [
             {
                 name: 'Site Work',
@@ -1174,19 +1159,16 @@ class BudgetViewer {
         return baseConfig;
     }
     
-    getRandomVendor(vendors, vendorType) {
         const vendorList = vendors[vendorType] || vendors.excavation;
         return vendorList[Math.floor(Math.random() * vendorList.length)];
     }
     
-    generateRealisticBudget(baseAmount, projectType) {
         // Add realistic variation to base amounts
         const multiplier = projectType === 'commercial' ? 1.5 : 1.0;
         const variation = 0.7 + (Math.random() * 0.6); // 70% to 130% of base
         return Math.round(baseAmount * multiplier * variation);
     }
     
-    populateGeneratedBudget() {
         if (!this.newBudgetData) return;
         
         // Populate project information
@@ -1228,7 +1210,6 @@ class BudgetViewer {
     
 
     
-    renderScenarioCards() {
         const container = document.getElementById('scenarioCards');
         container.innerHTML = this.budgetScenarios.map(scenario => `
             <div class="col-md-6 mb-4">
@@ -1272,73 +1253,50 @@ class BudgetViewer {
                 this.selectedScenario = this.budgetScenarios.find(s => s.id === scenarioId);
                 
                 // Enable next button
-                document.getElementById('nextStep').disabled = false;
             });
         });
     }
     
-    updateStepModal() {
         // Hide all steps
         document.querySelectorAll('.step-content').forEach(step => {
             step.classList.add('d-none');
         });
         
         // Show current step
-        document.getElementById(`step${this.currentStep}`).classList.remove('d-none');
         
         // Update navigation buttons
-        const prevBtn = document.getElementById('prevStep');
-        const nextBtn = document.getElementById('nextStep');
         const createBtn = document.getElementById('createBudgetStep');
         
-        prevBtn.disabled = this.currentStep === 1;
         
-        if (this.currentStep === 4) {
             nextBtn.classList.add('d-none');
             createBtn.classList.remove('d-none');
         } else {
             nextBtn.classList.remove('d-none');
             createBtn.classList.add('d-none');
-            nextBtn.disabled = this.currentStep === 1 && !this.selectedScenario;
         }
     }
     
-    nextStep() {
         // Save current step data before proceeding
-        if (this.currentStep === 1) {
             // Save project info
             this.saveCurrentProjectInfo();
-        } else if (this.currentStep === 2) {
             // Save scenario selection  
             this.saveCurrentScenario();
-        } else if (this.currentStep === 3) {
             // Save current line item if in line item mode
-            if (this.stepData.isAddingLineItems) {
                 this.saveCurrentLineItem();
                 return; // Stay on step 3 for next line item
             }
         }
         
-        if (this.currentStep < this.maxSteps) {
-            this.currentStep++;
-            this.updateStepModal();
         }
     }
     
-    prevStep() {
-        if (this.currentStep > 1) {
-            this.currentStep--;
-            this.updateStepModal();
         }
     }
     
-    renderProjectInfoStep() {
-        const projectInfo = this.stepData.projectInfo;
         return `
             <div class="step-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="mb-0">Project Information</h4>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.budgetViewer.fillTestProjectData()">
                         <i class="fas fa-magic me-2"></i>Add Test Data
                     </button>
                 </div>
@@ -1366,8 +1324,6 @@ class BudgetViewer {
         `;
     }
     
-    renderTradesOverviewStep() {
-        if (!this.stepData.isAddingLineItems) {
             // Show trade overview first
             return `
                 <div class="step-content">
@@ -1392,7 +1348,6 @@ class BudgetViewer {
         }
     }
     
-    renderBudgetSummaryStep() {
         const container = document.getElementById('budgetSummary');
         const trades = Object.entries(this.selectedScenario.trades);
         const totalItems = trades.reduce((sum, [key, trade]) => sum + trade.line_items.length, 0);
@@ -1406,15 +1361,12 @@ class BudgetViewer {
         `;
     }
     
-    createBudgetFromStep() {
         // Collect all step data and create the budget
         const budgetData = {
-            project: this.stepData.projectInfo,
             trades: {}
         };
         
         // Add collected trades with line items
-        this.stepData.trades.forEach(trade => {
             budgetData.trades[trade.name] = {
                 name: trade.name,
                 lineItems: trade.lineItems
@@ -1427,10 +1379,6 @@ class BudgetViewer {
         
         // Create budget entry
         const budgetEntry = {
-            id: this.generateBudgetId(this.stepData.projectInfo.name),
-            projectName: this.stepData.projectInfo.name,
-            client: this.stepData.projectInfo.client,
-            address: this.stepData.projectInfo.address || '',
             totalBudget: this.calculateTotalFromTrades(budgetData.trades),
             status: 'planning',
             filename: `budget_${Date.now()}.json`,
@@ -1760,8 +1708,6 @@ class BudgetViewer {
     }
     
     // Enhanced step-by-step methods
-    loadTradeConfigurations() {
-        this.commonTrades = [
             {
                 name: 'Professional Services',
                 items: [
@@ -1798,7 +1744,6 @@ class BudgetViewer {
     }
     
     saveCurrentProjectInfo() {
-        this.stepData.projectInfo = {
             name: document.getElementById('stepProjectName')?.value || '',
             client: document.getElementById('stepClient')?.value || '',
             address: document.getElementById('stepAddress')?.value || ''
@@ -1807,22 +1752,15 @@ class BudgetViewer {
     
     saveCurrentScenario() {
         // For now, use a default scenario approach
-        this.stepData.selectedScenario = {
             type: 'residential',
             totalBudget: 2500000
         };
     }
     
     startLineItemMode() {
-        this.stepData.isAddingLineItems = true;
-        this.stepData.currentTradeIndex = 0;
-        this.stepData.currentLineItemIndex = 0;
-        this.updateStepModal();
     }
     
     renderCurrentLineItem() {
-        const currentTrade = this.commonTrades[this.stepData.currentTradeIndex];
-        const currentItem = currentTrade?.items[this.stepData.currentLineItemIndex];
         
         if (!currentItem) {
             // All items added, show completion
@@ -1830,7 +1768,6 @@ class BudgetViewer {
         }
         
         const randomBudget = Math.floor(Math.random() * (currentItem.budgetRange[1] - currentItem.budgetRange[0]) + currentItem.budgetRange[0]);
-        const progress = this.stepData.trades.reduce((sum, trade) => sum + trade.lineItems.length, 0) + 1;
         
         return `
             <div class="step-content">
@@ -1840,10 +1777,8 @@ class BudgetViewer {
                         <small class="text-muted">Trade: ${currentTrade.name}</small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.budgetViewer.fillTestLineItem()">
                             <i class="fas fa-magic me-1"></i>Use Test Data
                         </button>
-                        <span class="badge bg-primary fs-6">${this.stepData.currentTradeIndex + 1} of ${this.commonTrades.length}</span>
                     </div>
                 </div>
                 
@@ -1903,11 +1838,8 @@ class BudgetViewer {
             return;
         }
         
-        // Find or create trade in stepData
-        let trade = this.stepData.trades.find(t => t.name === tradeCategory);
         if (!trade) {
             trade = { name: tradeCategory, lineItems: [] };
-            this.stepData.trades.push(trade);
         }
         
         // Add line item
@@ -1919,10 +1851,6 @@ class BudgetViewer {
         });
         
         // Move to next item
-        this.stepData.currentLineItemIndex++;
-        if (this.stepData.currentLineItemIndex >= this.commonTrades[this.stepData.currentTradeIndex].items.length) {
-            this.stepData.currentTradeIndex++;
-            this.stepData.currentLineItemIndex = 0;
         }
         
         // Show success message briefly
@@ -1930,13 +1858,10 @@ class BudgetViewer {
         
         // Update the modal content
         setTimeout(() => {
-            this.updateStepModal();
         }, 1000);
     }
     
     renderCompletionStep() {
-        const totalItems = this.stepData.trades.reduce((sum, trade) => sum + trade.lineItems.length, 0);
-        const totalBudget = this.stepData.trades.reduce((sum, trade) => 
             sum + trade.lineItems.reduce((tradeSum, item) => tradeSum + item.budgetAmount, 0), 0
         );
         
@@ -1946,14 +1871,12 @@ class BudgetViewer {
                     <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
                 </div>
                 <h4 class="mb-3">Budget Building Complete!</h4>
-                <p class="text-muted mb-4">You've successfully added ${totalItems} line items across ${this.stepData.trades.length} trade categories.</p>
                 
                 <div class="card border-success">
                     <div class="card-body">
                         <h5 class="card-title text-success">Budget Summary</h5>
                         <div class="row text-center">
                             <div class="col-md-4">
-                                <div class="fw-bold fs-4">${this.stepData.trades.length}</div>
                                 <small class="text-muted">Trade Categories</small>
                             </div>
                             <div class="col-md-4">
@@ -1969,7 +1892,6 @@ class BudgetViewer {
                 </div>
                 
                 <div class="mt-4">
-                    <button class="btn btn-success btn-lg" onclick="budgetViewer.createBudgetFromStep()">
                         <i class="fas fa-save me-2"></i>Create Budget
                     </button>
                 </div>
@@ -1977,43 +1899,32 @@ class BudgetViewer {
         `;
     }
     
-    updateStepModal() {
         // Update progress bar
-        const progress = (this.currentStep / this.maxSteps) * 100;
         document.getElementById('stepProgress').style.width = `${progress}%`;
         
         // Update step content
         const stepContent = document.getElementById('stepContent');
         let content = '';
         
-        switch (this.currentStep) {
             case 1:
-                content = this.renderProjectInfoStep();
                 break;
             case 2:
                 content = this.renderScenarioSelectionStep();
                 break;
             case 3:
-                content = this.renderTradesOverviewStep();
                 break;
             case 4:
-                content = this.renderBudgetSummaryStep();
                 break;
         }
         
         stepContent.innerHTML = content;
         
         // Update navigation buttons
-        const prevBtn = document.getElementById('prevStepBtn');
-        const nextBtn = document.getElementById('nextStepBtn');
         const finishBtn = document.getElementById('finishBtn');
         
-        prevBtn.style.display = this.currentStep === 1 ? 'none' : 'inline-block';
         
-        if (this.stepData.isAddingLineItems && this.currentStep === 3) {
             nextBtn.textContent = 'Save & Continue';
             nextBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save & Continue';
-        } else if (this.currentStep === this.maxSteps) {
             nextBtn.style.display = 'none';
             finishBtn.classList.remove('d-none');
         } else {
@@ -2028,7 +1939,6 @@ class BudgetViewer {
             <div class="step-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="mb-0">Project Type Selection</h4>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.budgetViewer.autoSelectProjectType()">
                         <i class="fas fa-magic me-2"></i>Auto Select
                     </button>
                 </div>
@@ -2060,7 +1970,6 @@ class BudgetViewer {
                         card.addEventListener('click', function() {
                             document.querySelectorAll('.scenario-type-card').forEach(c => c.classList.remove('border-primary'));
                             this.classList.add('border-primary');
-                            window.budgetViewer.stepData.selectedScenario = { type: this.dataset.type };
                         });
                     });
                 </script>
@@ -2068,7 +1977,6 @@ class BudgetViewer {
         `;
     }
     
-    autoSelectProjectType() {
         const types = ['residential', 'commercial'];
         const selectedType = types[Math.floor(Math.random() * types.length)];
         
@@ -2080,13 +1988,9 @@ class BudgetViewer {
             }
         });
         
-        this.stepData.selectedScenario = { type: selectedType };
         this.showSuccessMessage(`${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} project type selected!`);
     }
     
-    renderBudgetSummaryStep() {
-        const totalItems = this.stepData.trades.reduce((sum, trade) => sum + trade.lineItems.length, 0);
-        const totalBudget = this.stepData.trades.reduce((sum, trade) => 
             sum + trade.lineItems.reduce((tradeSum, item) => tradeSum + item.budgetAmount, 0), 0
         );
         
@@ -2098,7 +2002,6 @@ class BudgetViewer {
                         <h5 class="card-title text-success">Final Budget Overview</h5>
                         <div class="row text-center mb-4">
                             <div class="col-md-4">
-                                <div class="fw-bold fs-4">${this.stepData.trades.length}</div>
                                 <small class="text-muted">Trade Categories</small>
                             </div>
                             <div class="col-md-4">
@@ -2112,7 +2015,6 @@ class BudgetViewer {
                         </div>
                         
                         <div class="accordion" id="summaryAccordion">
-                            ${this.stepData.trades.map((trade, index) => `
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}">
