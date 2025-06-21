@@ -311,7 +311,11 @@ export class BudgetManager {
             this.renderDashboard();
         } catch (error) {
             console.error('Failed to initialize budget manager:', error);
-            this.showError('Failed to load budget data');
+            // Check if error message element exists before showing error
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                this.showError('Failed to load budget data');
+            }
         }
     }
 
@@ -644,26 +648,32 @@ export class BudgetManager {
         const errorDiv = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
         
-        errorText.textContent = message;
-        errorDiv.classList.remove('d-none');
+        if (errorDiv && errorText) {
+            errorText.textContent = message;
+            errorDiv.classList.remove('d-none');
+        }
     }
     
     hideError() {
         const errorDiv = document.getElementById('errorMessage');
-        errorDiv.classList.add('d-none');
+        if (errorDiv) {
+            errorDiv.classList.add('d-none');
+        }
     }
 
     showSuccessMessage(message) {
         const successDiv = document.getElementById('successMessage');
         const successText = document.getElementById('successText');
         
-        successText.textContent = message;
-        successDiv.classList.remove('d-none');
-        
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            successDiv.classList.add('d-none');
-        }, 3000);
+        if (successDiv && successText) {
+            successText.textContent = message;
+            successDiv.classList.remove('d-none');
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                successDiv.classList.add('d-none');
+            }, 3000);
+        }
     }
 
     showDashboard() {
@@ -1263,12 +1273,12 @@ export class BudgetManager {
                 <div class="card budget-card h-100" onclick="budgetManager.showBudgetViewer('${budget.id}')">
                     <div class="card-body">
                         <h5 class="card-title">${this.escapeHtml(budget.projectName)}</h5>
+                        <span class="badge ${this.getStatusBadgeClass(budget.status)} mb-2">${this.getStatusText(budget.status)}</span>
                         <p class="card-text">
                             <strong>Client:</strong> ${this.escapeHtml(budget.client)}<br>
                             <small class="text-muted">${this.escapeHtml(budget.address)}</small>
                         </p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge ${this.getStatusBadgeClass(budget.status)}">${this.getStatusText(budget.status)}</span>
                             <span class="currency">${this.formatCurrency(budget.totalBudget)}</span>
                         </div>
                         <small class="text-muted d-block mt-2">
