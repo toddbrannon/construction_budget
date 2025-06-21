@@ -543,6 +543,27 @@ export class BudgetManager {
         // Search and filter
         document.getElementById('searchInput').addEventListener('input', () => this.filterBudgets());
         document.getElementById('statusFilter').addEventListener('change', () => this.filterBudgets());
+        
+        // Form validation - clear errors on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                const feedback = e.target.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+            }
+        });
+        
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                const feedback = e.target.parentNode.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.remove();
+                }
+            }
+        });
     }
 
     toggleTradeSection(toggleBtn) {
@@ -768,6 +789,7 @@ export class BudgetManager {
             project: { name: '', client: '', address: '' },
             trades: {}
         };
+        this.clearValidationErrors();
     }
 
     addNewTrade() {
@@ -1039,48 +1061,165 @@ export class BudgetManager {
     }
 
     validateNewBudget() {
-        const projectName = document.getElementById('newProjectName').value.trim();
-        const projectClient = document.getElementById('newProjectClient').value.trim();
-        const projectAddress = document.getElementById('newProjectAddress').value.trim();
+        // Clear previous validation states
+        this.clearValidationErrors();
         
-        if (!projectName || !projectClient || !projectAddress) {
-            this.showError('Please fill in all project information fields');
-            return false;
+        let isValid = true;
+        let errorMessages = [];
+        
+        // Validate project information
+        const projectName = document.getElementById('newProjectName');
+        const projectClient = document.getElementById('newProjectClient');
+        const projectAddress = document.getElementById('newProjectAddress');
+        
+        if (!projectName.value.trim()) {
+            this.addValidationError(projectName, 'Project name is required');
+            errorMessages.push('Project name is required');
+            isValid = false;
         }
         
+        if (!projectClient.value.trim()) {
+            this.addValidationError(projectClient, 'Client name is required');
+            errorMessages.push('Client name is required');
+            isValid = false;
+        }
+        
+        if (!projectAddress.value.trim()) {
+            this.addValidationError(projectAddress, 'Project address is required');
+            errorMessages.push('Project address is required');
+            isValid = false;
+        }
+        
+        // Validate trades
         const tradeForms = document.querySelectorAll('#newTradesContainer .trade-form');
         if (tradeForms.length === 0) {
-            this.showError('Please add at least one trade');
-            return false;
-        }
-        
-        let hasValidTrade = false;
-        for (const tradeForm of tradeForms) {
-            const tradeName = tradeForm.querySelector('.trade-name').value;
-            const lineItems = tradeForm.querySelectorAll('.line-item-form');
+            errorMessages.push('Please add at least one trade');
+            isValid = false;
+        } else {
+            let hasValidTrade = false;
+            let tradeIndex = 0;
             
-            if (tradeName && lineItems.length > 0) {
+            for (const tradeForm of tradeForms) {
+                tradeIndex++;
+                const tradeName = tradeForm.querySelector('.trade-name');
+                const lineItems = tradeForm.querySelectorAll('.line-item-form');
+                
+                if (!tradeName.value) {
+                    this.addValidationError(tradeName, 'Trade category is required');
+                    errorMessages.push(`Trade ${tradeIndex}: Please select a trade category`);
+                    isValid = false;
+                    continue;
+                }
+                
+                if (lineItems.length === 0) {
+                    errorMessages.push(`Trade ${tradeIndex}: Please add at least one line item`);
+                    isValid = false;
+                    continue;
+                }
+                
+                let hasValidLineItem = false;
+                let lineItemIndex = 0;
+                
                 for (const item of lineItems) {
-                    const category = item.querySelector('.item-category').value;
-                    const vendor = item.querySelector('.item-vendor').value.trim();
-                    const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
+                    lineItemIndex++;
+                    const category = item.querySelector('.item-category');
+                    const vendor = item.querySelector('.item-vendor');
+                    const budget = item.querySelector('.item-budget');
                     
-                    if (category && vendor && budget > 0) {
-                        hasValidTrade = true;
-                        break;
+                    let lineItemValid = true;
+                    
+                    if (!category.value) {
+                        this.addValidationError(category, 'Category is required');
+                        errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Category is required`);
+                        lineItemValid = false;
+                        isValid = false;
                     }
+                    
+                    if (!vendor.value.trim()) {
+                        this.addValidationError(vendor, 'Vendor is required');
+                        errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Vendor is required`);
+                        lineItemValid = false;
+                        isValid = false;
+                    }
+                    
+                    const budgetValue = parseFloat(budget.value) || 0;
+                    if (budgetValue <= 0) {
+                        this.addValidationError(budget, 'Budget must be greater than 0');
+                        errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget must be greater than 0`);
+                        lineItemValid = false;
+                        isValid = false;
+                    }
+                    
+                    if (lineItemValid) {
+                        hasValidLineItem = true;
+                    }
+                }
+                
+                if (hasValidLineItem) {
+                    hasValidTrade = true;
                 }
             }
             
-            if (hasValidTrade) break;
+            if (!hasValidTrade && isValid) {
+                errorMessages.push('Please add at least one complete line item with category, vendor, and budget');
+                isValid = false;
+            }
         }
         
-        if (!hasValidTrade) {
-            this.showError('Please add at least one complete line item with category, vendor, and budget');
-            return false;
+        if (!isValid) {
+            this.showValidationErrors(errorMessages);
         }
         
-        return true;
+        return isValid;
+    }
+    
+    addValidationError(element, message) {
+        element.classList.add('is-invalid');
+        
+        // Remove existing feedback
+        const existingFeedback = element.parentNode.querySelector('.invalid-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+        
+        // Add new feedback
+        const feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        feedback.textContent = message;
+        element.parentNode.appendChild(feedback);
+    }
+    
+    clearValidationErrors() {
+        // Remove all validation error classes and feedback
+        const invalidElements = document.querySelectorAll('.is-invalid');
+        invalidElements.forEach(element => {
+            element.classList.remove('is-invalid');
+        });
+        
+        const feedbackElements = document.querySelectorAll('.invalid-feedback');
+        feedbackElements.forEach(element => {
+            element.remove();
+        });
+        
+        this.hideError();
+    }
+    
+    showValidationErrors(errorMessages) {
+        const errorText = errorMessages.length > 1 
+            ? `Please fix the following errors:\n• ${errorMessages.join('\n• ')}`
+            : errorMessages[0];
+        
+        this.showError(errorText);
+        
+        // Scroll to first invalid element
+        const firstInvalidElement = document.querySelector('.is-invalid');
+        if (firstInvalidElement) {
+            firstInvalidElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            firstInvalidElement.focus();
+        }
     }
 
     collectNewBudgetData() {

@@ -1,0 +1,29 @@
+{
+  "project": {
+    "name": "Jane & John Doe Residential",
+    "client": "Jane & John Doe",
+    "address": "1234 Anywhere"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "line_items": [
+        {
+          "category": "ARCHITECT",
+          "vendor": "ABC LLC",
+          "budget": 32000
+        },
+        {
+          "category": "MEP ENGINEERING",
+          "vendor": "XYZ",
+          "budget": 23000
+        },
+        {
+          "category": "LANDSCAPE ARCHITECT",
+          "vendor": "Gojo Creations",
+          "budget": 13400
+        }
+      ]
+    }
+  }
+}
