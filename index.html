@@ -750,30 +750,49 @@
             }
             
             showNewBudgetForm() {
-                document.getElementById('dashboardView').classList.add('d-none');
-                document.getElementById('newBudgetView').classList.remove('d-none');
+                const dashboardView = document.getElementById('dashboardView');
+                const newBudgetView = document.getElementById('newBudgetView');
+                
+                if (dashboardView) dashboardView.classList.add('d-none');
+                if (newBudgetView) newBudgetView.classList.remove('d-none');
+                
                 this.currentView = 'newBudget';
                 this.resetNewBudgetForm();
             }
             
             hideNewBudgetForm() {
-                document.getElementById('newBudgetView').classList.add('d-none');
-                document.getElementById('dashboardView').classList.remove('d-none');
+                const newBudgetView = document.getElementById('newBudgetView');
+                const dashboardView = document.getElementById('dashboardView');
+                
+                if (newBudgetView) newBudgetView.classList.add('d-none');
+                if (dashboardView) dashboardView.classList.remove('d-none');
+                
                 this.currentView = 'dashboard';
             }
             
             resetNewBudgetForm() {
-                document.getElementById('projectName').value = '';
-                document.getElementById('clientName').value = '';
-                document.getElementById('projectAddress').value = '';
-                document.getElementById('tradesContainer').innerHTML = '';
-                this.tradeCounter = 0;
-                this.addNewTrade(); // Add one default trade
+                const projectName = document.getElementById('projectName');
+                const clientName = document.getElementById('clientName');
+                const projectAddress = document.getElementById('projectAddress');
+                const tradesContainer = document.getElementById('tradesContainer');
+                
+                if (projectName) projectName.value = '';
+                if (clientName) clientName.value = '';
+                if (projectAddress) projectAddress.value = '';
+                if (tradesContainer) {
+                    tradesContainer.innerHTML = '';
+                    this.tradeCounter = 0;
+                    this.addNewTrade(); // Add one default trade
+                }
             }
             
             addNewTrade() {
                 this.tradeCounter++;
                 const tradesContainer = document.getElementById('tradesContainer');
+                if (!tradesContainer) {
+                    console.error('Trades container not found');
+                    return;
+                }
                 const tradeDiv = document.createElement('div');
                 tradeDiv.className = 'trade-section mb-4 p-3 border rounded';
                 tradeDiv.innerHTML = `
