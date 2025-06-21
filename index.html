@@ -219,7 +219,7 @@
                     <p class="text-muted">Manage your construction project budgets</p>
                 </div>
                 <div class="col-md-4 text-end">
-                    <button id="newBudgetBtn" class="btn btn-primary">
+                    <button id="createNewBudgetBtn" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Create New Budget
                     </button>
                 </div>
@@ -402,6 +402,60 @@
             <div class="d-flex gap-2">
                 <button id="clearFilters" class="btn btn-outline-secondary flex-fill">Clear All</button>
                 <button id="applyFilters" class="btn btn-primary flex-fill">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- New Budget Form View -->
+        <div id="newBudgetView" class="d-none">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2>Create New Budget</h2>
+                    <p class="text-muted">Add a new construction project budget</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button id="cancelNewBudget" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button id="saveNewBudget" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Save Budget
+                    </button>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Project Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="projectName" class="form-label">Project Name *</label>
+                            <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="clientName" class="form-label">Client Name *</label>
+                            <input type="text" class="form-control" id="clientName" placeholder="Enter client name">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="projectAddress" class="form-label">Project Address</label>
+                            <input type="text" class="form-control" id="projectAddress" placeholder="Enter project address">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Trades & Line Items</h5>
+                    <button type="button" id="addTradeBtn" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>Add Trade
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="tradesContainer">
+                        <!-- Trades will be added here dynamically -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
