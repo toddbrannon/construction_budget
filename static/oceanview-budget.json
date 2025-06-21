@@ -1,0 +1,154 @@
+{
+  "project": {
+    "name": "Oceanview Luxury Residence",
+    "client": "Thompson Family Trust",
+    "address": "4455 Coastal Highway, Malibu, CA 90265"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "line_items": [
+        {
+          "category": "ARCHITECT",
+          "vendor": "Coastal Design Studio",
+          "budget": 185000.00,
+          "notes": "Complete architectural design and project management"
+        },
+        {
+          "category": "STRUCTURAL ENGINEERING",
+          "vendor": "Pacific Structural Engineers",
+          "budget": 95000.00,
+          "notes": "Seismic and coastal wind analysis"
+        }
+      ]
+    },
+    "Shell": {
+      "name": "Shell",
+      "line_items": [
+        {
+          "category": "CONCRETE PILING",
+          "vendor": "Coastal Foundation Systems",
+          "budget": 450000.00,
+          "notes": "Deep foundation for oceanfront construction"
+        },
+        {
+          "category": "SHELL / ROOF FRAMING L&M",
+          "vendor": "Premium Steel Construction",
+          "budget": 680000.00,
+          "notes": "Steel frame with hurricane-rated connections"
+        }
+      ]
+    },
+    "Roofing / Siding": {
+      "name": "Roofing / Siding",
+      "line_items": [
+        {
+          "category": "ROOFING LABOR AND MATERIALS",
+          "vendor": "Oceanview Roofing Co",
+          "budget": 180000.00,
+          "notes": "Clay tile roofing system"
+        }
+      ]
+    },
+    "Exterior Windows & Doors": {
+      "name": "Exterior Windows & Doors",
+      "line_items": [
+        {
+          "category": "GLASS WINDOWS AND DOORS",
+          "vendor": "Luxury Glass Systems",
+          "budget": 320000.00,
+          "notes": "Floor-to-ceiling impact-resistant glass"
+        }
+      ]
+    },
+    "Mechanical Systems": {
+      "name": "Heating & Cooling",
+      "line_items": [
+        {
+          "category": "AIR CONDITIONING & DUCT WORK",
+          "vendor": "Coastal Climate Control",
+          "budget": 285000.00,
+          "notes": "Multi-zone HVAC with ocean air filtration"
+        }
+      ]
+    },
+    "Electrical & Low Voltage": {
+      "name": "Electrical & Low Voltage",
+      "line_items": [
+        {
+          "category": "ELECTRICAL LABOR",
+          "vendor": "Elite Electrical Services",
+          "budget": 195000.00,
+          "notes": "Complete electrical installation"
+        },
+        {
+          "category": "LIGHTING SYSTEM",
+          "vendor": "Luxury Lighting Design",
+          "budget": 125000.00,
+          "notes": "Designer lighting throughout"
+        }
+      ]
+    },
+    "Interior Finishes": {
+      "name": "Interior Trim Package",
+      "line_items": [
+        {
+          "category": "TRIM MATERIAL",
+          "vendor": "Custom Millwork Co",
+          "budget": 180000.00,
+          "notes": "Hand-crafted millwork and trim"
+        }
+      ]
+    },
+    "Flooring": {
+      "name": "Flooring",
+      "line_items": [
+        {
+          "category": "INTERIOR TILE / MARBLE FLOOR MATERIAL",
+          "vendor": "Marble Masters Inc",
+          "budget": 220000.00,
+          "notes": "Imported Italian marble flooring"
+        },
+        {
+          "category": "WOOD FLOOR MATERIAL & LABOR",
+          "vendor": "Luxury Hardwood Co",
+          "budget": 95000.00,
+          "notes": "Exotic hardwood flooring"
+        }
+      ]
+    },
+    "Cabinetry and Built-ins": {
+      "name": "Cabinetry and Built-ins",
+      "line_items": [
+        {
+          "category": "KITCHEN CABINETS",
+          "vendor": "Elite Kitchen Design",
+          "budget": 150000.00,
+          "notes": "Custom kitchen cabinetry"
+        }
+      ]
+    },
+    "Pool": {
+      "name": "Pool",
+      "line_items": [
+        {
+          "category": "POOL AND SPA",
+          "vendor": "Infinity Pool Builders",
+          "budget": 280000.00,
+          "notes": "Infinity edge pool with ocean view"
+        }
+      ]
+    },
+    "Landscaping / Irrigation": {
+      "name": "Landscaping / Irrigation",
+      "line_items": [
+        {
+          "category": "LANDSCAPING LABOR AND MATERIALS",
+          "vendor": "Coastal Landscape Design",
+          "budget": 150000.00,
+          "notes": "Native coastal landscaping"
+        }
+      ]
+    }
+  }
+}

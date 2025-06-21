@@ -831,6 +831,11 @@ class BudgetViewer {
         errorDiv.classList.remove('d-none');
     }
     
+    hideError() {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.classList.add('d-none');
+    }
+    
     hideLoading() {
         document.getElementById('loadingIndicator').classList.add('d-none');
         if (this.currentView === 'dashboard') {
@@ -864,6 +869,9 @@ class BudgetViewer {
             return;
         }
         
+        // Clear any existing error messages
+        this.hideError();
+        
         try {
             await this.loadBudgetData(budget.filename);
             document.getElementById('pageTitle').textContent = `Budget: ${budget.projectName}`;
@@ -875,7 +883,8 @@ class BudgetViewer {
             document.getElementById('exportPdfBtn').classList.remove('d-none');
             this.renderBudget();
         } catch (error) {
-            this.showError('Failed to load budget data');
+            console.error('Budget loading error:', error);
+            this.showError(`Failed to load budget: ${budget.filename}. The file may not exist.`);
         }
     }
     

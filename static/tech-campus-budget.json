@@ -1,0 +1,247 @@
+{
+  "project": {
+    "name": "Innovation Tech Campus",
+    "client": "TechCorp Solutions",
+    "address": "2500 Silicon Valley Drive, San Jose, CA 95110"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "line_items": [
+        {
+          "category": "ARCHITECT",
+          "vendor": "Tech Architecture Group",
+          "budget": 485000.00,
+          "notes": "Complete campus design and planning"
+        },
+        {
+          "category": "STRUCTURAL ENGINEERING",
+          "vendor": "Silicon Valley Structural",
+          "budget": 295000.00,
+          "notes": "Multi-building structural engineering"
+        },
+        {
+          "category": "MEP ENGINEERING",
+          "vendor": "Advanced MEP Systems",
+          "budget": 385000.00,
+          "notes": "High-tech MEP systems design"
+        }
+      ]
+    },
+    "General Conditions": {
+      "name": "General Conditions",
+      "line_items": [
+        {
+          "category": "BUILDING PERMITS",
+          "vendor": "City of San Jose",
+          "budget": 125000.00,
+          "notes": "Campus development permits"
+        },
+        {
+          "category": "CONSTRUCTION CLEANING",
+          "vendor": "Tech Clean Services",
+          "budget": 185000.00,
+          "notes": "Daily construction cleanup"
+        }
+      ]
+    },
+    "Site Work": {
+      "name": "Site Work",
+      "line_items": [
+        {
+          "category": "EXCAVATION / GRADING",
+          "vendor": "Bay Area Excavation",
+          "budget": 685000.00,
+          "notes": "Large-scale site preparation"
+        },
+        {
+          "category": "DRAINAGE LABOR AND MATERIAL",
+          "vendor": "Advanced Drainage Systems",
+          "budget": 295000.00,
+          "notes": "Campus-wide drainage system"
+        }
+      ]
+    },
+    "Shell": {
+      "name": "Shell",
+      "line_items": [
+        {
+          "category": "CONCRETE PILING",
+          "vendor": "Foundation Specialists Inc",
+          "budget": 1285000.00,
+          "notes": "Deep foundations for multiple buildings"
+        },
+        {
+          "category": "SHELL / ROOF FRAMING L&M",
+          "vendor": "Tech Steel Construction",
+          "budget": 1850000.00,
+          "notes": "Modern steel frame construction"
+        }
+      ]
+    },
+    "Roofing / Siding": {
+      "name": "Roofing / Siding",
+      "line_items": [
+        {
+          "category": "ROOFING LABOR AND MATERIALS",
+          "vendor": "Commercial Roofing Corp",
+          "budget": 485000.00,
+          "notes": "Green roof system with solar integration"
+        }
+      ]
+    },
+    "Exterior Windows & Doors": {
+      "name": "Exterior Windows & Doors",
+      "line_items": [
+        {
+          "category": "GLASS WINDOWS AND DOORS",
+          "vendor": "Tech Glass Systems",
+          "budget": 685000.00,
+          "notes": "Floor-to-ceiling curtain wall system"
+        }
+      ]
+    },
+    "Plumbing": {
+      "name": "Plumbing",
+      "line_items": [
+        {
+          "category": "PLUMBING LABOR",
+          "vendor": "Commercial Plumbing Corp",
+          "budget": 385000.00,
+          "notes": "Complete plumbing systems"
+        },
+        {
+          "category": "PLUMBING FIXTURES",
+          "vendor": "High-End Fixtures Co",
+          "budget": 185000.00,
+          "notes": "Premium commercial fixtures"
+        }
+      ]
+    },
+    "Electrical & Low Voltage": {
+      "name": "Electrical & Low Voltage",
+      "line_items": [
+        {
+          "category": "ELECTRICAL LABOR",
+          "vendor": "Tech Electric Systems",
+          "budget": 685000.00,
+          "notes": "Advanced electrical infrastructure"
+        },
+        {
+          "category": "AUDIO / VISUAL & NETWORK PREWIRE",
+          "vendor": "Network Solutions Inc",
+          "budget": 485000.00,
+          "notes": "High-speed network infrastructure"
+        },
+        {
+          "category": "AUDIO / VISUAL & NETWORK EQUIPMENT",
+          "vendor": "AV Tech Solutions",
+          "budget": 295000.00,
+          "notes": "Conference room AV systems"
+        },
+        {
+          "category": "SECURITY SYSTEM",
+          "vendor": "Advanced Security Corp",
+          "budget": 185000.00,
+          "notes": "Campus-wide security system"
+        }
+      ]
+    },
+    "Heating & Cooling": {
+      "name": "Heating & Cooling",
+      "line_items": [
+        {
+          "category": "AIR CONDITIONING & DUCT WORK",
+          "vendor": "Climate Control Systems",
+          "budget": 785000.00,
+          "notes": "Advanced HVAC with zone control"
+        }
+      ]
+    },
+    "Flooring": {
+      "name": "Flooring",
+      "line_items": [
+        {
+          "category": "INTERIOR TILE / MARBLE FLOOR MATERIAL",
+          "vendor": "Premium Flooring Co",
+          "budget": 385000.00,
+          "notes": "High-end lobby and common area flooring"
+        },
+        {
+          "category": "CARPET MATERIAL",
+          "vendor": "Commercial Carpet Co",
+          "budget": 185000.00,
+          "notes": "Office area carpeting"
+        },
+        {
+          "category": "CARPET LABOR",
+          "vendor": "Professional Installation",
+          "budget": 95000.00,
+          "notes": "Carpet installation throughout"
+        }
+      ]
+    },
+    "Interior Trim Package": {
+      "name": "Interior Trim Package",
+      "line_items": [
+        {
+          "category": "TRIM MATERIAL",
+          "vendor": "Custom Millwork Corp",
+          "budget": 285000.00,
+          "notes": "Custom millwork and trim"
+        },
+        {
+          "category": "TRIM LABOR",
+          "vendor": "Master Finish Carpenters",
+          "budget": 185000.00,
+          "notes": "Professional trim installation"
+        }
+      ]
+    },
+    "Paint": {
+      "name": "Paint",
+      "line_items": [
+        {
+          "category": "PAINTING INTERIOR",
+          "vendor": "Commercial Painters Inc",
+          "budget": 285000.00,
+          "notes": "Interior painting throughout campus"
+        },
+        {
+          "category": "PAINTING EXTERIOR",
+          "vendor": "Commercial Painters Inc",
+          "budget": 185000.00,
+          "notes": "Exterior accent painting"
+        }
+      ]
+    },
+    "Cabinetry and Built-ins": {
+      "name": "Cabinetry and Built-ins",
+      "line_items": [
+        {
+          "category": "CUSTOM BUILT INS",
+          "vendor": "Tech Cabinetry Solutions",
+          "budget": 385000.00,
+          "notes": "Custom built-ins for offices and labs"
+        }
+      ]
+    },
+    "Landscaping / Irrigation": {
+      "name": "Landscaping / Irrigation",
+      "line_items": [
+        {
+          "category": "LANDSCAPING LABOR AND MATERIALS",
+          "vendor": "Campus Landscape Design",
+          "budget": 485000.00,
+          "notes": "Sustainable campus landscaping"
+        },
+        {
+          "category": "IRRIGATION",
+          "vendor": "Smart Irrigation Systems",
+          "budget": 185000.00,
+          "notes": "Automated irrigation system"
+        }
+      ]
+    }
+  }
+}
