@@ -897,8 +897,9 @@ export class BudgetManager {
     }
 
     async saveNewBudget() {
+        // Run validation first - if it fails, don't proceed
         if (!this.validateNewBudget()) {
-            return;
+            return; // Stop here and keep form open for corrections
         }
         
         const budgetData = this.collectNewBudgetData();
@@ -1034,7 +1035,7 @@ export class BudgetManager {
 
     previewNewBudget() {
         if (!this.validateNewBudget()) {
-            return;
+            return; // Stay on form if validation fails
         }
         
         const budgetData = this.collectNewBudgetData();
