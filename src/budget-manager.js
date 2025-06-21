@@ -16,6 +16,11 @@ export class BudgetManager {
             trades: {}
         };
         this.tradeCounter = 0;
+        this.activeFilters = {
+            status: '',
+            sort: 'modified',
+            order: 'desc'
+        };
         
         this.tradeNames = [
             'Professional Services',
@@ -536,9 +541,16 @@ export class BudgetManager {
         document.getElementById('saveNewBudget').addEventListener('click', () => this.saveNewBudget());
         document.getElementById('previewBudgetBtn').addEventListener('click', () => this.previewNewBudget());
         
+        // Filter form listeners
+        document.getElementById('sortFilter').addEventListener('change', () => this.updateSortOrderLabels());
+        
         // Search and filter
         document.getElementById('searchInput').addEventListener('input', () => this.filterBudgets());
-        document.getElementById('statusFilter').addEventListener('change', () => this.filterBudgets());
+        document.getElementById('filterToggle').addEventListener('click', () => this.showFilterModal());
+        document.getElementById('closeFilter').addEventListener('click', () => this.hideFilterModal());
+        document.getElementById('filterModalBackdrop').addEventListener('click', () => this.hideFilterModal());
+        document.getElementById('clearFilters').addEventListener('click', () => this.clearAllFilters());
+        document.getElementById('applyFilters').addEventListener('click', () => this.applyFilters());
     }
 
     toggleTradeSection(toggleBtn) {
@@ -1224,7 +1236,6 @@ export class BudgetManager {
 
     filterBudgets() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const statusFilter = document.getElementById('statusFilter').value;
         
         this.filteredBudgets = this.budgetsList.filter(budget => {
             const matchesSearch = !searchTerm || 
@@ -1232,12 +1243,129 @@ export class BudgetManager {
                 budget.client.toLowerCase().includes(searchTerm) ||
                 budget.address.toLowerCase().includes(searchTerm);
             
-            const matchesStatus = !statusFilter || budget.status === statusFilter;
+            const matchesStatus = !this.activeFilters.status || budget.status === this.activeFilters.status;
             
             return matchesSearch && matchesStatus;
         });
         
+        this.sortBudgets();
         this.renderBudgetCards();
+    }
+    
+    sortBudgets() {
+        const { sort, order } = this.activeFilters;
+        
+        this.filteredBudgets.sort((a, b) => {
+            let comparison = 0;
+            
+            switch (sort) {
+                case 'name':
+                    comparison = a.projectName.localeCompare(b.projectName);
+                    break;
+                case 'client':
+                    comparison = a.client.localeCompare(b.client);
+                    break;
+                case 'budget':
+                    comparison = a.totalBudget - b.totalBudget;
+                    break;
+                case 'modified':
+                default:
+                    comparison = new Date(a.lastModified) - new Date(b.lastModified);
+                    break;
+            }
+            
+            return order === 'asc' ? comparison : -comparison;
+        });
+    }
+    
+    showFilterModal() {
+        // Populate current filter values
+        document.getElementById('statusFilter').value = this.activeFilters.status;
+        document.getElementById('sortFilter').value = this.activeFilters.sort;
+        document.querySelector(`input[name="sortOrder"][value="${this.activeFilters.order}"]`).checked = true;
+        
+        // Show modal
+        document.getElementById('filterModalBackdrop').classList.add('show');
+        document.getElementById('filterModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        this.updateFilterBadge();
+    }
+    
+    hideFilterModal() {
+        document.getElementById('filterModalBackdrop').classList.remove('show');
+        document.getElementById('filterModal').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    
+    clearAllFilters() {
+        this.activeFilters = {
+            status: '',
+            sort: 'modified',
+            order: 'desc'
+        };
+        
+        // Update form
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('sortFilter').value = 'modified';
+        document.querySelector('input[name="sortOrder"][value="desc"]').checked = true;
+        
+        this.updateFilterBadge();
+        this.filterBudgets();
+    }
+    
+    applyFilters() {
+        this.activeFilters = {
+            status: document.getElementById('statusFilter').value,
+            sort: document.getElementById('sortFilter').value,
+            order: document.querySelector('input[name="sortOrder"]:checked').value
+        };
+        
+        this.updateFilterBadge();
+        this.filterBudgets();
+        this.hideFilterModal();
+    }
+    
+    updateFilterBadge() {
+        const badge = document.getElementById('filterBadge');
+        let activeCount = 0;
+        
+        if (this.activeFilters.status) activeCount++;
+        if (this.activeFilters.sort !== 'modified') activeCount++;
+        if (this.activeFilters.order !== 'desc') activeCount++;
+        
+        if (activeCount > 0) {
+            badge.textContent = activeCount;
+            badge.classList.remove('d-none');
+        } else {
+            badge.classList.add('d-none');
+        }
+        
+        // Update sort order labels based on sort type
+        this.updateSortOrderLabels();
+    }
+    
+    updateSortOrderLabels() {
+        const sortType = document.getElementById('sortFilter').value;
+        const descLabel = document.querySelector('label[for="sortDesc"]');
+        const ascLabel = document.querySelector('label[for="sortAsc"]');
+        
+        switch (sortType) {
+            case 'name':
+            case 'client':
+                descLabel.textContent = 'Z to A';
+                ascLabel.textContent = 'A to Z';
+                break;
+            case 'budget':
+                descLabel.textContent = 'Highest First';
+                ascLabel.textContent = 'Lowest First';
+                break;
+            case 'modified':
+            default:
+                descLabel.textContent = 'Newest First';
+                ascLabel.textContent = 'Oldest First';
+                break;
+        }
     }
 
     renderBudgetCards() {

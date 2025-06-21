@@ -113,6 +113,52 @@
         }
         
         /* Compact mobile styling */
+        /* Filter Modal Styles */
+        .filter-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bs-body-bg);
+            border-radius: 1rem 1rem 0 0;
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.2);
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1050;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        
+        .filter-modal.show {
+            transform: translateY(0);
+        }
+        
+        .filter-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none;
+        }
+        
+        .filter-modal-backdrop.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .filter-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--bs-border-color);
+            border-radius: 2px;
+            margin: 0.75rem auto 0;
+        }
+        
         @media (max-width: 768px) {
             .container { padding: 0.5rem; }
             .trade-header { padding: 0.75rem; }
@@ -131,6 +177,10 @@
             .budget-card .card-text {
                 font-size: 0.875rem;
                 margin-bottom: 0.75rem;
+            }
+            
+            .filter-modal {
+                max-height: 60vh;
             }
         }
     </style>
@@ -177,19 +227,18 @@
 
             <!-- Search and Filter -->
             <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search projects...">
+                <div class="col-12">
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="input-group flex-grow-1">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search projects...">
+                        </div>
+                        <button id="filterToggle" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                            <i class="fas fa-filter"></i>
+                            <span>Filter</span>
+                            <span id="filterBadge" class="badge bg-primary rounded-pill d-none">1</span>
+                        </button>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <select id="statusFilter" class="form-select">
-                        <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="planning">Planning</option>
-                        <option value="completed">Completed</option>
-                    </select>
                 </div>
             </div>
 
@@ -303,6 +352,56 @@
                         <i class="fas fa-save me-2"></i>Save Budget
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div id="filterModalBackdrop" class="filter-modal-backdrop"></div>
+    <div id="filterModal" class="filter-modal">
+        <div class="filter-handle"></div>
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Filter Projects</h5>
+                <button id="closeFilter" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="planning">Planning</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Sort By</label>
+                <select id="sortFilter" class="form-select">
+                    <option value="modified">Last Modified</option>
+                    <option value="name">Project Name</option>
+                    <option value="budget">Budget Amount</option>
+                    <option value="client">Client Name</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Sort Order</label>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" name="sortOrder" id="sortDesc" value="desc" checked>
+                    <label class="btn btn-outline-primary" for="sortDesc">Newest First</label>
+                    
+                    <input type="radio" class="btn-check" name="sortOrder" id="sortAsc" value="asc">
+                    <label class="btn btn-outline-primary" for="sortAsc">Oldest First</label>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button id="clearFilters" class="btn btn-outline-secondary flex-fill">Clear All</button>
+                <button id="applyFilters" class="btn btn-primary flex-fill">Apply Filters</button>
             </div>
         </div>
     </div>
