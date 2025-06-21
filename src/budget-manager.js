@@ -1127,6 +1127,7 @@ export class BudgetManager {
                 
                 let hasValidLineItem = false;
                 let lineItemIndex = 0;
+                let hasIncompleteItems = false;
                 
                 for (const item of lineItems) {
                     lineItemIndex++;
@@ -1141,33 +1142,37 @@ export class BudgetManager {
                     if (category.value || vendor.value.trim() || budget.value.trim()) {
                         hasAnyValue = true;
                         
-                        // If any field has a value, all required fields must be filled
+                        // If any field has a value, ALL required fields must be completed
                         if (!category.value) {
-                            this.addValidationError(category, 'Category is required');
-                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Category is required`);
+                            this.addValidationError(category, 'Complete this field or remove the line item');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Complete Category field or remove this line item`);
                             lineItemValid = false;
                             isValid = false;
+                            hasIncompleteItems = true;
                         }
                         
                         if (!vendor.value.trim()) {
-                            this.addValidationError(vendor, 'Vendor is required');
-                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Vendor is required`);
+                            this.addValidationError(vendor, 'Complete this field or remove the line item');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Complete Vendor field or remove this line item`);
                             lineItemValid = false;
                             isValid = false;
+                            hasIncompleteItems = true;
                         }
                         
                         // Data type validation for budget
                         const budgetValue = parseFloat(budget.value);
-                        if (budget.value.trim() && (isNaN(budgetValue) || budgetValue <= 0)) {
+                        if (!budget.value.trim()) {
+                            this.addValidationError(budget, 'Complete this field or remove the line item');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Complete Budget field or remove this line item`);
+                            lineItemValid = false;
+                            isValid = false;
+                            hasIncompleteItems = true;
+                        } else if (isNaN(budgetValue) || budgetValue <= 0) {
                             this.addValidationError(budget, 'Budget must be a valid number greater than 0');
                             errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget must be a valid number greater than 0`);
                             lineItemValid = false;
                             isValid = false;
-                        } else if (!budget.value.trim()) {
-                            this.addValidationError(budget, 'Budget is required');
-                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget is required`);
-                            lineItemValid = false;
-                            isValid = false;
+                            hasIncompleteItems = true;
                         }
                         
                         // Data type validation for vendor (should be text only)
@@ -1176,12 +1181,17 @@ export class BudgetManager {
                             errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Vendor name should contain text, not just numbers`);
                             lineItemValid = false;
                             isValid = false;
+                            hasIncompleteItems = true;
                         }
                     }
                     
                     if (lineItemValid && hasAnyValue) {
                         hasValidLineItem = true;
                     }
+                }
+                
+                if (hasIncompleteItems) {
+                    errorMessages.unshift('Cannot save budget with incomplete line items. Please complete all fields or remove incomplete items using the trash icon.');
                 }
                 
                 if (hasValidLineItem) {
@@ -1279,17 +1289,22 @@ export class BudgetManager {
             lineItemForms.forEach(item => {
                 const category = item.querySelector('.item-category').value;
                 const vendor = item.querySelector('.item-vendor').value.trim();
-                const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
+                const budgetValue = parseFloat(item.querySelector('.item-budget').value);
                 const notes = item.querySelector('.item-notes').value.trim();
                 
-                // Only include complete line items (validation should have caught incomplete ones)
-                if (category && vendor && budget > 0) {
+                // STRICT: Only include line items where ALL required fields are complete
+                // This prevents saving any incomplete data that validation might have missed
+                if (category && vendor.length > 0 && !isNaN(budgetValue) && budgetValue > 0) {
                     lineItems.push({
                         category,
                         vendor,
-                        budget,
+                        budget: budgetValue,
                         notes: notes || undefined
                     });
+                }
+                // If any line item is incomplete and has some data, this should have been caught by validation
+                else if (category || vendor.length > 0 || item.querySelector('.item-budget').value.trim()) {
+                    console.warn('Incomplete line item detected during collection - this should have been caught by validation');
                 }
             });
             
