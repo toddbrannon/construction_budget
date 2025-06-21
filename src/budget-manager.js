@@ -1214,8 +1214,14 @@ export class BudgetManager {
         // Add new feedback
         const feedback = document.createElement('div');
         feedback.className = 'invalid-feedback';
-        feedback.textContent = message;
+        feedback.innerHTML = `<i class="fas fa-exclamation-triangle me-1"></i>${message}`;
         element.parentNode.appendChild(feedback);
+        
+        // Add a slight shake animation to draw attention
+        element.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+            element.style.animation = '';
+        }, 500);
     }
     
     clearValidationErrors() {

@@ -78,7 +78,14 @@
         
         .is-invalid {
             border-color: #dc3545 !important;
+            border-width: 2px !important;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+            background-color: rgba(220, 53, 69, 0.05) !important;
+        }
+        
+        .is-invalid:focus {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5) !important;
         }
         
         .invalid-feedback {
@@ -86,6 +93,13 @@
             color: #dc3545;
             font-size: 0.875em;
             margin-top: 0.25rem;
+            font-weight: 500;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
         }
         
         .remove-btn {
