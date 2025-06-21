@@ -103,12 +103,7 @@
                                 <li><a class="dropdown-item" href="#" id="createBlankBudget">
                                     <i class="fas fa-file-alt me-2"></i>Blank Budget
                                 </a></li>
-                                <li><a class="dropdown-item" href="#" id="generateStepByStepBudget">
-                                    <i class="fas fa-magic me-2"></i>Step-by-Step Generator
-                                </a></li>
-                                <li><a class="dropdown-item" href="#" id="generateTestBudget">
-                                    <i class="fas fa-bolt me-2"></i>Quick Generate
-                                </a></li>
+
                             </ul>
                         </div>
                         <button id="exportPdfBtn" class="btn btn-outline-primary no-print d-none">
@@ -322,79 +317,7 @@
         </div>
         
         <!-- Step-by-Step Budget Generator Modal -->
-        <div class="modal fade" id="stepByStepModal" tabindex="-1">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header bg-gradient text-white" style="background: linear-gradient(135deg, #6f42c1, #9a6fc1);">
-                        <h4 class="modal-title fw-bold">
-                            <i class="fas fa-magic me-3"></i>Step-by-Step Budget Generator
-                        </h4>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" style="min-height: 500px;">
-                        <!-- Step 1: Select Scenario -->
-                        <div id="step1" class="step-content">
-                            <div class="text-center mb-4">
-                                <h5 class="fw-bold text-dark">Step 1: Choose a Project Scenario</h5>
-                                <p class="text-muted">Select from our curated collection of realistic construction projects</p>
-                            </div>
-                            <div class="row" id="scenarioCards">
-                                <!-- Scenario cards will be populated here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Step 2: Review Project Info -->
-                        <div id="step2" class="step-content d-none">
-                            <div class="text-center mb-4">
-                                <h5 class="fw-bold text-dark">Step 2: Project Information</h5>
-                                <p class="text-muted">Review the project details and specifications</p>
-                            </div>
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <div id="projectInfoPreview"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Step 3: Review Trade Sections -->
-                        <div id="step3" class="step-content d-none">
-                            <div class="text-center mb-4">
-                                <h5 class="fw-bold text-dark">Step 3: Trade Sections Overview</h5>
-                                <p class="text-muted">Preview all trade sections and their budget allocations</p>
-                            </div>
-                            <div id="tradesOverview"></div>
-                        </div>
-                        
-                        <!-- Step 4: Complete -->
-                        <div id="step4" class="step-content d-none">
-                            <div class="text-center mb-4">
-                                <h5 class="fw-bold text-dark">Step 4: Ready to Create</h5>
-                                <p class="text-muted">Your comprehensive budget is ready for creation</p>
-                            </div>
-                            <div class="alert alert-success border-0 shadow-sm" style="background: linear-gradient(135deg, #d4edda, #c3e6cb);">
-                                <div class="d-flex align-items-center mb-3">
-                                    <i class="fas fa-check-circle text-success fs-4 me-3"></i>
-                                    <h5 class="mb-0 text-success fw-bold">Budget Ready for Creation!</h5>
-                                </div>
-                                <p class="mb-3 text-dark">Your comprehensive construction budget has been prepared with the following details:</p>
-                                <ul id="budgetSummary" class="mb-0 list-unstyled"></ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-outline-secondary px-4" id="prevStep" disabled>
-                            <i class="fas fa-arrow-left me-2"></i>Previous
-                        </button>
-                        <button type="button" class="btn btn-primary px-4" id="nextStep">
-                            Continue <i class="fas fa-arrow-right ms-2"></i>
-                        </button>
-                        <button type="button" class="btn btn-success px-4 d-none" id="createBudgetStep">
-                            <i class="fas fa-plus me-2"></i>Create Budget
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <!-- Bootstrap JS -->
