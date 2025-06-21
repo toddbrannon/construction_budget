@@ -1245,13 +1245,11 @@ export class BudgetManager {
         
         if (this.filteredBudgets.length === 0) {
             container.innerHTML = `
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body text-center py-5">
-                            <i class="fas fa-calculator fa-3x text-muted mb-3"></i>
-                            <h5>No budgets found</h5>
-                            <p class="text-muted">Try adjusting your search or create a new budget.</p>
-                        </div>
+                <div class="card" style="grid-column: 1 / -1;">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-calculator fa-2x text-muted mb-3"></i>
+                        <h5>No budgets found</h5>
+                        <p class="text-muted mb-0">Try adjusting your search or create a new budget.</p>
                     </div>
                 </div>
             `;
@@ -1259,22 +1257,20 @@ export class BudgetManager {
         }
         
         container.innerHTML = this.filteredBudgets.map(budget => `
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card budget-card h-100" onclick="budgetManager.showBudgetViewer('${budget.id}')">
-                    <div class="card-body">
-                        <h5 class="card-title">${this.escapeHtml(budget.projectName)}</h5>
-                        <p class="card-text">
-                            <strong>Client:</strong> ${this.escapeHtml(budget.client)}<br>
-                            <small class="text-muted">${this.escapeHtml(budget.address)}</small>
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge ${this.getStatusBadgeClass(budget.status)}">${this.getStatusText(budget.status)}</span>
-                            <span class="currency">${this.formatCurrency(budget.totalBudget)}</span>
-                        </div>
-                        <small class="text-muted d-block mt-2">
-                            Modified: ${new Date(budget.lastModified).toLocaleDateString()}
-                        </small>
+            <div class="card budget-card h-100" onclick="budgetManager.showBudgetViewer('${budget.id}')">
+                <div class="card-body">
+                    <h5 class="card-title">${this.escapeHtml(budget.projectName)}</h5>
+                    <p class="card-text">
+                        <strong>Client:</strong> ${this.escapeHtml(budget.client)}<br>
+                        <small class="text-muted d-block mt-1">${this.escapeHtml(budget.address)}</small>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge ${this.getStatusBadgeClass(budget.status)}">${this.getStatusText(budget.status)}</span>
+                        <span class="currency">${this.formatCurrency(budget.totalBudget)}</span>
                     </div>
+                    <small class="text-muted">
+                        Modified: ${new Date(budget.lastModified).toLocaleDateString()}
+                    </small>
                 </div>
             </div>
         `).join('');

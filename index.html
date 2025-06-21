@@ -84,11 +84,54 @@
             transform: scale(1.1);
         }
         
+        /* Responsive Grid Layout */
+        .budget-cards-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+        }
+        
+        /* 2-column at ≥360px (portrait) */
+        @media (min-width: 360px) {
+            .budget-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* 3-column at ≥540px */
+        @media (min-width: 540px) {
+            .budget-cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* 4-column at larger screens */
+        @media (min-width: 992px) {
+            .budget-cards-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Compact mobile styling */
         @media (max-width: 768px) {
             .container { padding: 0.5rem; }
             .trade-header { padding: 0.75rem; }
             .line-item { padding: 0.75rem; }
             .btn { padding: 0.5rem 1rem; }
+            
+            .budget-card .card-body {
+                padding: 0.75rem;
+            }
+            
+            .budget-card .card-title {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .budget-card .card-text {
+                font-size: 0.875rem;
+                margin-bottom: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -151,7 +194,7 @@
             </div>
 
             <!-- Budget Cards Container -->
-            <div id="budgetCardsContainer" class="row">
+            <div id="budgetCardsContainer" class="budget-cards-grid">
                 <!-- Budget cards will be rendered here -->
             </div>
         </div>
