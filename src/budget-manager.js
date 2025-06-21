@@ -1127,30 +1127,37 @@ export class BudgetManager {
                     const budget = item.querySelector('.item-budget');
                     
                     let lineItemValid = true;
+                    let hasAnyValue = false;
                     
-                    if (!category.value) {
-                        this.addValidationError(category, 'Category is required');
-                        errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Category is required`);
-                        lineItemValid = false;
-                        isValid = false;
+                    // Check if this line item has any values entered
+                    if (category.value || vendor.value.trim() || (parseFloat(budget.value) || 0) > 0) {
+                        hasAnyValue = true;
+                        
+                        // If any field has a value, all required fields must be filled
+                        if (!category.value) {
+                            this.addValidationError(category, 'Category is required');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Category is required`);
+                            lineItemValid = false;
+                            isValid = false;
+                        }
+                        
+                        if (!vendor.value.trim()) {
+                            this.addValidationError(vendor, 'Vendor is required');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Vendor is required`);
+                            lineItemValid = false;
+                            isValid = false;
+                        }
+                        
+                        const budgetValue = parseFloat(budget.value) || 0;
+                        if (budgetValue <= 0) {
+                            this.addValidationError(budget, 'Budget must be greater than 0');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget must be greater than 0`);
+                            lineItemValid = false;
+                            isValid = false;
+                        }
                     }
                     
-                    if (!vendor.value.trim()) {
-                        this.addValidationError(vendor, 'Vendor is required');
-                        errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Vendor is required`);
-                        lineItemValid = false;
-                        isValid = false;
-                    }
-                    
-                    const budgetValue = parseFloat(budget.value) || 0;
-                    if (budgetValue <= 0) {
-                        this.addValidationError(budget, 'Budget must be greater than 0');
-                        errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget must be greater than 0`);
-                        lineItemValid = false;
-                        isValid = false;
-                    }
-                    
-                    if (lineItemValid) {
+                    if (lineItemValid && hasAnyValue) {
                         hasValidLineItem = true;
                     }
                 }
@@ -1247,6 +1254,7 @@ export class BudgetManager {
                 const budget = parseFloat(item.querySelector('.item-budget').value) || 0;
                 const notes = item.querySelector('.item-notes').value.trim();
                 
+                // Only include complete line items (validation should have caught incomplete ones)
                 if (category && vendor && budget > 0) {
                     lineItems.push({
                         category,
