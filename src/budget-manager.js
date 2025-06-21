@@ -317,23 +317,49 @@ export class BudgetManager {
 
     async loadBudgetsList() {
         try {
+            // Load from localStorage first for any saved budgets
+            const savedBudgets = JSON.parse(localStorage.getItem('constructionBudgetsList') || '[]');
+            
+            // Load initial budgets from public file
             const response = await fetch('/budgets.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.ok) {
+                const data = await response.json();
+                const publicBudgets = data.budgets || [];
+                
+                // Merge public budgets with saved budgets (avoid duplicates)
+                const allBudgets = [...publicBudgets];
+                savedBudgets.forEach(savedBudget => {
+                    if (!allBudgets.find(b => b.id === savedBudget.id)) {
+                        allBudgets.push(savedBudget);
+                    }
+                });
+                
+                this.budgetsList = allBudgets;
+            } else {
+                this.budgetsList = savedBudgets;
             }
-            const data = await response.json();
-            this.budgetsList = data.budgets || [];
+            
             this.filteredBudgets = [...this.budgetsList];
         } catch (error) {
             console.error('Error loading budgets list:', error);
-            // Create empty list if file doesn't exist
-            this.budgetsList = [];
-            this.filteredBudgets = [];
+            this.budgetsList = JSON.parse(localStorage.getItem('constructionBudgetsList') || '[]');
+            this.filteredBudgets = [...this.budgetsList];
         }
     }
 
     async loadBudgetData(filename = 'budget.json') {
         try {
+            // First try to load from storage
+            if (this.currentBudgetId) {
+                const storedData = await this.loadBudgetFromStorage(this.currentBudgetId);
+                if (storedData) {
+                    this.budgetData = storedData;
+                    this.normalizeTradesData();
+                    return;
+                }
+            }
+            
+            // Fallback to public files
             const response = await fetch(`/${filename}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -869,6 +895,9 @@ export class BudgetManager {
             this.filteredBudgets = [...this.budgetsList];
             this.currentBudgetId = newBudgetId;
             
+            // Save updated list
+            this.saveBudgetsList();
+            
             // Update current budget data
             this.budgetData = budgetData;
             
@@ -884,6 +913,11 @@ export class BudgetManager {
         const savedBudgets = JSON.parse(localStorage.getItem('constructionBudgets') || '{}');
         savedBudgets[budgetId] = budgetData;
         localStorage.setItem('constructionBudgets', JSON.stringify(savedBudgets));
+    }
+    
+    saveBudgetsList() {
+        // Save the budgets list to localStorage
+        localStorage.setItem('constructionBudgetsList', JSON.stringify(this.budgetsList));
     }
 
     async loadBudgetFromStorage(budgetId) {
@@ -914,6 +948,9 @@ export class BudgetManager {
                     totalBudget: totalBudget
                 };
                 this.filteredBudgets = [...this.budgetsList];
+                
+                // Save updated list
+                this.saveBudgetsList();
             }
             
             this.showSuccessMessage('Budget updated and saved locally!');
