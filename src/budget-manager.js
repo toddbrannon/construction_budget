@@ -897,11 +897,18 @@ export class BudgetManager {
     }
 
     async saveNewBudget() {
+        console.log('Save button clicked, running validation...');
+        
         // Run validation first - if it fails, don't proceed
-        if (!this.validateNewBudget()) {
+        const isValid = this.validateNewBudget();
+        console.log('Validation result:', isValid);
+        
+        if (!isValid) {
+            console.log('Validation failed, stopping save operation');
             return; // Stop here and keep form open for corrections
         }
         
+        console.log('Validation passed, proceeding with save...');
         const budgetData = this.collectNewBudgetData();
         
         if (this.isEditMode) {
@@ -1131,7 +1138,7 @@ export class BudgetManager {
                     let hasAnyValue = false;
                     
                     // Check if this line item has any values entered
-                    if (category.value || vendor.value.trim() || (parseFloat(budget.value) || 0) > 0) {
+                    if (category.value || vendor.value.trim() || budget.value.trim()) {
                         hasAnyValue = true;
                         
                         // If any field has a value, all required fields must be filled
@@ -1149,10 +1156,24 @@ export class BudgetManager {
                             isValid = false;
                         }
                         
-                        const budgetValue = parseFloat(budget.value) || 0;
-                        if (budgetValue <= 0) {
-                            this.addValidationError(budget, 'Budget must be greater than 0');
-                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget must be greater than 0`);
+                        // Data type validation for budget
+                        const budgetValue = parseFloat(budget.value);
+                        if (budget.value.trim() && (isNaN(budgetValue) || budgetValue <= 0)) {
+                            this.addValidationError(budget, 'Budget must be a valid number greater than 0');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget must be a valid number greater than 0`);
+                            lineItemValid = false;
+                            isValid = false;
+                        } else if (!budget.value.trim()) {
+                            this.addValidationError(budget, 'Budget is required');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Budget is required`);
+                            lineItemValid = false;
+                            isValid = false;
+                        }
+                        
+                        // Data type validation for vendor (should be text only)
+                        if (vendor.value.trim() && /^\d+$/.test(vendor.value.trim())) {
+                            this.addValidationError(vendor, 'Vendor name should contain text, not just numbers');
+                            errorMessages.push(`Trade ${tradeIndex}, Line ${lineItemIndex}: Vendor name should contain text, not just numbers`);
                             lineItemValid = false;
                             isValid = false;
                         }
