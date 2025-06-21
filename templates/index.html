@@ -74,38 +74,14 @@
                             <i class="fas fa-arrow-left me-1"></i>
                             <span class="d-none d-sm-inline">Back to </span>Dashboard
                         </button>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="text-light d-none d-md-inline">
-                                <i class="fas fa-user me-2"></i>{{ user.first_name or user.username }}
-                            </span>
-                            <button class="btn btn-outline-light btn-sm d-none d-md-inline-block" onclick="window.location.href='#'">
-                                <i class="fas fa-user"></i>
-                                <span class="d-none d-lg-inline ms-1">Profile</span>
-                            </button>
-                            <button class="btn btn-outline-light btn-sm" onclick="window.location.href='{{ url_for('logout') }}'">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span class="d-none d-lg-inline ms-1">Logout</span>
-                            </button>
-                        </div>
                         <button id="editBudgetBtn" class="btn btn-warning no-print d-none">
                             <i class="fas fa-edit me-1"></i>
                             <span class="d-none d-sm-inline">Edit </span>Budget
                         </button>
-                        <div class="btn-group">
-                            <button id="newBudgetBtn" class="btn btn-success no-print">
-                                <i class="fas fa-plus me-1"></i>
-                                <span class="d-none d-sm-inline">New </span>Budget
-                            </button>
-                            <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split no-print" data-bs-toggle="dropdown">
-                                <span class="visually-hidden">Toggle Dropdown</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" id="createBlankBudget">
-                                    <i class="fas fa-file-alt me-2"></i>Blank Budget
-                                </a></li>
-
-                            </ul>
-                        </div>
+                        <button id="newBudgetBtn" class="btn btn-success no-print">
+                            <i class="fas fa-plus me-1"></i>
+                            <span class="d-none d-sm-inline">New </span>Budget
+                        </button>
                         <button id="exportPdfBtn" class="btn btn-outline-primary no-print d-none">
                             <i class="fas fa-file-pdf me-1"></i>
                             <span class="d-none d-sm-inline">Download </span>PDF
@@ -279,52 +255,12 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Enhanced Step-by-Step Modal -->
-        <div class="modal fade" id="stepModal" tabindex="-1">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header bg-gradient text-white" style="background: linear-gradient(135deg, #6f42c1, #9a6fc1);">
-                        <h4 class="modal-title fw-bold">
-                            <i class="fas fa-magic me-3"></i>Step-by-Step Budget Generator
-                        </h4>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" style="min-height: 500px;">
-                        <!-- Progress Bar -->
-                        <div class="progress mb-4" style="height: 8px;">
-                            <div id="stepProgress" class="progress-bar bg-gradient" style="background: linear-gradient(135deg, #6f42c1, #9a6fc1);"></div>
-                        </div>
-                        
-                        <!-- Step Content Container -->
-                        <div id="stepContent">
-                            <!-- Content will be dynamically rendered here -->
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="prevStepBtn" class="btn btn-outline-secondary" onclick="budgetViewer.prevStep()">
-                            <i class="fas fa-arrow-left me-2"></i>Previous
-                        </button>
-                        <button type="button" id="nextStepBtn" class="btn btn-primary" onclick="budgetViewer.nextStep()">
-                            Next<i class="fas fa-arrow-right ms-2"></i>
-                        </button>
-                        <button type="button" id="finishBtn" class="btn btn-success d-none" onclick="budgetViewer.createBudgetFromStep()">
-                            <i class="fas fa-check me-2"></i>Create Budget
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Step-by-Step Budget Generator Modal -->
-
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Application JS -->
+    
+    <!-- Custom JavaScript -->
     <script src="/static/app.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ class BudgetViewer {
         this.currentBudgetId = null;
         this.budgetsList = [];
         this.filteredBudgets = [];
-        this.currentView = 'dashboard';
+        this.currentView = 'dashboard'; // 'dashboard', 'budget', 'new', 'edit'
         this.newBudgetData = {
             project: { name: '', client: '', address: '' },
             trades: {}
@@ -80,272 +80,823 @@ class BudgetViewer {
             'Pest Control',
             'SMS Direct Services'
         ];
-    }
 
+        this.tradeCategoryMapping = {
+            'Professional Services': [
+                { name: 'ARCHITECT', code: '1001' },
+                { name: 'STRUCTURAL ENGINEERING', code: '1002' },
+                { name: 'CIVIL ENGINEERING', code: '1003' },
+                { name: 'MEP ENGINEERING', code: '1004' },
+                { name: 'FIRE SPRINKLER', code: '1005' },
+                { name: 'LANDSCAPE ARCHITECT', code: '1006' },
+                { name: 'INTERIOR DESIGN', code: '1007' },
+                { name: 'BUILDER\'S RISK INSURANCE', code: '1008' },
+                { name: 'WIND INSURANCE', code: '1009' },
+                { name: 'PROJECT INSURANCE', code: '1010' },
+                { name: 'PROFESSIONAL SERVICES', code: '1011' },
+                { name: 'THRESHOLD INSPECTIONS', code: '1012' },
+                { name: 'LEGAL SERVICES', code: '1013' }
+            ],
+            'General Conditions': [
+                { name: 'SURVEYS', code: '1101' },
+                { name: 'BUILDING PERMITS', code: '1102' },
+                { name: 'PLAN COPIES', code: '1103' },
+                { name: 'PERMIT PROCESSING', code: '1104' },
+                { name: 'SOIL TESTING', code: '1105' },
+                { name: 'ASBESTOS & LEAD TESTING', code: '1106' },
+                { name: 'MOLD TESTING', code: '1107' },
+                { name: 'MISCELLANEOUS CONSTRUCTION EXPENSE', code: '1108' },
+                { name: 'PROTECTIVE MATERIALS', code: '1109' },
+                { name: 'CONSTRUCTION PREPARATION/DEMO', code: '1110' },
+                { name: 'CONSTRUCTION CLEANING', code: '1111' },
+                { name: 'PUNCH OUT', code: '1112' },
+                { name: 'COURIER SERVICES', code: '1113' },
+                { name: 'GENERAL BUILDING MATERIALS', code: '1114' },
+                { name: 'WEEKLY ALLOWANCE FOR JOB/SITE CLEAN UP', code: '1115' }
+            ],
+            'Temporary Conditions': [
+                { name: 'CONSTRUCTION TRAILER', code: '1201' },
+                { name: 'CONSTRUCTION FENCES', code: '1202' },
+                { name: 'ON SITE WIFI', code: '1203' },
+                { name: 'PSEG ELECTRIC TIE-IN PRIMARY FEEDERS', code: '1204' },
+                { name: 'TEMPORARY ELECTRIC', code: '1205' },
+                { name: 'TEMPORARY AC', code: '1206' },
+                { name: 'TEMPORARY WATER', code: '1207' },
+                { name: 'TEMPORARY TOILETS', code: '1208' },
+                { name: 'TEMPORARY STORAGE', code: '1209' },
+                { name: 'LP DELIVERIES', code: '1210' },
+                { name: 'TEMPORARY LP TANKS', code: '1211' },
+                { name: 'TEMPORARY HEAT W/ RENTAL', code: '1212' },
+                { name: 'TEMPORARY TENTING', code: '1213' },
+                { name: 'DUMPSTER/TRASH HAULING', code: '1214' },
+                { name: 'SCAFFOLDING SETUP/BREAK DOWN', code: '1215' },
+                { name: 'SCAFFOLDING MONTHLY RENTAL', code: '1216' },
+                { name: 'FURNITURE PACKUP/PACK OUT/STORAGE', code: '1217' }
+            ],
+            'Shell': [
+                { name: 'CONCRETE PILING', code: '1301' },
+                { name: 'CONCRETE PILING ENGINEERING & INSPECTIONS', code: '1302' },
+                { name: 'PILING SPOILS CLEAN UP', code: '1303' },
+                { name: 'REVISION FRAMING', code: '1304' },
+                { name: 'SHELL / ROOF FRAMING L&M', code: '1305' },
+                { name: 'TRUSSES & FLOOR JOISTS', code: '1306' },
+                { name: 'FLOOR SYSTEM', code: '1307' },
+                { name: 'CORE DRILL FOR ALL TRADES', code: '1308' },
+                { name: 'SITE WALLS', code: '1309' },
+                { name: 'SHEATHING L & M', code: '1310' },
+                { name: 'ROT REPAIR', code: '1311' },
+                { name: 'ACCESSORY STRUCTURES', code: '1312' },
+                { name: 'CONCRETE SAW CUTTING', code: '1313' }
+            ],
+            'Masonry': [
+                { name: 'STUCCO', code: '1401' },
+                { name: 'STONE VENEER MATERIAL', code: '1402' },
+                { name: 'VENEER INSTALLATION / LABOR', code: '1403' },
+                { name: 'PRECAST STONE / CORAL', code: '1404' },
+                { name: 'PATIO MATERIAL', code: '1405' },
+                { name: 'PATIO LABOR', code: '1406' }
+            ],
+            'Decking': [
+                { name: 'DECKING FOOTINGS', code: '1501' },
+                { name: 'DECKING FRAMING L & M', code: '1502' },
+                { name: 'DECKING MATERIAL', code: '1503' },
+                { name: 'EXTERIOR RAILS', code: '1504' },
+                { name: 'DECKING LABOR', code: '1505' }
+            ],
+            'Waterproofing': [
+                { name: 'WATERPROOFING BELOW GRADE', code: '1601' },
+                { name: 'WATERPROOFING WALLS PRIOR TO STUCCO', code: '1602' },
+                { name: 'BALCONY WATERPROOFING', code: '1603' },
+                { name: 'SITE WALL WATERPROOFING', code: '1604' }
+            ],
+            'Roofing / Siding': [
+                { name: 'DEMO/LOAD DEBRIS/CLEAN WORK AREA', code: '1701' },
+                { name: 'ROOFING LABOR AND MATERIALS', code: '1702' },
+                { name: 'CHIMNEY CAPS/LOUVERS & VENTS', code: '1703' },
+                { name: 'DOOR PANS', code: '1704' },
+                { name: 'WINDOW DRIP CAPS', code: '1705' },
+                { name: 'FLASHINGS', code: '1706' },
+                { name: 'SIDING MATERIAL', code: '1707' },
+                { name: 'SIDING LABOR', code: '1708' },
+                { name: 'PARAPET CAPPING', code: '1709' },
+                { name: 'KNUCKLE/INTERSECTING FLASHING', code: '1710' },
+                { name: 'WRP (HOUSE WRAP)', code: '1711' },
+                { name: 'CROSS LATHE', code: '1712' },
+                { name: 'ATTACHMENTS', code: '1713' },
+                { name: 'BREAK FLASHING/EXPOSED METAL DETAILING', code: '1714' },
+                { name: 'SPEACIALTY MATERIALS', code: '1715' }
+            ],
+            'Exterior Windows & Doors': [
+                { name: 'GLASS WINDOWS AND DOORS', code: '1801' },
+                { name: 'WINDOW AND DOOR INSTALLATION', code: '1802' },
+                { name: 'BUCKS/ WATERPROOFING', code: '1803' },
+                { name: 'FRONT ENTRY DOOR', code: '1804' },
+                { name: 'EXTERIOR DOOR HARDWARE', code: '1805' },
+                { name: 'EXTERIOR DOOR HARDWARE INSTALLATION', code: '1806' },
+                { name: 'OVERHEAD GARAGE DOORS', code: '1807' },
+                { name: 'SPECIALTY DOOR SYSTEMS', code: '1808' }
+            ],
+            'Framing & Drywall': [
+                { name: 'DRYWALL L & M', code: '1901' },
+                { name: 'INTERIOR FRAMING', code: '1902' },
+                { name: 'INSULATION', code: '1903' },
+                { name: 'WINE ROOM INSULATION', code: '1904' }
+            ],
+            'Plumbing': [
+                { name: 'PLUMBING LABOR', code: '2001' },
+                { name: 'PLUMBING FIXTURES', code: '2002' },
+                { name: 'SEPTIC', code: '2003' },
+                { name: 'BACKFLOW', code: '2004' },
+                { name: 'DOCK PLUMBING', code: '2005' },
+                { name: 'FIRE SPRINKLERS', code: '2006' },
+                { name: 'SEWER TIE-IN', code: '2007' },
+                { name: 'WELL WATER', code: '2008' }
+            ],
+            'Electrical & Low Voltage': [
+                { name: 'ELECTRICAL LABOR', code: '2101' },
+                { name: 'ELECTRICAL FIXTURES', code: '2102' },
+                { name: 'LIGHTING SYSTEM', code: '2103' },
+                { name: 'AUDIO / VISUAL & NETWORK PREWIRE', code: '2104' },
+                { name: 'AUDIO / VISUAL & NETWORK EQUIPMENT', code: '2105' },
+                { name: 'MOTORIZED SHADES / DRAPERIES', code: '2106' },
+                { name: 'SECURITY SYSTEM', code: '2107' },
+                { name: 'CAMERAS', code: '2108' },
+                { name: 'CENTRAL VACUUM', code: '2109' },
+                { name: 'LIGHTNING PROTECTION', code: '2110' },
+                { name: 'GENERATOR', code: '2111' },
+                { name: 'LANDSCAPE LIGHTING', code: '2112' },
+                { name: 'BOAT LIFT / DOCK ELECTRIC', code: '2113' },
+                { name: 'SOLAR', code: '2114' }
+            ],
+            'Heating & Cooling': [
+                { name: 'AIR CONDITIONING & DUCT WORK', code: '2201' },
+                { name: 'WINE ROOM', code: '2202' }
+            ],
+            'Natural Gas & Propane': [
+                { name: 'NATURAL GAS OR PROPANE TANK', code: '2301' },
+                { name: 'NATIONAL GRID / OTHER GAS METER', code: '2302' },
+                { name: 'EXTERIOR GAS FIXTURES - LANTERNS/OTHER', code: '2303' }
+            ],
+            'Flooring': [
+                { name: 'SUBFLOOR UNDERLAYMENT', code: '2401' },
+                { name: 'SOUND PROOFING / CRACK SUPPRESSION', code: '2402' },
+                { name: 'INTERIOR TILE / MARBLE FLOOR MATERIAL', code: '2403' },
+                { name: 'INTERIOR TILE / MARBLE FLOOR LABOR', code: '2404' },
+                { name: 'EXTERIOR TILE / MARBLE MATERIAL', code: '2405' },
+                { name: 'EXTERIOR TILE / MARBLE LABOR', code: '2406' },
+                { name: 'WOOD FLOOR MATERIAL & LABOR', code: '2407' },
+                { name: 'CARPET MATERIAL', code: '2409' },
+                { name: 'CARPET LABOR', code: '2410' },
+                { name: 'FLOOR DEMOLITION', code: '2411' },
+                { name: 'GARAGE FLOORS (EPOXY COATING)', code: '2412' },
+                { name: 'FLOORING PROTECTION', code: '2413' },
+                { name: 'OTHER FLOORING L & M', code: '2414' },
+                { name: 'FLOOR REFINISHING', code: '2415' }
+            ],
+            'Interior Trim Package': [
+                { name: 'TRIM MATERIAL', code: '2501' },
+                { name: 'TRIM LABOR', code: '2502' },
+                { name: 'INTERIOR DOORS MATERIAL', code: '2503' },
+                { name: 'INTERIOR DOORS HARDWARE', code: '2504' },
+                { name: 'STAIRS & HANDRAILS', code: '2505' },
+                { name: 'ATTIC HATCHES / PULL DOWN LADDERS', code: '2506' },
+                { name: 'SPECIALTY DETAILS', code: '2507' }
+            ],
+            'Exterior Trim Package': [
+                { name: 'TRIM MATERIAL', code: '2601' },
+                { name: 'TRIM LABOR', code: '2602' }
+            ],
+            'Paint': [
+                { name: 'PAINTING INTERIOR', code: '2701' },
+                { name: 'PAINTING EXTERIOR', code: '2702' },
+                { name: 'PAINTING EXTERIOR WINDOWS/DOORS', code: '2703' },
+                { name: 'CUSTOM FINISHES', code: '2704' },
+                { name: 'PRESSURE WASH', code: '2705' },
+                { name: 'WALLPAPER MATERIAL', code: '2706' },
+                { name: 'WALLPAPER LABOR', code: '2707' }
+            ],
+            'Tile / Marble / Tops': [
+                { name: 'COUNTER TOP MATERIAL', code: '2801' },
+                { name: 'COUNTER TOP LABOR', code: '2802' },
+                { name: 'BACKSPLASH MATERIAL', code: '2803' },
+                { name: 'BACKSPLASH LABOR', code: '2804' },
+                { name: 'WATERPROOFING', code: '2805' },
+                { name: 'BATHROOM SHOWER FLOOR / WALLS MATERIAL', code: '2806' },
+                { name: 'BATHROOM SHOWER FLOOR / WALLS LABOR', code: '2807' },
+                { name: 'EXTERIOR TILE & MARBLE MATERIAL', code: '2808' },
+                { name: 'EXTERIOR TILE & MARBLE LABOR', code: '2809' },
+                { name: 'ACCENT WALL / SPECIALTY MATERIAL', code: '2810' },
+                { name: 'ACCENT WALL / SPECIALTY LABOR', code: '2811' },
+                { name: 'FIRE PLACE SURROUNDS', code: '2812' }
+            ],
+            'Cabinetry and Built-ins': [
+                { name: 'KITCHEN CABINETS', code: '2901' },
+                { name: 'INSTALL OF OTHERS CABINETS', code: '2902' },
+                { name: 'VANITY AND MED. CAB INSTALL', code: '2903' },
+                { name: 'BATH VANITIES', code: '2904' },
+                { name: 'CLOSETS', code: '2905' },
+                { name: 'WINE ROOM', code: '2906' },
+                { name: 'CUSTOM BUILT INS', code: '2907' },
+                { name: 'CABINETRY HARDWARE', code: '2908' },
+                { name: 'PRE FAB CAB. ASSEMBLY', code: '2909' }
+            ],
+            'Appliances': [
+                { name: 'APPLIANCES', code: '3001' }
+            ],
+            'Bathroom Accessories': [
+                { name: 'SHOWER ENCLOSURES AND MIRRORS', code: '3101' },
+                { name: 'TOWEL BARS / ROBE HOOKS / TP HOLDERS', code: '3102' },
+                { name: 'ACCESSORIES INSTALLATION', code: '3103' }
+            ],
+            'Other Amenities': [
+                { name: 'ELEVATOR', code: '3201' },
+                { name: 'SAFE', code: '3202' },
+                { name: 'CAR LIFT', code: '3203' },
+                { name: 'CUSTOM METAL DOORS', code: '3204' },
+                { name: 'FIREPLACES', code: '3205' },
+                { name: 'FIREPLACE DECORATIVE MANTELS', code: '3206' },
+                { name: 'GAS LOG SET', code: '3207' }
+            ],
+            'Exterior Accessories': [
+                { name: 'SIDE GATES', code: '3301' },
+                { name: 'FENCES', code: '3302' },
+                { name: 'CHILD SAFETY FENCES', code: '3303' },
+                { name: 'ENTRANCE GATES', code: '3304' },
+                { name: 'ENTRANCE GATE MOTORS, KEY PADS AND LOOPS', code: '3305' },
+                { name: 'DECORATIVE SHUTTERS', code: '3306' },
+                { name: 'ARMOR SCREENS', code: '3307' },
+                { name: 'GUTTERS', code: '3308' },
+                { name: 'MAILBOX', code: '3309' },
+                { name: 'FLAG POLE', code: '3310' },
+                { name: 'TRELLIS', code: '3311' },
+                { name: 'BEACH STAIRS', code: '3312' },
+                { name: 'BEACH STAIRS DAVIT AND WIRING', code: '3313' },
+                { name: 'BREEZE SOLIEL', code: '3314' },
+                { name: 'ALUMINUM GRATE/LENTIL', code: '3315' },
+                { name: 'EGREES LADDERS/STAIRS', code: '3316' }
+            ],
+            'Driveway': [
+                { name: 'DRIVEWAY MATERIAL', code: '3401' },
+                { name: 'DRIVEWAY LABOR', code: '3402' },
+                { name: 'SLEEVES LABOR AND MATERIAL', code: '3403' },
+                { name: 'PAVEMENT APRON', code: '3404' },
+                { name: 'SHELL ROCK', code: '3405' },
+                { name: 'APRON', code: '3406' }
+            ],
+            'Pool': [
+                { name: 'POOL DEMOLITION', code: '3501' },
+                { name: 'POOL AND SPA', code: '3502' },
+                { name: 'POOL DECK MATERIAL', code: '3503' },
+                { name: 'POOL DECK LABOR', code: '3504' },
+                { name: 'POOL FENCE AND ALARMS', code: '3505' },
+                { name: 'POOL SAFETY FENCE', code: '3506' },
+                { name: 'POOL AUTOMATION', code: '3507' }
+            ],
+            'Seawall and Dock': [
+                { name: 'SEAWALL', code: '3601' },
+                { name: 'SEAWALL CAP', code: '3602' },
+                { name: 'DOCK', code: '3603' },
+                { name: 'BOAT LIFT', code: '3604' }
+            ],
+            'Landscaping / Irrigation': [
+                { name: 'LANDSCAPING LABOR AND MATERIALS', code: '3701' },
+                { name: 'IRRIGATION', code: '3702' },
+                { name: 'TREE REMOVAL / TRIMMING / RELOCATION', code: '3703' },
+                { name: 'FOUNTAIN', code: '3704' },
+                { name: 'SCREENING FOR NEIGHBORS', code: '3705' }
+            ],
+            'Site Work': [
+                { name: 'FOUNDATION AND SITE EQUIPMENT', code: '3801' },
+                { name: 'EXCAVATION / GRADING', code: '3802' },
+                { name: 'FILL (REMOVAL OR DELIVER)', code: '3803' },
+                { name: 'STABILIZER / SHELL ROCK', code: '3804' },
+                { name: 'DRAINAGE LABOR AND MATERIAL', code: '3805' },
+                { name: 'SILT FENCE', code: '3806' }
+            ],
+            'Pest Control': [
+                { name: 'TERMITE TREATMENT', code: '3901' },
+                { name: 'LAWN / SHRUB TREATMENT', code: '3902' },
+                { name: 'HOUSE TREATMENT', code: '3903' }
+            ],
+            'SMS Direct Services': [
+                { name: 'FIELD SUPERVISION/PROJECT MANAGEMENT', code: '5001' },
+                { name: 'PROJECT ADMINISTRATION', code: '5002' },
+                { name: 'GENERAL LABOR', code: '5003' }
+            ]
+        };
+        
+        this.init();
+    }
+    
     async init() {
-        this.setupEventListeners();
-        await this.loadBudgetsList();
+        try {
+            await this.loadBudgetsList();
+            this.renderDashboard();
+            this.setupEventListeners();
+            this.hideLoading();
+        } catch (error) {
+            console.error('Failed to initialize budget viewer:', error);
+            this.showError('Failed to load dashboard data. Please refresh the page and try again.');
+            this.hideLoading();
+        }
     }
-
-    setupEventListeners() {
-        // New budget button
-        document.getElementById('newBudgetBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.showNewBudgetForm();
-        });
-        
-        // Create blank budget
-        document.getElementById('createBlankBudget').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.showNewBudgetForm();
-        });
-        
-        // Save new budget
-        document.getElementById('saveNewBudget').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.saveNewBudget();
-        });
-        
-        // Cancel new budget
-        document.getElementById('cancelNewBudget').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.hideNewBudgetForm();
-        });
-        
-        // Add trade section
-        document.getElementById('addTradeSection').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.addNewTrade();
-        });
-        
-        // Search and filter functionality
-        document.getElementById('searchBudgets').addEventListener('input', (e) => {
-            this.filterBudgets();
-        });
-        
-        document.getElementById('filterStatus').addEventListener('change', (e) => {
-            this.filterBudgets();
-        });
-        
-        document.getElementById('sortBudgets').addEventListener('change', (e) => {
-            this.sortBudgets();
-        });
-        
-        // Export PDF
-        document.getElementById('exportPdfBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.exportToPDF();
-        });
-    }
-
+    
     async loadBudgetsList() {
         try {
-            const response = await fetch('/api/budgets');
-            if (response.ok) {
-                this.budgetsList = await response.json();
-                this.filteredBudgets = [...this.budgetsList];
-                this.renderBudgetsList();
-                this.hideLoadingMessage();
-            } else {
-                console.error('Failed to load budgets');
-                this.hideLoadingMessage();
-                this.showEmptyState();
+            const response = await fetch('/static/budgets.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            const data = await response.json();
+            this.budgetsList = data.budgets || [];
+            this.filteredBudgets = [...this.budgetsList];
         } catch (error) {
-            console.error('Error loading budgets:', error);
-            this.hideLoadingMessage();
-            this.showEmptyState();
+            console.error('Error loading budgets list:', error);
+            throw error;
         }
     }
 
-    hideLoadingMessage() {
-        document.getElementById('loadingMessage').classList.add('d-none');
-        document.getElementById('dashboardContent').classList.remove('d-none');
-    }
-
-    showEmptyState() {
-        document.getElementById('noBudgetsMessage').classList.remove('d-none');
-        document.getElementById('budgetsList').classList.add('d-none');
-    }
-
-    renderBudgetsList() {
-        const container = document.getElementById('budgetsList');
-        
-        if (this.filteredBudgets.length === 0) {
-            this.showEmptyState();
-            return;
-        }
-        
-        document.getElementById('noBudgetsMessage').classList.add('d-none');
-        container.classList.remove('d-none');
-        
-        container.innerHTML = this.filteredBudgets.map(budget => `
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 budget-card" data-budget-id="${budget.budget_id}">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="card-subtitle mb-0 text-muted">${budget.client}</h6>
-                        <span class="badge bg-${this.getStatusColor(budget.status)}">${budget.status}</span>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">${budget.project_name}</h5>
-                        <p class="card-text text-muted small">${budget.address || 'No address specified'}</p>
-                        <div class="budget-amount mb-3">
-                            <strong class="text-primary fs-5">$${this.formatCurrency(budget.total_budget)}</strong>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                Last modified: ${this.formatDate(budget.updated_at)}
-                            </small>
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="budgetViewer.loadBudget('${budget.data_file}')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="budgetViewer.editBudget('${budget.budget_id}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    getStatusColor(status) {
-        const colors = {
-            'planning': 'warning',
-            'active': 'success',
-            'completed': 'info',
-            'on-hold': 'secondary'
-        };
-        return colors[status] || 'secondary';
-    }
-
-    formatCurrency(amount) {
-        return new Intl.NumberFormat('en-US').format(amount);
-    }
-
-    formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString();
-    }
-
-    async loadBudget(filename) {
+    async loadBudgetData(filename = 'budget.json') {
         try {
-            const response = await fetch(`/static/sample_budgets/${filename}`);
-            if (response.ok) {
-                this.budgetData = await response.json();
-                this.renderBudget();
-                this.switchView('budget');
-            } else {
-                this.showError('Failed to load budget data');
+            const response = await fetch(`/static/${filename}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            this.budgetData = await response.json();
+            
+            // Validate required data structure
+            if (!this.budgetData.project || !this.budgetData.trades) {
+                throw new Error('Invalid budget data structure');
             }
         } catch (error) {
-            console.error('Error loading budget:', error);
-            this.showError('Error loading budget data');
+            console.error('Error loading budget data:', error);
+            throw error;
         }
     }
-
+    
     renderBudget() {
         if (!this.budgetData) return;
         
         this.renderProjectInfo();
         this.renderTradeSections();
         this.calculateGrandTotal();
-        this.showExportButton();
     }
-
+    
     renderProjectInfo() {
         const project = this.budgetData.project;
-        document.getElementById('projectName').textContent = project.name || 'Untitled Project';
-        document.getElementById('projectClient').textContent = project.client || 'No client specified';
-        document.getElementById('projectAddress').textContent = project.address || 'No address specified';
+        
+        document.getElementById('projectName').textContent = project.name || 'N/A';
+        document.getElementById('projectClient').textContent = project.client || 'N/A';
+        document.getElementById('projectAddress').textContent = project.address || 'N/A';
     }
-
+    
     renderTradeSections() {
-        const container = document.getElementById('tradeSections');
-        const trades = this.budgetData.trades || {};
+        const tradeSectionsContainer = document.getElementById('tradeSections');
+        tradeSectionsContainer.innerHTML = '';
         
-        container.innerHTML = Object.entries(trades).map(([tradeKey, trade]) => 
-            this.createTradeSection(tradeKey, trade)
-        ).join('');
+        Object.entries(this.budgetData.trades).forEach(([tradeKey, trade]) => {
+            if (!trade.line_items || trade.line_items.length === 0) {
+                return; // Skip trades with no line items
+            }
+            
+            const tradeSection = this.createTradeSection(tradeKey, trade);
+            tradeSectionsContainer.appendChild(tradeSection);
+        });
     }
-
+    
     createTradeSection(tradeKey, trade) {
-        const lineItems = trade.lineItems || trade.line_items || [];
-        const subtotal = this.calculateTradeSubtotal(lineItems);
+        const subtotal = this.calculateTradeSubtotal(trade.line_items);
         
-        return `
-            <div class="trade-section mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">${trade.name}</h5>
-                            <div>
-                                <span class="badge bg-primary me-2">${lineItems.length} items</span>
-                                <strong>$${this.formatCurrency(subtotal)}</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        ${lineItems.map(item => this.createLineItemHTML(item)).join('')}
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'trade-section card mb-3';
+        sectionDiv.innerHTML = `
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <button class="btn btn-link text-decoration-none p-0 text-start trade-toggle" 
+                                type="button" data-trade="${tradeKey}">
+                            <i class="fas fa-chevron-down me-2 trade-icon"></i>
+                            ${this.escapeHtml(trade.name)}
+                        </button>
+                    </h4>
+                    <div class="currency text-end">
+                        <strong>${this.formatCurrency(subtotal)}</strong>
                     </div>
                 </div>
             </div>
-        `;
-    }
-
-    createLineItemHTML(item) {
-        const budget = item.budgetAmount || item.budget || 0;
-        return `
-            <div class="line-item mb-3 p-3 border rounded">
+            <div class="card-body trade-content" id="trade-${tradeKey}">
+                <div class="row d-none d-md-flex text-muted mb-2">
+                    <div class="col-md-3"><small><strong>Category</strong></small></div>
+                    <div class="col-md-3"><small><strong>Vendor</strong></small></div>
+                    <div class="col-md-2"><small><strong>Budget</strong></small></div>
+                    <div class="col-md-4"><small><strong>Notes</strong></small></div>
+                </div>
+                ${trade.line_items.map(item => this.createLineItemHTML(item)).join('')}
+                <hr class="my-3">
                 <div class="row">
-                    <div class="col-md-3">
-                        <strong>${item.category}</strong>
+                    <div class="col">
+                        <strong>Subtotal: ${this.escapeHtml(trade.name)}</strong>
                     </div>
-                    <div class="col-md-3">
-                        ${item.vendor}
-                    </div>
-                    <div class="col-md-2">
-                        <strong class="text-success">$${this.formatCurrency(budget)}</strong>
-                    </div>
-                    <div class="col-md-4">
-                        <small class="text-muted">${item.notes || ''}</small>
+                    <div class="col-auto">
+                        <strong class="currency">${this.formatCurrency(subtotal)}</strong>
                     </div>
                 </div>
             </div>
         `;
-    }
-
-    calculateTradeSubtotal(lineItems) {
-        return lineItems.reduce((total, item) => {
-            const budget = item.budgetAmount || item.budget || 0;
-            return total + parseFloat(budget);
-        }, 0);
-    }
-
-    calculateGrandTotal() {
-        const trades = this.budgetData.trades || {};
-        this.grandTotal = Object.values(trades).reduce((total, trade) => {
-            const lineItems = trade.lineItems || trade.line_items || [];
-            return total + this.calculateTradeSubtotal(lineItems);
-        }, 0);
         
-        document.getElementById('grandTotal').textContent = `$${this.formatCurrency(this.grandTotal)}`;
+        return sectionDiv;
     }
-
+    
+    createLineItemHTML(item) {
+        return `
+            <div class="row mb-2 py-2 border-bottom border-secondary align-items-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2 mb-sm-1 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <strong class="d-md-none text-muted small">Trade Category</strong>
+                        <span class="fw-medium">${this.escapeHtml(item.category)}</span>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2 mb-sm-1 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <strong class="d-md-none text-muted small">Vendor</strong>
+                        <span>${this.escapeHtml(item.vendor)}</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <strong class="d-md-none text-muted small">Budget</strong>
+                        <span class="currency fw-bold text-success">${this.formatCurrency(item.budget)}</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    ${item.notes ? `
+                        <div class="d-flex flex-column">
+                            <strong class="d-md-none text-muted small">Notes</strong>
+                            <small class="text-muted">${this.escapeHtml(item.notes)}</small>
+                        </div>
+                    ` : '<span class="d-md-none"></span>'}
+                </div>
+            </div>
+        `;
+    }
+    
+    calculateTradeSubtotal(lineItems) {
+        return lineItems.reduce((sum, item) => sum + (item.budget || 0), 0);
+    }
+    
+    calculateGrandTotal() {
+        this.grandTotal = 0;
+        
+        Object.values(this.budgetData.trades).forEach(trade => {
+            if (trade.line_items && trade.line_items.length > 0) {
+                this.grandTotal += this.calculateTradeSubtotal(trade.line_items);
+            }
+        });
+        
+        document.getElementById('grandTotal').textContent = this.formatCurrency(this.grandTotal);
+    }
+    
+    setupEventListeners() {
+        // Toggle trade sections
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('trade-toggle')) {
+                this.toggleTradeSection(e.target);
+            }
+        });
+        
+        // Navigation buttons
+        document.getElementById('backToDashboard').addEventListener('click', () => {
+            this.showDashboard();
+        });
+        
+        document.getElementById('editBudgetBtn').addEventListener('click', () => {
+            this.editCurrentBudget();
+        });
+        
+        document.getElementById('newBudgetBtn').addEventListener('click', () => {
+            this.showNewBudgetForm();
+        });
+        
+        document.getElementById('exportPdfBtn').addEventListener('click', () => {
+            this.exportToPDF();
+        });
+        
+        // New budget form
+        document.getElementById('cancelNewBudget').addEventListener('click', () => {
+            this.showDashboard();
+        });
+        
+        document.getElementById('addTradeBtn').addEventListener('click', () => {
+            this.addNewTrade();
+        });
+        
+        document.getElementById('saveNewBudget').addEventListener('click', () => {
+            this.saveNewBudget();
+        });
+        
+        document.getElementById('previewBudget').addEventListener('click', () => {
+            this.previewNewBudget();
+        });
+        
+        // Dashboard search and filters
+        document.getElementById('searchBudgets').addEventListener('input', (e) => {
+            this.filterBudgets();
+        });
+        
+        document.getElementById('filterStatus').addEventListener('change', () => {
+            this.filterBudgets();
+        });
+        
+        document.getElementById('sortBudgets').addEventListener('change', () => {
+            this.sortAndRenderBudgets();
+        });
+    }
+    
+    toggleTradeSection(toggleBtn) {
+        const tradeKey = toggleBtn.dataset.trade;
+        const tradeContent = document.getElementById(`trade-${tradeKey}`);
+        const icon = toggleBtn.querySelector('.trade-icon');
+        const section = toggleBtn.closest('.trade-section');
+        
+        if (section.classList.contains('collapsed')) {
+            section.classList.remove('collapsed');
+            tradeContent.style.display = 'block';
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            section.classList.add('collapsed');
+            tradeContent.style.display = 'none';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+        }
+    }
+    
+    async exportToPDF() {
+        const button = document.getElementById('exportPdfBtn');
+        const originalText = button.innerHTML;
+        
+        try {
+            // Show loading state
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating PDF...';
+            button.disabled = true;
+            
+            // Expand all sections for PDF
+            const collapsedSections = document.querySelectorAll('.trade-section.collapsed');
+            collapsedSections.forEach(section => {
+                section.classList.remove('collapsed');
+                const content = section.querySelector('.trade-content');
+                if (content) content.style.display = 'block';
+            });
+            
+            // Create PDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            await this.generatePDFContent(pdf);
+            
+            // Save PDF
+            const projectName = this.budgetData.project.name || 'Construction Budget';
+            const fileName = `${projectName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_budget.pdf`;
+            pdf.save(fileName);
+            
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Failed to generate PDF. Please try again.');
+        } finally {
+            // Restore button state
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }
+    
+    async generatePDFContent(pdf) {
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 20;
+        let yPosition = margin;
+        
+        // Add project header
+        pdf.setFontSize(20);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Construction Budget Report', margin, yPosition);
+        yPosition += 15;
+        
+        // Project information
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(`Project: ${this.budgetData.project.name}`, margin, yPosition);
+        yPosition += 7;
+        pdf.text(`Client: ${this.budgetData.project.client}`, margin, yPosition);
+        yPosition += 7;
+        pdf.text(`Address: ${this.budgetData.project.address}`, margin, yPosition);
+        yPosition += 15;
+        
+        // Add trades with improved formatting
+        for (const [tradeKey, trade] of Object.entries(this.budgetData.trades)) {
+            if (!trade.line_items || trade.line_items.length === 0) continue;
+            
+            // Check if we need a new page for trade section
+            if (yPosition > pageHeight - 80) {
+                pdf.addPage();
+                yPosition = margin;
+            }
+            
+            // Trade section header with gray background
+            pdf.setFillColor(220, 220, 220);
+            pdf.rect(margin, yPosition - 5, pageWidth - 2 * margin, 12, 'F');
+            
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.setTextColor(0, 0, 0);
+            const subtotal = this.calculateTradeSubtotal(trade.line_items);
+            pdf.text(trade.name, margin + 2, yPosition + 3);
+            pdf.text(this.formatCurrency(subtotal), pageWidth - margin - 30, yPosition + 3);
+            yPosition += 15;
+            
+            // Table headers
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'bold');
+            pdf.setFillColor(240, 240, 240);
+            pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
+            
+            pdf.text('Trade Category', margin + 2, yPosition + 2);
+            pdf.text('Vendor', margin + 60, yPosition + 2);
+            pdf.text('Budget', margin + 110, yPosition + 2);
+            pdf.text('Notes', margin + 140, yPosition + 2);
+            yPosition += 10;
+            
+            // Line items in table format
+            pdf.setFont(undefined, 'normal');
+            pdf.setTextColor(0, 0, 0);
+            
+            trade.line_items.forEach((item, index) => {
+                if (yPosition > pageHeight - 25) {
+                    pdf.addPage();
+                    yPosition = margin;
+                    
+                    // Repeat table headers on new page
+                    pdf.setFont(undefined, 'bold');
+                    pdf.setFillColor(240, 240, 240);
+                    pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
+                    pdf.text('Trade Category', margin + 2, yPosition + 2);
+                    pdf.text('Vendor', margin + 60, yPosition + 2);
+                    pdf.text('Budget', margin + 110, yPosition + 2);
+                    pdf.text('Notes', margin + 140, yPosition + 2);
+                    yPosition += 10;
+                    pdf.setFont(undefined, 'normal');
+                }
+                
+                // Alternating row background
+                if (index % 2 === 0) {
+                    pdf.setFillColor(250, 250, 250);
+                    pdf.rect(margin, yPosition - 3, pageWidth - 2 * margin, 8, 'F');
+                }
+                
+                // Item details in table format
+                const categoryText = pdf.splitTextToSize(item.category, 55);
+                const vendorText = pdf.splitTextToSize(item.vendor, 45);
+                const notesText = item.notes ? pdf.splitTextToSize(item.notes, 40) : [];
+                
+                pdf.text(categoryText, margin + 2, yPosition + 2);
+                pdf.text(vendorText, margin + 60, yPosition + 2);
+                pdf.text(this.formatCurrency(item.budget), margin + 110, yPosition + 2);
+                if (notesText.length > 0) {
+                    pdf.text(notesText, margin + 140, yPosition + 2);
+                }
+                
+                // Adjust yPosition based on text height
+                const maxLines = Math.max(categoryText.length, vendorText.length, notesText.length, 1);
+                yPosition += maxLines * 4 + 2;
+            });
+            
+            yPosition += 8;
+        }
+        
+        // Grand total with enhanced styling
+        if (yPosition > pageHeight - 40) {
+            pdf.addPage();
+            yPosition = margin;
+        }
+        
+        pdf.setFillColor(0, 100, 200);
+        pdf.rect(margin, yPosition - 5, pageWidth - 2 * margin, 15, 'F');
+        
+        pdf.setFontSize(16);
+        pdf.setFont(undefined, 'bold');
+        pdf.setTextColor(255, 255, 255);
+        pdf.text('GRAND TOTAL:', margin + 2, yPosition + 5);
+        pdf.text(this.formatCurrency(this.grandTotal), pageWidth - margin - 50, yPosition + 5);
+    }
+    
+    formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(amount || 0);
+    }
+    
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        
+        errorText.textContent = message;
+        errorDiv.classList.remove('d-none');
+    }
+    
+    hideLoading() {
+        document.getElementById('loadingIndicator').classList.add('d-none');
+        if (this.currentView === 'dashboard') {
+            document.getElementById('dashboard').classList.remove('d-none');
+        } else {
+            document.getElementById('budgetContent').classList.remove('d-none');
+        }
+    }
+    
+    showDashboard() {
+        this.currentView = 'dashboard';
+        this.currentBudgetId = null;
+        this.isEditMode = false;
+        document.getElementById('pageTitle').textContent = 'Construction Budget Dashboard';
+        document.getElementById('dashboard').classList.remove('d-none');
+        document.getElementById('budgetContent').classList.add('d-none');
+        document.getElementById('newBudgetForm').classList.add('d-none');
+        document.getElementById('backToDashboard').classList.add('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        document.getElementById('exportPdfBtn').classList.add('d-none');
+        this.renderDashboard();
+    }
+    
+    async showBudgetViewer(budgetId) {
+        this.currentView = 'budget';
+        this.currentBudgetId = budgetId;
+        const budget = this.budgetsList.find(b => b.id === budgetId);
+        
+        if (!budget) {
+            this.showError('Budget not found');
+            return;
+        }
+        
+        try {
+            await this.loadBudgetData(budget.filename);
+            document.getElementById('pageTitle').textContent = `Budget: ${budget.projectName}`;
+            document.getElementById('dashboard').classList.add('d-none');
+            document.getElementById('newBudgetForm').classList.add('d-none');
+            document.getElementById('budgetContent').classList.remove('d-none');
+            document.getElementById('backToDashboard').classList.remove('d-none');
+            document.getElementById('editBudgetBtn').classList.remove('d-none');
+            document.getElementById('exportPdfBtn').classList.remove('d-none');
+            this.renderBudget();
+        } catch (error) {
+            this.showError('Failed to load budget data');
+        }
+    }
+    
     showNewBudgetForm() {
+        this.currentView = 'new';
+        document.getElementById('pageTitle').textContent = 'Create New Budget';
+        document.getElementById('dashboard').classList.add('d-none');
+        document.getElementById('budgetContent').classList.add('d-none');
+        document.getElementById('newBudgetForm').classList.remove('d-none');
+        document.getElementById('loadingIndicator').classList.add('d-none');
+        document.getElementById('backToDashboard').classList.remove('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        document.getElementById('exportPdfBtn').classList.add('d-none');
         this.isNewBudgetMode = true;
+        this.isEditMode = false;
         this.resetNewBudgetForm();
-        this.switchView('new');
     }
-
-    hideNewBudgetForm() {
+    
+    editCurrentBudget() {
+        if (!this.budgetData) return;
+        
+        this.currentView = 'edit';
+        this.isEditMode = true;
         this.isNewBudgetMode = false;
-        this.switchView('dashboard');
+        document.getElementById('pageTitle').textContent = `Edit Budget: ${this.budgetData.project.name}`;
+        document.getElementById('budgetContent').classList.add('d-none');
+        document.getElementById('newBudgetForm').classList.remove('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        this.populateEditForm();
     }
-
+    
+    hideNewBudgetForm() {
+        if (this.currentView === 'edit') {
+            this.showBudgetViewer(this.currentBudgetId);
+        } else {
+            this.showDashboard();
+        }
+        this.isNewBudgetMode = false;
+        this.isEditMode = false;
+    }
+    
     resetNewBudgetForm() {
         document.getElementById('newProjectName').value = '';
         document.getElementById('newProjectClient').value = '';
@@ -356,160 +907,387 @@ class BudgetViewer {
             trades: {}
         };
         this.tradeCounter = 0;
-        this.addNewTrade();
+        this.addNewTrade(); // Add one trade section by default
         
+        // Reset button text
         const saveButton = document.getElementById('saveNewBudget');
         saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Save Budget';
     }
-
+    
     addNewTrade() {
         this.tradeCounter++;
         const tradeKey = `trade_${this.tradeCounter}`;
         
-        const tradeHTML = `
-            <div class="trade-section mb-4" data-trade-key="${tradeKey}">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <select class="form-select trade-name" style="max-width: 300px;">
-                                <option value="">Select Trade Category</option>
-                                ${this.tradeNames.map(name => `<option value="${name}">${name}</option>`).join('')}
-                            </select>
-                            <button type="button" class="btn btn-outline-danger btn-sm remove-trade">
-                                <i class="fas fa-times"></i> Remove Trade
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="line-items-container">
-                            <!-- Line items will be added here -->
-                        </div>
-                        <button type="button" class="btn btn-outline-primary btn-sm add-line-item">
-                            <i class="fas fa-plus me-2"></i>Add Line Item
-                        </button>
-                    </div>
+        const tradeDiv = document.createElement('div');
+        tradeDiv.className = 'card mb-3';
+        tradeDiv.dataset.tradeKey = tradeKey;
+        tradeDiv.innerHTML = `
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Trade Section ${this.tradeCounter}</h6>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-trade">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
-        `;
-        
-        document.getElementById('newTradesContainer').insertAdjacentHTML('beforeend', tradeHTML);
-        
-        // Set up event listeners for the new trade section
-        const newTradeSection = document.querySelector(`[data-trade-key="${tradeKey}"]`);
-        
-        // Remove trade button
-        newTradeSection.querySelector('.remove-trade').addEventListener('click', (e) => {
-            e.preventDefault();
-            newTradeSection.remove();
-        });
-        
-        // Add line item button
-        newTradeSection.querySelector('.add-line-item').addEventListener('click', (e) => {
-            e.preventDefault();
-            const container = newTradeSection.querySelector('.line-items-container');
-            const tradeName = newTradeSection.querySelector('.trade-name').value;
-            this.addLineItem(container, tradeName);
-        });
-        
-        // Trade name change
-        newTradeSection.querySelector('.trade-name').addEventListener('change', (e) => {
-            const tradeName = e.target.value;
-            const container = newTradeSection.querySelector('.line-items-container');
-            // Update existing line items with new trade context if needed
-        });
-        
-        // Add initial line item
-        const container = newTradeSection.querySelector('.line-items-container');
-        this.addLineItem(container, '');
-    }
-
-    addLineItem(container, tradeName) {
-        const lineItemHTML = `
-            <div class="line-item mb-3 p-3 border rounded">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Category</label>
-                        <select class="form-select item-category" required>
-                            <option value="">Select Category</option>
-                            ${this.tradeCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label class="form-label">Trade Name *</label>
+                        <select class="form-select trade-name" required>
+                            <option value="">Select Trade Name</option>
+                            ${this.tradeNames.map(name => 
+                                `<option value="${name}">${name}</option>`
+                            ).join('')}
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Vendor</label>
-                        <input type="text" class="form-control item-vendor" placeholder="Enter vendor name" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Budget Amount</label>
-                        <input type="number" class="form-control item-budget" placeholder="0" min="0" step="0.01" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control item-notes" rows="1" placeholder="Optional notes"></textarea>
-                    </div>
-                    <div class="col-md-1 d-flex align-items-end">
-                        <button type="button" class="btn btn-outline-danger btn-sm remove-line-item">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="form-label mb-0">Line Items</label>
+                    <button type="button" class="btn btn-outline-primary btn-sm add-line-item">
+                        <i class="fas fa-plus me-1"></i>Add Item
+                    </button>
+                </div>
+                <div class="line-items-container">
+                    <!-- Line items will be added here -->
                 </div>
             </div>
         `;
         
-        container.insertAdjacentHTML('beforeend', lineItemHTML);
+        document.getElementById('newTradesContainer').appendChild(tradeDiv);
         
-        // Set up remove line item functionality
-        const newLineItem = container.lastElementChild;
-        newLineItem.querySelector('.remove-line-item').addEventListener('click', (e) => {
-            e.preventDefault();
-            newLineItem.remove();
+        // Add event listeners
+        tradeDiv.querySelector('.remove-trade').addEventListener('click', () => {
+            tradeDiv.remove();
         });
         
-        return newLineItem;
+        tradeDiv.querySelector('.add-line-item').addEventListener('click', () => {
+            const tradeNameSelect = tradeDiv.querySelector('.trade-name');
+            const tradeName = tradeNameSelect.value;
+            this.addLineItem(tradeDiv.querySelector('.line-items-container'), tradeName);
+        });
+        
+        // Add trade name change listener to update categories
+        tradeDiv.querySelector('.trade-name').addEventListener('change', (e) => {
+            const tradeName = e.target.value;
+            const lineItemsContainer = tradeDiv.querySelector('.line-items-container');
+            
+            // Update existing line items with new categories
+            const existingItems = lineItemsContainer.querySelectorAll('.line-item');
+            existingItems.forEach(item => {
+                this.updateLineItemCategories(item, tradeName);
+            });
+        });
+        
+        // Add one line item by default (disabled until trade is selected)
+        this.addLineItem(tradeDiv.querySelector('.line-items-container'));
     }
-
+    
+    addLineItem(container, tradeName = null) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'row mb-2 line-item';
+        
+        // Generate category dropdown options based on selected trade
+        let categoryOptions = '<option value="">Select Category</option>';
+        if (tradeName && this.tradeCategoryMapping[tradeName]) {
+            categoryOptions += this.tradeCategoryMapping[tradeName].map(category => 
+                `<option value="${category.name}" data-code="${category.code}">${category.name} (${category.code})</option>`
+            ).join('');
+        }
+        
+        itemDiv.innerHTML = `
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <select class="form-select form-select-sm item-category" required ${!tradeName ? 'disabled' : ''}>
+                    ${categoryOptions}
+                </select>
+                ${!tradeName ? '<small class="text-muted">Select Trade Name first</small>' : ''}
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <input type="text" class="form-control form-control-sm item-vendor" placeholder="Vendor" required>
+            </div>
+            <div class="col-8 col-md-2 mb-2">
+                <input type="number" class="form-control form-control-sm item-budget" placeholder="Budget" step="0.01" min="0" required>
+            </div>
+            <div class="col-12 col-md-3 mb-2">
+                <input type="text" class="form-control form-control-sm item-notes" placeholder="Notes (optional)">
+            </div>
+            <div class="col-4 col-md-1 mb-2">
+                <button type="button" class="btn btn-outline-danger btn-sm remove-line-item w-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(itemDiv);
+        
+        // Add remove functionality
+        itemDiv.querySelector('.remove-line-item').addEventListener('click', () => {
+            itemDiv.remove();
+        });
+        
+        return itemDiv;
+    }
+    
     async saveNewBudget() {
         if (!this.validateNewBudget()) {
             return;
         }
         
         this.collectNewBudgetData();
+        this.budgetData = { ...this.newBudgetData };
+        
+        if (this.isEditMode) {
+            // Update existing budget
+            await this.updateExistingBudget();
+            this.renderBudget();
+            this.showBudgetViewer(this.currentBudgetId);
+            this.showSuccessMessage('Budget updated successfully!');
+        } else {
+            // Create new budget
+            await this.saveNewBudgetToList();
+            this.renderBudget();
+            this.hideNewBudgetForm();
+            this.showSuccessMessage('Budget created successfully! (Note: In production, this would be saved to the server)');
+        }
+    }
+    
+    async saveNewBudgetToList() {
+        // Generate unique ID for new budget
+        const newBudgetId = this.generateBudgetId(this.newBudgetData.project.name);
+        const currentDate = new Date().toISOString().split('T')[0];
+        
+        // Calculate total budget
+        const totalBudget = this.calculateTotalBudgetAmount();
+        
+        // Create new budget entry for the list
+        const newBudgetEntry = {
+            id: newBudgetId,
+            projectName: this.newBudgetData.project.name,
+            client: this.newBudgetData.project.client,
+            address: this.newBudgetData.project.address,
+            dateCreated: currentDate,
+            lastModified: currentDate,
+            status: 'planning', // Default status for new budgets
+            totalBudget: totalBudget,
+            filename: `${newBudgetId}.json`
+        };
         
         try {
+            // Save to server
             const response = await fetch('/api/budgets', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(this.newBudgetData)
+                body: JSON.stringify({
+                    budgetEntry: newBudgetEntry,
+                    budgetData: this.newBudgetData
+                })
             });
             
             if (response.ok) {
                 const result = await response.json();
-                this.showSuccessMessage('Budget saved successfully!');
-                await this.loadBudgetsList();
-                this.hideNewBudgetForm();
+                console.log('Budget saved successfully:', result);
+                
+                // Update local lists
+                this.budgetsList.unshift(newBudgetEntry);
+                this.filteredBudgets = [...this.budgetsList];
+                this.currentBudgetId = newBudgetId;
+                
+                this.showSuccessMessage('Budget saved successfully to JSON files!');
             } else {
-                const error = await response.json();
-                this.showError(error.error || 'Failed to save budget');
+                throw new Error('Failed to save budget to server');
             }
         } catch (error) {
             console.error('Error saving budget:', error);
-            this.showError('Error saving budget');
+            
+            // Fallback to local update only
+            this.budgetsList.unshift(newBudgetEntry);
+            this.filteredBudgets = [...this.budgetsList];
+            this.currentBudgetId = newBudgetId;
+            
+            this.showBudgetSaveInfo(newBudgetEntry, this.newBudgetData);
         }
     }
+    
+    async updateExistingBudget() {
+        if (!this.currentBudgetId) return;
+        
+        // Find and update the budget in the list
+        const budgetIndex = this.budgetsList.findIndex(b => b.id === this.currentBudgetId);
+        if (budgetIndex !== -1) {
+            const currentDate = new Date().toISOString().split('T')[0];
+            const totalBudget = this.calculateTotalBudgetAmount();
+            
+            // Update budget entry
+            const updatedBudgetEntry = {
+                ...this.budgetsList[budgetIndex],
+                projectName: this.newBudgetData.project.name,
+                client: this.newBudgetData.project.client,
+                address: this.newBudgetData.project.address,
+                lastModified: currentDate,
+                totalBudget: totalBudget
+            };
+            
+            try {
+                // Save to server
+                const response = await fetch('/api/budgets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        budgetEntry: updatedBudgetEntry,
+                        budgetData: this.newBudgetData
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Budget updated successfully:', result);
+                    
+                    // Update local list
+                    this.budgetsList[budgetIndex] = updatedBudgetEntry;
+                    this.filteredBudgets = [...this.budgetsList];
+                    
+                    this.showSuccessMessage('Budget updated successfully in JSON files!');
+                } else {
+                    throw new Error('Failed to update budget on server');
+                }
+            } catch (error) {
+                console.error('Error updating budget:', error);
+                
+                // Fallback to local update only
+                this.budgetsList[budgetIndex] = updatedBudgetEntry;
+                this.filteredBudgets = [...this.budgetsList];
+                
+                this.showSuccessMessage('Budget updated locally (server save failed)');
+            }
+        }
+    }
+    
+    generateBudgetId(projectName) {
+        const cleanName = projectName.toLowerCase()
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, '-')
+            .substring(0, 30);
+        const year = new Date().getFullYear();
+        const timestamp = Date.now().toString().slice(-4);
+        return `${cleanName}-${year}-${timestamp}`;
+    }
+    
+    calculateTotalBudgetAmount() {
+        let total = 0;
+        Object.values(this.newBudgetData.trades).forEach(trade => {
+            if (trade.line_items) {
+                trade.line_items.forEach(item => {
+                    total += item.budget || 0;
+                });
+            }
+        });
+        return total;
+    }
+    
+    showBudgetSaveInfo(budgetEntry, budgetData) {
+        // Create a detailed info modal/alert showing what would be saved
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-info alert-dismissible fade show mt-3';
+        alert.innerHTML = `
+            <h6><i class="fas fa-info-circle me-2"></i>Budget Save Information</h6>
+            <p class="mb-2">In a production environment, this would save:</p>
+            <ul class="mb-2">
+                <li><strong>Budget ID:</strong> ${budgetEntry.id}</li>
+                <li><strong>File:</strong> ${budgetEntry.filename}</li>
+                <li><strong>Total Budget:</strong> ${this.formatCurrency(budgetEntry.totalBudget)}</li>
+                <li><strong>Trade Sections:</strong> ${Object.keys(budgetData.trades).length}</li>
+            </ul>
+            <details class="mb-2">
+                <summary>View JSON Structure</summary>
+                <pre class="mt-2 p-2 bg-dark text-light rounded small" style="max-height: 200px; overflow-y: auto;">Budget Entry: ${JSON.stringify(budgetEntry, null, 2)}
 
+Budget Data: ${JSON.stringify(budgetData, null, 2)}</pre>
+            </details>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        // Auto-dismiss after 10 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 10000);
+    }
+    
+    showSuccessMessage(message) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show';
+        alert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 3000);
+    }
+    
+    previewNewBudget() {
+        if (!this.validateNewBudget()) {
+            return;
+        }
+        
+        this.collectNewBudgetData();
+        const originalData = this.budgetData;
+        this.budgetData = { ...this.newBudgetData };
+        
+        this.currentView = 'preview';
+        document.getElementById('pageTitle').textContent = `Preview: ${this.newBudgetData.project.name}`;
+        document.getElementById('newBudgetForm').classList.add('d-none');
+        document.getElementById('budgetContent').classList.remove('d-none');
+        document.getElementById('editBudgetBtn').classList.add('d-none');
+        document.getElementById('exportPdfBtn').classList.remove('d-none');
+        this.renderBudget();
+        
+        // Show preview notice
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-info alert-dismissible fade show';
+        alert.innerHTML = `
+            <i class="fas fa-eye me-2"></i>
+            Preview mode - Budget not saved yet. 
+            <button type="button" class="btn btn-link p-0 ms-2" id="backToEdit">Edit</button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        
+        document.getElementById('backToEdit').addEventListener('click', () => {
+            this.budgetData = originalData;
+            this.showNewBudgetForm();
+            alert.remove();
+        });
+    }
+    
     validateNewBudget() {
         const projectName = document.getElementById('newProjectName').value.trim();
         const projectClient = document.getElementById('newProjectClient').value.trim();
         
         if (!projectName || !projectClient) {
-            alert('Please fill in the project name and client name.');
+            alert('Please fill in the required project information (Project Name and Client).');
             return false;
         }
         
         const trades = document.querySelectorAll('[data-trade-key]');
-        let hasValidTrade = false;
+        if (trades.length === 0) {
+            alert('Please add at least one trade section.');
+            return false;
+        }
         
+        let hasValidTrade = false;
         for (const trade of trades) {
             const tradeNameSelect = trade.querySelector('.trade-name');
             const tradeName = tradeNameSelect ? tradeNameSelect.value.trim() : '';
@@ -542,14 +1320,16 @@ class BudgetViewer {
         
         return true;
     }
-
+    
     collectNewBudgetData() {
+        // Collect project info
         this.newBudgetData.project = {
             name: document.getElementById('newProjectName').value.trim(),
             client: document.getElementById('newProjectClient').value.trim(),
             address: document.getElementById('newProjectAddress').value.trim()
         };
         
+        // Collect trades
         this.newBudgetData.trades = {};
         const trades = document.querySelectorAll('[data-trade-key]');
         
@@ -570,11 +1350,15 @@ class BudgetViewer {
                     const notes = item.querySelector('.item-notes').value.trim();
                     
                     if (category && vendor && budget > 0) {
+                        const categoryOption = categorySelect.options[categorySelect.selectedIndex];
+                        const categoryCode = categoryOption ? categoryOption.getAttribute('data-code') : '';
+                        
                         lineItems.push({
                             category,
+                            categoryCode,
                             vendor,
                             budget,
-                            notes
+                            notes: notes || undefined
                         });
                     }
                 });
@@ -582,152 +1366,214 @@ class BudgetViewer {
                 if (lineItems.length > 0) {
                     this.newBudgetData.trades[tradeKey] = {
                         name: tradeName,
-                        lineItems
+                        line_items: lineItems
                     };
                 }
             }
         });
     }
-
-    switchView(view) {
-        this.currentView = view;
+    
+    updateLineItemCategories(lineItem, tradeName) {
+        const categorySelect = lineItem.querySelector('.item-category');
+        const currentValue = categorySelect.value;
         
-        // Hide all views
-        document.getElementById('loadingMessage').classList.add('d-none');
-        document.getElementById('dashboardContent').classList.add('d-none');
-        document.getElementById('budgetContent').classList.add('d-none');
-        document.getElementById('newBudgetForm').classList.add('d-none');
+        // Clear and rebuild options
+        categorySelect.innerHTML = '<option value="">Select Category</option>';
         
-        // Show selected view
-        switch (view) {
-            case 'dashboard':
-                document.getElementById('dashboardContent').classList.remove('d-none');
-                this.hideExportButton();
-                break;
-            case 'budget':
-                document.getElementById('budgetContent').classList.remove('d-none');
-                this.showExportButton();
-                break;
-            case 'new':
-                document.getElementById('newBudgetForm').classList.remove('d-none');
-                this.hideExportButton();
-                break;
+        if (tradeName && this.tradeCategoryMapping[tradeName]) {
+            this.tradeCategoryMapping[tradeName].forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.name;
+                option.setAttribute('data-code', category.code);
+                option.textContent = `${category.name} (${category.code})`;
+                if (category.name === currentValue) {
+                    option.selected = true;
+                }
+                categorySelect.appendChild(option);
+            });
+            categorySelect.disabled = false;
+            
+            // Remove helper text
+            const helpText = lineItem.querySelector('small');
+            if (helpText) {
+                helpText.remove();
+            }
+        } else {
+            categorySelect.disabled = true;
+            // Add helper text if not present
+            if (!lineItem.querySelector('small')) {
+                const helpText = document.createElement('small');
+                helpText.className = 'text-muted';
+                helpText.textContent = 'Select Trade Name first';
+                categorySelect.parentNode.appendChild(helpText);
+            }
         }
     }
-
-    showExportButton() {
-        document.getElementById('exportPdfBtn').classList.remove('d-none');
+    
+    renderDashboard() {
+        this.sortAndRenderBudgets();
     }
-
-    hideExportButton() {
-        document.getElementById('exportPdfBtn').classList.add('d-none');
-    }
-
+    
     filterBudgets() {
         const searchTerm = document.getElementById('searchBudgets').value.toLowerCase();
         const statusFilter = document.getElementById('filterStatus').value;
         
         this.filteredBudgets = this.budgetsList.filter(budget => {
-            const matchesSearch = !searchTerm || 
-                budget.project_name.toLowerCase().includes(searchTerm) ||
-                budget.client.toLowerCase().includes(searchTerm) ||
-                (budget.address && budget.address.toLowerCase().includes(searchTerm));
-            
+            const matchesSearch = budget.projectName.toLowerCase().includes(searchTerm) ||
+                                budget.client.toLowerCase().includes(searchTerm);
             const matchesStatus = !statusFilter || budget.status === statusFilter;
-            
             return matchesSearch && matchesStatus;
         });
         
-        this.renderBudgetsList();
+        this.sortAndRenderBudgets();
     }
-
-    sortBudgets() {
+    
+    sortAndRenderBudgets() {
         const sortBy = document.getElementById('sortBudgets').value;
         
         this.filteredBudgets.sort((a, b) => {
             switch (sortBy) {
                 case 'projectName':
-                    return a.project_name.localeCompare(b.project_name);
+                    return a.projectName.localeCompare(b.projectName);
                 case 'totalBudget':
-                    return parseFloat(b.total_budget) - parseFloat(a.total_budget);
+                    return b.totalBudget - a.totalBudget;
                 case 'dateCreated':
-                    return new Date(b.created_at) - new Date(a.created_at);
+                    return new Date(b.dateCreated) - new Date(a.dateCreated);
                 case 'lastModified':
                 default:
-                    return new Date(b.updated_at) - new Date(a.updated_at);
+                    return new Date(b.lastModified) - new Date(a.lastModified);
             }
         });
         
-        this.renderBudgetsList();
+        this.renderBudgetCards();
     }
-
-    exportToPDF() {
+    
+    renderBudgetCards() {
+        const container = document.getElementById('budgetsList');
+        const noResults = document.getElementById('noBudgetsMessage');
+        
+        if (this.filteredBudgets.length === 0) {
+            container.innerHTML = '';
+            noResults.classList.remove('d-none');
+            return;
+        }
+        
+        noResults.classList.add('d-none');
+        
+        container.innerHTML = this.filteredBudgets.map((budget, index) => {
+            const statusBadge = this.getStatusBadge(budget.status);
+            const formattedDate = new Date(budget.lastModified).toLocaleDateString();
+            
+            const cardColors = [
+                'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(168, 237, 234, 0.1) 0%, rgba(254, 214, 227, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(255, 154, 158, 0.1) 0%, rgba(254, 207, 239, 0.1) 100%)',
+                'linear-gradient(135deg, rgba(255, 236, 210, 0.1) 0%, rgba(252, 182, 159, 0.1) 100%)'
+            ];
+            const cardColor = cardColors[index % cardColors.length];
+            
+            return `
+                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 budget-card border-0 shadow-sm" data-budget-id="${budget.id}" style="cursor: pointer; background: ${cardColor};">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: rgba(0, 0, 0, 0.05);">
+                            <h6 class="mb-0 text-truncate me-2 fw-bold">${this.escapeHtml(budget.projectName)}</h6>
+                            ${statusBadge}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-2">
+                                <strong>Client:</strong><br>
+                                <small class="text-muted">${this.escapeHtml(budget.client)}</small>
+                            </p>
+                            <p class="card-text mb-2">
+                                <strong>Address:</strong><br>
+                                <small class="text-muted">${this.escapeHtml(budget.address)}</small>
+                            </p>
+                            <p class="card-text mb-2">
+                                <strong>Total Budget:</strong><br>
+                                <span class="currency fw-bold text-success">${this.formatCurrency(budget.totalBudget)}</span>
+                            </p>
+                        </div>
+                        <div class="card-footer border-0" style="background: rgba(0, 0, 0, 0.02);">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Last modified: ${formattedDate}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Add click handlers to budget cards
+        container.querySelectorAll('.budget-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const budgetId = card.dataset.budgetId;
+                this.showBudgetViewer(budgetId);
+            });
+        });
+    }
+    
+    getStatusBadge(status) {
+        const badges = {
+            'active': '<span class="badge bg-success">Active</span>',
+            'planning': '<span class="badge bg-warning">Planning</span>',
+            'completed': '<span class="badge bg-primary">Completed</span>'
+        };
+        return badges[status] || '<span class="badge bg-secondary">Unknown</span>';
+    }
+    
+    populateEditForm() {
         if (!this.budgetData) return;
         
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+        // Populate project information
+        document.getElementById('newProjectName').value = this.budgetData.project.name || '';
+        document.getElementById('newProjectClient').value = this.budgetData.project.client || '';
+        document.getElementById('newProjectAddress').value = this.budgetData.project.address || '';
         
-        // Add title
-        doc.setFontSize(20);
-        doc.text('Construction Budget', 20, 30);
+        // Clear existing trades
+        document.getElementById('newTradesContainer').innerHTML = '';
+        this.tradeCounter = 0;
         
-        // Add project info
-        doc.setFontSize(12);
-        doc.text(`Project: ${this.budgetData.project.name}`, 20, 50);
-        doc.text(`Client: ${this.budgetData.project.client}`, 20, 60);
-        doc.text(`Address: ${this.budgetData.project.address}`, 20, 70);
-        
-        // Add grand total
-        doc.setFontSize(14);
-        doc.text(`Total Budget: $${this.formatCurrency(this.grandTotal)}`, 20, 90);
-        
-        let yPos = 110;
-        
-        // Add trade sections
+        // Populate trades
         Object.entries(this.budgetData.trades).forEach(([tradeKey, trade]) => {
-            if (yPos > 250) {
-                doc.addPage();
-                yPos = 30;
-            }
+            if (!trade.line_items || trade.line_items.length === 0) return;
             
-            const lineItems = trade.lineItems || trade.line_items || [];
-            const subtotal = this.calculateTradeSubtotal(lineItems);
+            this.addNewTrade();
+            const tradeDiv = document.querySelector('[data-trade-key]:last-child');
+            const tradeNameSelect = tradeDiv.querySelector('.trade-name');
             
-            doc.setFontSize(12);
-            doc.text(`${trade.name} - $${this.formatCurrency(subtotal)}`, 20, yPos);
-            yPos += 10;
+            // Set trade name
+            tradeNameSelect.value = trade.name;
+            tradeNameSelect.dispatchEvent(new Event('change'));
             
-            lineItems.forEach(item => {
-                if (yPos > 250) {
-                    doc.addPage();
-                    yPos = 30;
-                }
+            // Clear default line item
+            const lineItemsContainer = tradeDiv.querySelector('.line-items-container');
+            lineItemsContainer.innerHTML = '';
+            
+            // Add line items
+            trade.line_items.forEach(item => {
+                const lineItem = this.addLineItem(lineItemsContainer, trade.name);
                 
-                const budget = item.budgetAmount || item.budget || 0;
-                doc.setFontSize(10);
-                doc.text(`  ${item.category} - ${item.vendor} - $${this.formatCurrency(budget)}`, 25, yPos);
-                yPos += 8;
+                // Populate line item data
+                const categorySelect = lineItem.querySelector('.item-category');
+                categorySelect.value = item.category;
+                lineItem.querySelector('.item-vendor').value = item.vendor;
+                lineItem.querySelector('.item-budget').value = item.budget;
+                lineItem.querySelector('.item-notes').value = item.notes || '';
             });
-            
-            yPos += 5;
         });
         
-        doc.save(`${this.budgetData.project.name}_budget.pdf`);
-    }
-
-    showSuccessMessage(message) {
-        // Simple alert for now - could be enhanced with toast notifications
-        alert(message);
-    }
-
-    showError(message) {
-        // Simple alert for now - could be enhanced with toast notifications
-        alert(`Error: ${message}`);
+        // Update button text for edit mode
+        const saveButton = document.getElementById('saveNewBudget');
+        saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Update Budget';
     }
 }
 
-// Initialize the application when DOM is loaded
+// Initialize the budget viewer when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.budgetViewer = new BudgetViewer();
-    window.budgetViewer.init();
+    new BudgetViewer();
 });
