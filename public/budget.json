@@ -1,0 +1,176 @@
+{
+  "project": {
+    "name": "Riverside Office Complex - Phase 1",
+    "client": "Riverside Development Corp",
+    "address": "1250 Riverside Drive, Portland, OR 97201"
+  },
+  "trades": {
+    "site_work": {
+      "name": "Site Work & Excavation",
+      "line_items": [
+        {
+          "category": "Site Preparation",
+          "vendor": "Pacific Excavation LLC",
+          "budget": 45000.00,
+          "notes": "Includes tree removal and site clearing"
+        },
+        {
+          "category": "Excavation & Grading",
+          "vendor": "Pacific Excavation LLC",
+          "budget": 85000.00,
+          "notes": "Foundation excavation and rough grading"
+        },
+        {
+          "category": "Utilities Connection",
+          "vendor": "Northwest Utilities Inc",
+          "budget": 32000.00,
+          "notes": "Water, sewer, and electrical service connections"
+        }
+      ]
+    },
+    "concrete": {
+      "name": "Concrete & Foundation",
+      "line_items": [
+        {
+          "category": "Foundation Concrete",
+          "vendor": "Columbia River Concrete",
+          "budget": 125000.00,
+          "notes": "Footings, foundation walls, and slab on grade"
+        },
+        {
+          "category": "Structural Concrete",
+          "vendor": "Columbia River Concrete",
+          "budget": 89000.00,
+          "notes": "Elevated slabs and structural elements"
+        },
+        {
+          "category": "Concrete Finishing",
+          "vendor": "Premier Concrete Finishing",
+          "budget": 28000.00,
+          "notes": "Polished concrete floors in lobby areas"
+        }
+      ]
+    },
+    "framing": {
+      "name": "Structural Steel & Framing",
+      "line_items": [
+        {
+          "category": "Structural Steel",
+          "vendor": "Northwest Steel Fabricators",
+          "budget": 285000.00,
+          "notes": "Steel frame structure and connections"
+        },
+        {
+          "category": "Metal Decking",
+          "vendor": "Northwest Steel Fabricators",
+          "budget": 45000.00,
+          "notes": "Composite metal decking for floors"
+        },
+        {
+          "category": "Miscellaneous Metals",
+          "vendor": "Custom Metal Works",
+          "budget": 38000.00,
+          "notes": "Stairs, railings, and architectural metals"
+        }
+      ]
+    },
+    "roofing": {
+      "name": "Roofing & Waterproofing",
+      "line_items": [
+        {
+          "category": "Roofing System",
+          "vendor": "Superior Roofing Solutions",
+          "budget": 95000.00,
+          "notes": "TPO membrane roofing system with insulation"
+        },
+        {
+          "category": "Waterproofing",
+          "vendor": "Superior Roofing Solutions",
+          "budget": 35000.00,
+          "notes": "Below-grade waterproofing and deck coatings"
+        }
+      ]
+    },
+    "mechanical": {
+      "name": "Mechanical Systems",
+      "line_items": [
+        {
+          "category": "HVAC Equipment",
+          "vendor": "Climate Control Systems",
+          "budget": 185000.00,
+          "notes": "Rooftop units, ductwork, and controls"
+        },
+        {
+          "category": "Plumbing",
+          "vendor": "Metro Plumbing Services",
+          "budget": 75000.00,
+          "notes": "Complete plumbing system and fixtures"
+        },
+        {
+          "category": "Fire Protection",
+          "vendor": "Pacific Fire Systems",
+          "budget": 55000.00,
+          "notes": "Sprinkler system throughout building"
+        }
+      ]
+    },
+    "electrical": {
+      "name": "Electrical Systems",
+      "line_items": [
+        {
+          "category": "Electrical Service",
+          "vendor": "Cascade Electric Co",
+          "budget": 45000.00,
+          "notes": "Main electrical service and distribution"
+        },
+        {
+          "category": "Interior Wiring",
+          "vendor": "Cascade Electric Co",
+          "budget": 125000.00,
+          "notes": "Branch circuits, outlets, and switches"
+        },
+        {
+          "category": "Lighting Systems",
+          "vendor": "Illumination Specialists",
+          "budget": 65000.00,
+          "notes": "LED lighting package and controls"
+        },
+        {
+          "category": "Low Voltage Systems",
+          "vendor": "TechComm Solutions",
+          "budget": 35000.00,
+          "notes": "Data, phone, and security systems"
+        }
+      ]
+    },
+    "finishes": {
+      "name": "Interior Finishes",
+      "line_items": [
+        {
+          "category": "Drywall & Painting",
+          "vendor": "Northwest Drywall Inc",
+          "budget": 85000.00,
+          "notes": "Drywall installation and interior painting"
+        },
+        {
+          "category": "Flooring",
+          "vendor": "Premium Floor Covering",
+          "budget": 95000.00,
+          "notes": "Carpet, tile, and luxury vinyl plank flooring"
+        },
+        {
+          "category": "Doors & Hardware",
+          "vendor": "Commercial Door Systems",
+          "budget": 45000.00,
+          "notes": "Interior doors, frames, and hardware"
+        },
+        {
+          "category": "Specialties",
+          "vendor": "Building Specialties LLC",
+          "budget": 25000.00,
+          "notes": "Toilet accessories, signage, and millwork"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construction Budget Manager</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .trade-section {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .trade-header {
+            background-color: var(--bs-secondary-bg);
+            padding: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .trade-header:hover {
+            background-color: var(--bs-tertiary-bg);
+        }
+        
+        .trade-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .trade-content.show {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .line-item {
+            background-color: var(--bs-body-bg);
+            border-bottom: 1px solid var(--bs-border-color);
+            padding: 1rem;
+        }
+        
+        .line-item:last-child {
+            border-bottom: none;
+        }
+        
+        .currency {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: var(--bs-success);
+        }
+        
+        .budget-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid var(--bs-border-color);
+        }
+        
+        .budget-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .status-active { color: var(--bs-success); }
+        .status-planning { color: var(--bs-warning); }
+        .status-completed { color: var(--bs-info); }
+        
+        .form-floating > .form-control, .form-floating > .form-select {
+            border-color: var(--bs-border-color);
+        }
+        
+        .remove-btn {
+            transition: all 0.2s;
+        }
+        
+        .remove-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0.5rem; }
+            .trade-header { padding: 0.75rem; }
+            .line-item { padding: 0.75rem; }
+            .btn { padding: 0.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <span class="navbar-brand">
+                <i class="fas fa-calculator me-2"></i>
+                <span id="pageTitle">Construction Budget Manager</span>
+            </span>
+            <button id="backToDashboard" class="btn btn-outline-light d-none">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </button>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Error Message -->
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="alert alert-success d-none" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span id="successText"></span>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2>Project Budgets</h2>
+                    <p class="text-muted">Manage your construction project budgets</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button id="newBudgetBtn" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create New Budget
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search projects...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="planning">Planning</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Budget Cards Container -->
+            <div id="budgetCardsContainer" class="row">
+                <!-- Budget cards will be rendered here -->
+            </div>
+        </div>
+
+        <!-- Budget Content View -->
+        <div id="budgetContent" class="d-none">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div id="projectInfo">
+                        <!-- Project info will be rendered here -->
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button id="editBudgetBtn" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-edit me-2"></i>Edit Budget
+                    </button>
+                    <button id="exportPdfBtn" class="btn btn-success">
+                        <i class="fas fa-file-pdf me-2"></i>Export PDF
+                    </button>
+                </div>
+            </div>
+
+            <div id="tradeSections">
+                <!-- Trade sections will be rendered here -->
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Budget Summary</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-0"><strong>Total Budget:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <span id="grandTotal" class="currency fs-4"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Budget Form -->
+        <div id="newBudgetForm" class="d-none">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 id="formTitle">Create New Budget</h2>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button id="cancelNewBudget" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Project Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Project Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="newProjectName" placeholder="Project Name" required>
+                                <label for="newProjectName">Project Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="newProjectClient" placeholder="Client Name" required>
+                                <label for="newProjectClient">Client Name</label>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="newProjectAddress" placeholder="Project Address" required>
+                                <label for="newProjectAddress">Project Address</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trades Section -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-hammer me-2"></i>Budget Breakdown</h5>
+                    <button type="button" id="addTradeBtn" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Add Trade
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="newTradesContainer">
+                        <!-- Trade forms will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <button id="previewBudgetBtn" class="btn btn-outline-info me-2">
+                        <i class="fas fa-eye me-2"></i>Preview Budget
+                    </button>
+                    <button id="saveNewBudget" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Save Budget
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

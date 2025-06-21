@@ -1,0 +1,172 @@
+{
+  "project": {
+    "name": "Downtown Retail Center",
+    "client": "Metro Development LLC",
+    "address": "789 Main Street, Seattle, WA 98101"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "line_items": [
+        {
+          "category": "ARCHITECT",
+          "vendor": "Urban Design Associates",
+          "budget": 125000.00,
+          "notes": "Commercial retail design"
+        },
+        {
+          "category": "STRUCTURAL ENGINEERING",
+          "vendor": "Metro Structural Group",
+          "budget": 75000.00,
+          "notes": "Multi-story commercial structure"
+        }
+      ]
+    },
+    "General Conditions": {
+      "name": "General Conditions",
+      "line_items": [
+        {
+          "category": "BUILDING PERMITS",
+          "vendor": "City of Seattle",
+          "budget": 35000.00,
+          "notes": "Commercial building permits"
+        },
+        {
+          "category": "CONSTRUCTION CLEANING",
+          "vendor": "Commercial Cleaning Co",
+          "budget": 25000.00,
+          "notes": "Daily construction cleanup"
+        }
+      ]
+    },
+    "Shell": {
+      "name": "Shell",
+      "line_items": [
+        {
+          "category": "CONCRETE PILING",
+          "vendor": "Downtown Foundation Co",
+          "budget": 380000.00,
+          "notes": "Deep foundations for downtown location"
+        },
+        {
+          "category": "SHELL / ROOF FRAMING L&M",
+          "vendor": "Steel Frame Builders",
+          "budget": 620000.00,
+          "notes": "Three-story steel frame construction"
+        }
+      ]
+    },
+    "Masonry": {
+      "name": "Masonry",
+      "line_items": [
+        {
+          "category": "STONE VENEER MATERIAL",
+          "vendor": "Pacific Stone Supply",
+          "budget": 95000.00,
+          "notes": "Exterior stone veneer facade"
+        },
+        {
+          "category": "VENEER INSTALLATION / LABOR",
+          "vendor": "Master Masons LLC",
+          "budget": 120000.00,
+          "notes": "Professional stone installation"
+        }
+      ]
+    },
+    "Roofing / Siding": {
+      "name": "Roofing / Siding",
+      "line_items": [
+        {
+          "category": "ROOFING LABOR AND MATERIALS",
+          "vendor": "Commercial Roofing Systems",
+          "budget": 145000.00,
+          "notes": "TPO commercial roofing system"
+        }
+      ]
+    },
+    "Exterior Windows & Doors": {
+      "name": "Exterior Windows & Doors",
+      "line_items": [
+        {
+          "category": "GLASS WINDOWS AND DOORS",
+          "vendor": "Storefront Glass Co",
+          "budget": 185000.00,
+          "notes": "Commercial storefront glass systems"
+        }
+      ]
+    },
+    "Plumbing": {
+      "name": "Plumbing",
+      "line_items": [
+        {
+          "category": "PLUMBING LABOR",
+          "vendor": "Commercial Plumbing Inc",
+          "budget": 95000.00,
+          "notes": "Commercial plumbing installation"
+        },
+        {
+          "category": "PLUMBING FIXTURES",
+          "vendor": "Commercial Fixtures Co",
+          "budget": 45000.00,
+          "notes": "Public restroom fixtures"
+        }
+      ]
+    },
+    "Electrical & Low Voltage": {
+      "name": "Electrical & Low Voltage",
+      "line_items": [
+        {
+          "category": "ELECTRICAL LABOR",
+          "vendor": "Downtown Electric Co",
+          "budget": 165000.00,
+          "notes": "Commercial electrical systems"
+        },
+        {
+          "category": "LIGHTING SYSTEM",
+          "vendor": "Commercial Lighting Inc",
+          "budget": 85000.00,
+          "notes": "LED lighting throughout"
+        }
+      ]
+    },
+    "Heating & Cooling": {
+      "name": "Heating & Cooling",
+      "line_items": [
+        {
+          "category": "AIR CONDITIONING & DUCT WORK",
+          "vendor": "HVAC Solutions Inc",
+          "budget": 195000.00,
+          "notes": "Commercial HVAC system"
+        }
+      ]
+    },
+    "Flooring": {
+      "name": "Flooring",
+      "line_items": [
+        {
+          "category": "INTERIOR TILE / MARBLE FLOOR MATERIAL",
+          "vendor": "Commercial Flooring Co",
+          "budget": 125000.00,
+          "notes": "Polished concrete and tile flooring"
+        }
+      ]
+    },
+    "Paint": {
+      "name": "Paint",
+      "line_items": [
+        {
+          "category": "PAINTING INTERIOR",
+          "vendor": "Professional Painters Inc",
+          "budget": 65000.00,
+          "notes": "Interior painting throughout"
+        },
+        {
+          "category": "PAINTING EXTERIOR",
+          "vendor": "Professional Painters Inc",
+          "budget": 45000.00,
+          "notes": "Exterior accent painting"
+        }
+      ]
+    }
+  }
+}

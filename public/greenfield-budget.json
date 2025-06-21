@@ -1,0 +1,242 @@
+{
+  "project": {
+    "name": "Greenfield Residential Development",
+    "client": "Horizon Builders Inc",
+    "address": "1100 Oak Ridge Boulevard, Austin, TX 78704"
+  },
+  "trades": {
+    "Professional Services": {
+      "name": "Professional Services",
+      "line_items": [
+        {
+          "category": "ARCHITECT",
+          "vendor": "Texas Design Group",
+          "budget": 195000.00,
+          "notes": "Master plan and residential design"
+        },
+        {
+          "category": "CIVIL ENGINEERING",
+          "vendor": "Austin Civil Engineers",
+          "budget": 145000.00,
+          "notes": "Site development and utilities"
+        }
+      ]
+    },
+    "Site Work": {
+      "name": "Site Work",
+      "line_items": [
+        {
+          "category": "EXCAVATION / GRADING",
+          "vendor": "Texas Earthworks Inc",
+          "budget": 285000.00,
+          "notes": "Site preparation for 50 units"
+        },
+        {
+          "category": "DRAINAGE LABOR AND MATERIAL",
+          "vendor": "Drainage Solutions LLC",
+          "budget": 195000.00,
+          "notes": "Storm water management system"
+        }
+      ]
+    },
+    "Shell": {
+      "name": "Shell",
+      "line_items": [
+        {
+          "category": "SHELL / ROOF FRAMING L&M",
+          "vendor": "Horizon Framing Co",
+          "budget": 850000.00,
+          "notes": "Framing for multiple residential units"
+        },
+        {
+          "category": "SHEATHING L & M",
+          "vendor": "Building Supply Co",
+          "budget": 285000.00,
+          "notes": "Structural sheathing installation"
+        }
+      ]
+    },
+    "Roofing / Siding": {
+      "name": "Roofing / Siding",
+      "line_items": [
+        {
+          "category": "ROOFING LABOR AND MATERIALS",
+          "vendor": "Texas Roofing Systems",
+          "budget": 385000.00,
+          "notes": "Composite shingle roofing"
+        },
+        {
+          "category": "SIDING MATERIAL",
+          "vendor": "Siding Supply Co",
+          "budget": 225000.00,
+          "notes": "Fiber cement siding"
+        },
+        {
+          "category": "SIDING LABOR",
+          "vendor": "Professional Siding Inc",
+          "budget": 185000.00,
+          "notes": "Siding installation"
+        }
+      ]
+    },
+    "Exterior Windows & Doors": {
+      "name": "Exterior Windows & Doors",
+      "line_items": [
+        {
+          "category": "GLASS WINDOWS AND DOORS",
+          "vendor": "Residential Window Co",
+          "budget": 295000.00,
+          "notes": "Energy-efficient windows and doors"
+        }
+      ]
+    },
+    "Framing & Drywall": {
+      "name": "Framing & Drywall",
+      "line_items": [
+        {
+          "category": "INTERIOR FRAMING",
+          "vendor": "Interior Frame Co",
+          "budget": 185000.00,
+          "notes": "Interior wall framing"
+        },
+        {
+          "category": "DRYWALL L & M",
+          "vendor": "Drywall Professionals",
+          "budget": 295000.00,
+          "notes": "Drywall installation and finishing"
+        },
+        {
+          "category": "INSULATION",
+          "vendor": "Energy Insulation Co",
+          "budget": 125000.00,
+          "notes": "High-efficiency insulation"
+        }
+      ]
+    },
+    "Plumbing": {
+      "name": "Plumbing",
+      "line_items": [
+        {
+          "category": "PLUMBING LABOR",
+          "vendor": "Austin Plumbing Co",
+          "budget": 185000.00,
+          "notes": "Complete plumbing installation"
+        },
+        {
+          "category": "PLUMBING FIXTURES",
+          "vendor": "Fixture Supply Co",
+          "budget": 95000.00,
+          "notes": "Standard residential fixtures"
+        }
+      ]
+    },
+    "Electrical & Low Voltage": {
+      "name": "Electrical & Low Voltage",
+      "line_items": [
+        {
+          "category": "ELECTRICAL LABOR",
+          "vendor": "Texas Electric Co",
+          "budget": 225000.00,
+          "notes": "Electrical systems for all units"
+        },
+        {
+          "category": "ELECTRICAL FIXTURES",
+          "vendor": "Light Fixture Co",
+          "budget": 85000.00,
+          "notes": "Standard residential lighting"
+        }
+      ]
+    },
+    "Heating & Cooling": {
+      "name": "Heating & Cooling",
+      "line_items": [
+        {
+          "category": "AIR CONDITIONING & DUCT WORK",
+          "vendor": "Texas HVAC Systems",
+          "budget": 295000.00,
+          "notes": "Central air conditioning for all units"
+        }
+      ]
+    },
+    "Flooring": {
+      "name": "Flooring",
+      "line_items": [
+        {
+          "category": "WOOD FLOOR MATERIAL & LABOR",
+          "vendor": "Hardwood Flooring Co",
+          "budget": 185000.00,
+          "notes": "Engineered hardwood flooring"
+        },
+        {
+          "category": "CARPET MATERIAL",
+          "vendor": "Carpet Supply Co",
+          "budget": 65000.00,
+          "notes": "Bedroom carpeting"
+        },
+        {
+          "category": "CARPET LABOR",
+          "vendor": "Carpet Installation Inc",
+          "budget": 45000.00,
+          "notes": "Carpet installation"
+        }
+      ]
+    },
+    "Interior Trim Package": {
+      "name": "Interior Trim Package",
+      "line_items": [
+        {
+          "category": "TRIM MATERIAL",
+          "vendor": "Trim Supply Co",
+          "budget": 125000.00,
+          "notes": "Interior trim and molding"
+        },
+        {
+          "category": "TRIM LABOR",
+          "vendor": "Finish Carpentry Inc",
+          "budget": 95000.00,
+          "notes": "Trim installation"
+        },
+        {
+          "category": "INTERIOR DOORS MATERIAL",
+          "vendor": "Door Supply Co",
+          "budget": 85000.00,
+          "notes": "Interior doors for all units"
+        }
+      ]
+    },
+    "Paint": {
+      "name": "Paint",
+      "line_items": [
+        {
+          "category": "PAINTING INTERIOR",
+          "vendor": "Residential Painters Inc",
+          "budget": 145000.00,
+          "notes": "Interior painting for all units"
+        },
+        {
+          "category": "PAINTING EXTERIOR",
+          "vendor": "Residential Painters Inc",
+          "budget": 95000.00,
+          "notes": "Exterior painting"
+        }
+      ]
+    },
+    "Landscaping / Irrigation": {
+      "name": "Landscaping / Irrigation",
+      "line_items": [
+        {
+          "category": "LANDSCAPING LABOR AND MATERIALS",
+          "vendor": "Austin Landscape Co",
+          "budget": 185000.00,
+          "notes": "Landscaping for common areas"
+        },
+        {
+          "category": "IRRIGATION",
+          "vendor": "Sprinkler Systems Inc",
+          "budget": 65000.00,
+          "notes": "Irrigation system installation"
+        }
+      ]
+    }
+  }
+}
